@@ -1,0 +1,1012 @@
+"use client";
+
+import { useRouter } from "next/navigation";
+import * as React from "react";
+import { AjudaLancamento } from "@/components/AjudaLancamento";
+import { Icon } from "@/components/Icon";
+import { BottomSheet, Modal } from "@/components/ui/Modal";
+import { useToast } from "@/components/ui/Toast";
+import {
+  FORMAS_PAGAMENTO,
+  MEIOS_RECEBIMENTO,
+  MODALIDADES,
+} from "@/lib/constants";
+import {
+  brl,
+  centavosParaNumero,
+  hojeIso,
+  isoParaBR,
+  mesRefLabel,
+  numeroParaCentavos,
+} from "@/lib/format";
+import { enfileirar } from "@/lib/offline-queue";
+import type { Cliente, FormaPagamento, LancamentoView, MeioRecebimento } from "@/lib/types";
+
+type Modo = "vendedora" | "gestor";
+type TipoForm = "venda" | "recebimento" | "despesa" | "capital";
+type ModoReceb = "tudo" | "parcial" | "nao";
+
+// Bandeiras de cartão (recebimento)
+const BANDEIRAS = ["VISA", "MASTER", "ELO", "HIPERCARD", "AMEX"];
+
+// Dica de um toque sob o seletor de tipo — linguagem do balcão
+const TIPO_HINTS: Record<TipoForm, string> = {
+  venda: "O que a cliente levou — valor cheio, mesmo se for pagar depois. Conta nas metas.",
+  recebimento: "Dinheiro que entrou no caixa: parcela do crediário, repasse da maquininha…",
+  despesa: "Dinheiro que saiu — contas e pagamentos da loja.",
+  capital: "Aportes e retiradas dos sócios — não entram no resultado da loja.",
+};
+
+// Meio de recebimento sugerido a partir da forma de pagamento da venda
+const MEIO_PADRAO: Record<FormaPagamento, MeioRecebimento> = {
+  dinheiro: "dinheiro",
+  pix_transferencia: "pix",
+  cartao_credito: "cartao_credito",
+  cartao_debito: "cartao_debito",
+  cheque: "cheque",
+  crediario: "dinheiro",
+};
+
+interface Props {
+  modo: Modo;
+  categorias: { id: string; nome: string }[];
+  vendedoras?: { id: string; nome: string }[];
+  clientes?: Cliente[];
+  inicial?: LancamentoView | null;
+}
+
+/** Exibe centavos como valor pt-BR sem o prefixo (ex.: "1.234,56"). */
+function centsDisplay(cents: string): string {
+  if (!cents) return "";
+  return ((parseInt(cents, 10) || 0) / 100).toLocaleString("pt-BR", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  });
+}
+
+function digitsDe(texto: string): string {
+  return texto.replace(/\D/g, "").replace(/^0+(?=\d)/, "").slice(0, 9);
+}
+
+export function LancamentoForm({
+  modo,
+  categorias,
+  vendedoras = [],
+  clientes = [],
+  inicial = null,
+}: Props) {
+  const router = useRouter();
+  const toast = useToast();
+  const editando = Boolean(inicial);
+
+  const tipoInicial: TipoForm = inicial
+    ? inicial.tipo === "investimento" || inicial.tipo === "devolucao_capital"
+      ? "capital"
+      : (inicial.tipo as TipoForm)
+    : "venda";
+
+  const [tipo, setTipo] = React.useState<TipoForm>(tipoInicial);
+  const [valorCents, setValorCents] = React.useState(
+    inicial ? numeroParaCentavos(inicial.valor) : "",
+  );
+  const [cliente, setCliente] = React.useState(
+    inicial?.cliente ?? inicial?.cliente_ou_bandeira ?? "",
+  );
+  const [bandeira, setBandeira] = React.useState(inicial?.bandeira ?? "");
+  const [forma, setForma] = React.useState<FormaPagamento | "">(
+    inicial?.forma_pagamento ?? "",
+  );
+  const [modalidade, setModalidade] = React.useState(inicial?.modalidade ?? "presencial");
+  const [meio, setMeio] = React.useState(inicial?.meio ?? "");
+  const [categoriaId, setCategoriaId] = React.useState(
+    inicial?.categoria_id ?? categorias[0]?.id ?? "",
+  );
+  const [credor, setCredor] = React.useState(inicial?.credor ?? "");
+  const [data, setData] = React.useState(inicial?.data ?? hojeIso());
+  const [vencimento, setVencimento] = React.useState(inicial?.data_vencimento ?? "");
+  const [mesRef, setMesRef] = React.useState(
+    inicial?.mes_referencia ??
+      (() => {
+        const p = hojeIso().split("-");
+        return mesRefLabel(+p[0], +p[1]);
+      })(),
+  );
+  const [descricao, setDescricao] = React.useState(inicial?.descricao ?? "");
+  const [capKind, setCapKind] = React.useState<"aporte" | "devolucao">(
+    inicial?.tipo === "devolucao_capital" ? "devolucao" : "aporte",
+  );
+  const [registradoPor, setRegistradoPor] = React.useState<string>(
+    inicial?.vendedora_id ?? "gestor",
+  );
+
+  // Recebimento embutido na venda (só em lançamento novo)
+  const [modoReceb, setModoReceb] = React.useState<ModoReceb>("tudo");
+  const [recebCents, setRecebCents] = React.useState("");
+  const [recebMeio, setRecebMeio] = React.useState<MeioRecebimento | "">("");
+
+  // Cadastro de clientes (lista local atualizável)
+  const [listaClientes, setListaClientes] = React.useState<Cliente[]>(clientes);
+
+  const [salvando, setSalvando] = React.useState(false);
+  const [confirmaExcluir, setConfirmaExcluir] = React.useState(false);
+  const [erro, setErro] = React.useState<string | null>(null);
+
+  const valor = centavosParaNumero(valorCents);
+  const recebValor = centavosParaNumero(recebCents);
+  const cor =
+    tipo === "venda"
+      ? "#2f7d5b"
+      : tipo === "recebimento"
+        ? "#2b6f74"
+        : tipo === "capital"
+          ? "#8c6f52"
+          : "#b04a34";
+
+  // Ao escolher a forma da venda, sugere o modo e o meio do recebimento
+  function escolherForma(f: FormaPagamento) {
+    setForma(f);
+    if (!editando) {
+      setModoReceb(f === "crediario" ? "parcial" : "tudo");
+      setRecebMeio(MEIO_PADRAO[f]);
+      if (f !== "crediario") setRecebCents("");
+    }
+  }
+
+  // ---- teclado numérico (vendedora) ---------------------------------------
+  function apertaDigito(d: string) {
+    setValorCents((cur) => (cur.length >= 9 ? cur : (cur + d).replace(/^0+(?=\d)/, "")));
+  }
+  function apagaDigito() {
+    setValorCents((cur) => cur.slice(0, -1));
+  }
+  function limpaValor() {
+    setValorCents("");
+  }
+
+  const tiposDisponiveis: { key: TipoForm; label: string }[] =
+    modo === "gestor"
+      ? [
+          { key: "venda", label: "Venda" },
+          { key: "recebimento", label: "Recebimento" },
+          { key: "despesa", label: "Despesa" },
+          { key: "capital", label: "Capital" },
+        ]
+      : [
+          { key: "venda", label: "Venda" },
+          { key: "recebimento", label: "Recebimento" },
+          { key: "despesa", label: "Despesa" },
+        ];
+
+  function montarBody() {
+    if (tipo === "venda") {
+      const incluirReceb = !editando && modoReceb !== "nao";
+      return {
+        tipo: "venda",
+        valor,
+        data,
+        cliente,
+        forma_pagamento: forma,
+        modalidade,
+        vendedora_id:
+          modo === "gestor" ? (registradoPor === "gestor" ? null : registradoPor) : undefined,
+        recebimento: incluirReceb
+          ? {
+              valor: modoReceb === "tudo" ? valor : recebValor,
+              meio: recebMeio,
+            }
+          : undefined,
+      };
+    }
+    if (tipo === "recebimento") {
+      return {
+        tipo: "recebimento",
+        valor,
+        data,
+        cliente,
+        bandeira,
+        meio,
+        vendedora_id:
+          modo === "gestor" ? (registradoPor === "gestor" ? null : registradoPor) : undefined,
+      };
+    }
+    if (tipo === "despesa") {
+      return {
+        tipo: "despesa",
+        valor,
+        data,
+        categoria_id: categoriaId,
+        credor,
+        mes_referencia: mesRef,
+        data_vencimento: vencimento || null,
+        data_pagamento: data,
+      };
+    }
+    return {
+      tipo: capKind === "aporte" ? "investimento" : "devolucao_capital",
+      valor,
+      data,
+      descricao,
+    };
+  }
+
+  async function salvar() {
+    setErro(null);
+    if (valor <= 0) return setErro("Informe um valor maior que zero");
+    // Validação amigável antes de enviar
+    if (tipo === "venda") {
+      if (!cliente.trim()) return setErro("Informe o nome da cliente");
+      if (!forma) return setErro("Escolha a forma de pagamento");
+      if (!editando && modoReceb !== "nao") {
+        if (!recebMeio) return setErro("Escolha o meio do recebimento");
+        if (modoReceb === "parcial" && recebValor <= 0)
+          return setErro("Informe o valor da entrada recebida");
+      }
+    }
+    if (tipo === "recebimento") {
+      if (!cliente.trim() && !bandeira) return setErro("Informe a cliente ou escolha a bandeira");
+      if (!meio) return setErro("Escolha o meio do recebimento");
+    }
+    if (tipo === "despesa" && !categoriaId) return setErro("Selecione a categoria");
+    if (tipo === "capital" && !descricao.trim()) return setErro("Informe a descrição");
+
+    setSalvando(true);
+    const body = montarBody();
+    const criouDupla = tipo === "venda" && !editando && modoReceb !== "nao";
+    try {
+      const url = editando ? `/api/lancamentos/${inicial!.id}` : "/api/lancamentos";
+      const res = await fetch(url, {
+        method: editando ? "PATCH" : "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
+      const dataRes = await res.json();
+      if (!res.ok) {
+        setErro(dataRes.erro || "Não foi possível salvar");
+        setSalvando(false);
+        return;
+      }
+      const msgOk = criouDupla
+        ? "Venda + recebimento salvos"
+        : editando
+          ? "Lançamento atualizado"
+          : "Lançamento salvo";
+      if (modo === "vendedora") {
+        sessionStorage.setItem("ac_toast", msgOk);
+        router.replace("/app/sucesso");
+        return;
+      }
+      toast(msgOk);
+      router.replace(tipo === "capital" ? "/admin/capital" : "/admin/lancamentos");
+      router.refresh();
+    } catch {
+      // Sem rede: em NOVO lançamento, guarda no aparelho (offline-first)
+      if (!editando) {
+        enfileirar(body);
+        if (modo === "vendedora") {
+          sessionStorage.setItem("ac_toast", "Salvo no aparelho — enviaremos ao reconectar");
+          router.replace("/app/sucesso");
+          return;
+        }
+        toast("Sem conexão — salvo no aparelho, enviaremos ao reconectar");
+        router.replace("/admin/lancamentos");
+        return;
+      }
+      setErro("Sem conexão. A alteração não foi enviada. Tente novamente.");
+      setSalvando(false);
+    }
+  }
+
+  async function excluir() {
+    setSalvando(true);
+    try {
+      const res = await fetch(`/api/lancamentos/${inicial!.id}`, { method: "DELETE" });
+      if (!res.ok) {
+        const d = await res.json();
+        setErro(d.erro || "Não foi possível excluir");
+        setSalvando(false);
+        setConfirmaExcluir(false);
+        return;
+      }
+      toast("Lançamento excluído");
+      router.replace(modo === "gestor" ? "/admin/lancamentos" : "/app/lancamentos");
+      router.refresh();
+    } catch {
+      setErro("Sem conexão. Tente novamente.");
+      setSalvando(false);
+      setConfirmaExcluir(false);
+    }
+  }
+
+  const podeExcluir = editando;
+  const keypad = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "C", "0", "⌫"];
+
+  // ==== blocos =============================================================
+
+  // Dica contextual + guia "Entenda a diferença", logo abaixo das abas
+  const hintRow = (
+    <div className="mt-2.5 flex items-center justify-between gap-3 px-0.5">
+      <p className="min-w-0 text-[12px] leading-[1.45] text-muted">{TIPO_HINTS[tipo]}</p>
+      <AjudaLancamento modo={modo} />
+    </div>
+  );
+
+  const blocoRecebimentoJunto = tipo === "venda" && !editando && (
+    <div className="rounded-[14px] border border-[#d9e6de] bg-[#f4f9f6] p-4">
+      <div className="mb-1 flex items-center gap-2">
+        <Icon name="banknote" size={17} color="#2b6f74" />
+        <span className="text-[13px] font-bold text-ink-2">Já entrou dinheiro?</span>
+      </div>
+      <div className="mb-3 text-[12px] leading-[1.45] text-muted">
+        Registre a venda e o que entrou no caixa de uma vez só — sem precisar lançar duas vezes.
+      </div>
+      <div className="flex gap-2">
+        {(
+          [
+            { key: "tudo", label: "Recebi tudo" },
+            { key: "parcial", label: "Entrada (parcial)" },
+            { key: "nao", label: "Ainda não" },
+          ] as { key: ModoReceb; label: string }[]
+        ).map((o) => {
+          const ativo = modoReceb === o.key;
+          return (
+            <button
+              key={o.key}
+              type="button"
+              onClick={() => {
+                setModoReceb(o.key);
+                if (o.key !== "nao" && !recebMeio && forma) setRecebMeio(MEIO_PADRAO[forma as FormaPagamento]);
+              }}
+              className="h-10 flex-1 rounded-[10px] text-[12.5px] font-bold transition-colors"
+              style={{
+                border: `1px solid ${ativo ? "#2b6f74" : "#d5e0da"}`,
+                background: ativo ? "#2b6f74" : "#fff",
+                color: ativo ? "#fff" : "#42403b",
+              }}
+            >
+              {o.label}
+            </button>
+          );
+        })}
+      </div>
+
+      {modoReceb !== "nao" && (
+        <div className="mt-3.5 flex flex-col gap-3.5">
+          {modoReceb === "parcial" && (
+            <div>
+              <label className="mb-1.5 block text-[12.5px] font-bold text-ink-2">
+                Valor recebido agora
+              </label>
+              <div className="flex h-12 items-center rounded-[11px] border border-[#d5e0da] bg-white px-3.5">
+                <span className="mr-1.5 text-[14px] font-bold text-muted">R$</span>
+                <input
+                  value={centsDisplay(recebCents)}
+                  onChange={(e) => setRecebCents(digitsDe(e.target.value))}
+                  inputMode="numeric"
+                  placeholder="0,00"
+                  className="w-full bg-transparent text-[17px] font-extrabold tnum outline-none"
+                  style={{ color: "#2b6f74" }}
+                />
+              </div>
+            </div>
+          )}
+          <div>
+            <label className="mb-2 block text-[12.5px] font-bold text-ink-2">Meio do recebimento</label>
+            <div className="flex flex-wrap gap-2">
+              {MEIOS_RECEBIMENTO.map((o) => {
+                const ativo = o.value === recebMeio;
+                return (
+                  <button
+                    key={o.value}
+                    type="button"
+                    onClick={() => setRecebMeio(o.value)}
+                    className="h-9 rounded-full px-3.5 text-[12.5px] font-semibold transition-colors"
+                    style={{
+                      border: `1px solid ${ativo ? "#2b6f74" : "#d5e0da"}`,
+                      background: ativo ? "#2b6f74" : "#fff",
+                      color: ativo ? "#fff" : "#42403b",
+                    }}
+                  >
+                    {o.label}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+          {valor > 0 && (
+            <div className="text-[12px] font-semibold text-receb-fg">
+              Será registrado: venda de {brl(valor)} + recebimento de{" "}
+              {brl(modoReceb === "tudo" ? valor : recebValor)}
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+
+  const camposAdaptativos = (
+    <>
+      {tipo === "venda" && (
+        <div className="flex flex-col gap-[18px]">
+          <ClienteField
+            label="Cliente"
+            valor={cliente}
+            onChange={setCliente}
+            clientes={listaClientes}
+            onCadastrada={(c) => setListaClientes((l) => [...l, c].sort((a, b) => a.nome.localeCompare(b.nome, "pt-BR")))}
+          />
+          <ChipGroup
+            label="Forma de pagamento"
+            options={FORMAS_PAGAMENTO}
+            value={forma}
+            onChange={(v) => escolherForma(v as FormaPagamento)}
+          />
+          <ChipGroup
+            label="Modalidade"
+            options={MODALIDADES}
+            value={modalidade}
+            onChange={(v) => setModalidade(v as typeof modalidade)}
+            fill
+          />
+          {blocoRecebimentoJunto}
+        </div>
+      )}
+
+      {tipo === "recebimento" && (
+        <div className="flex flex-col gap-[18px]">
+          <ClienteField
+            label="Cliente"
+            placeholder="Nome da cliente (se souber)"
+            valor={cliente}
+            onChange={setCliente}
+            clientes={listaClientes}
+            onCadastrada={(c) => setListaClientes((l) => [...l, c].sort((a, b) => a.nome.localeCompare(b.nome, "pt-BR")))}
+          />
+          <div>
+            <label className="mb-2.5 block text-[13px] font-bold text-ink-2">
+              Bandeira do cartão <span className="font-semibold text-faint">(quando for repasse da maquininha)</span>
+            </label>
+            <div className="flex flex-wrap gap-2">
+              {BANDEIRAS.map((b) => {
+                const ativo = bandeira === b;
+                return (
+                  <button
+                    key={b}
+                    type="button"
+                    onClick={() => setBandeira(ativo ? "" : b)}
+                    className="h-10 rounded-full px-[15px] text-[13px] font-bold transition-colors"
+                    style={{
+                      border: `1px solid ${ativo ? "#1c1a17" : "#e3dfd8"}`,
+                      background: ativo ? "#1c1a17" : "#fff",
+                      color: ativo ? "#fff" : "#42403b",
+                    }}
+                  >
+                    {b}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+          <ChipGroup
+            label="Meio do recebimento"
+            options={MEIOS_RECEBIMENTO}
+            value={meio}
+            onChange={(v) => setMeio(v)}
+          />
+        </div>
+      )}
+
+      {tipo === "despesa" && (
+        <div className="flex flex-col gap-[18px]">
+          <div>
+            <label className="mb-2 block text-[13px] font-bold text-ink-2">Categoria</label>
+            <select
+              value={categoriaId}
+              onChange={(e) => setCategoriaId(e.target.value)}
+              className="select-reset focus-ring h-[52px] w-full rounded-[12px] border border-input-border bg-white px-4 text-base"
+            >
+              {categorias.map((c) => (
+                <option key={c.id} value={c.id}>
+                  {c.nome}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div>
+            <label className="mb-2 block text-[13px] font-bold text-ink-2">Credor / detalhamento</label>
+            <input
+              value={credor}
+              onChange={(e) => setCredor(e.target.value)}
+              placeholder="ex: Imobiliária Central"
+              className="focus-ring h-[52px] w-full rounded-[12px] border border-input-border bg-white px-4 text-base"
+            />
+          </div>
+          <div className="flex gap-3">
+            <div className="flex-1">
+              <label className="mb-2 block text-[13px] font-bold text-ink-2">Vencimento</label>
+              <input
+                type="date"
+                value={vencimento}
+                onChange={(e) => setVencimento(e.target.value)}
+                className="focus-ring h-[52px] w-full rounded-[12px] border border-input-border bg-white px-3 text-[15px]"
+              />
+            </div>
+            <div className="flex-1">
+              <label className="mb-2 block text-[13px] font-bold text-ink-2">Mês ref.</label>
+              <input
+                value={mesRef}
+                onChange={(e) => setMesRef(e.target.value)}
+                placeholder="Julho/2026"
+                className="focus-ring h-[52px] w-full rounded-[12px] border border-input-border bg-white px-3 text-[15px]"
+              />
+            </div>
+          </div>
+        </div>
+      )}
+
+      {tipo === "capital" && (
+        <div className="flex flex-col gap-[18px]">
+          <ChipGroup
+            label="Tipo de movimentação"
+            options={[
+              { value: "aporte", label: "Aporte" },
+              { value: "devolucao", label: "Devolução de Capital" },
+            ]}
+            value={capKind}
+            onChange={(v) => setCapKind(v as "aporte" | "devolucao")}
+            fill
+          />
+          <div>
+            <label className="mb-2 block text-[13px] font-bold text-ink-2">Descrição</label>
+            <input
+              value={descricao}
+              onChange={(e) => setDescricao(e.target.value)}
+              placeholder="ex: Aporte para reforma da loja"
+              className="focus-ring h-[52px] w-full rounded-[12px] border border-input-border bg-white px-4 text-base"
+            />
+          </div>
+          <div className="rounded-[10px] bg-app px-4 py-3 text-[12.5px] leading-[1.5] text-muted">
+            Movimentações de capital (aportes e retiradas dos sócios) aparecem na tela{" "}
+            <b className="text-ink-2">Capital</b> e não entram no resultado operacional do DRE.
+          </div>
+        </div>
+      )}
+
+      {/* Data — a linha inteira abre o calendário */}
+      <label className="relative mt-[18px] flex cursor-pointer items-center gap-3 rounded-[12px] border border-line bg-white px-4 py-3 shadow-card transition-colors hover:border-input-border">
+        <Icon name="calendar" size={20} color="#8a857c" />
+        <span className="flex-1">
+          <span className="block text-[11.5px] font-bold uppercase tracking-[.1em] text-faint">
+            Data
+          </span>
+          <span className="mt-0.5 block text-[15px] font-bold">
+            {isoParaBR(data)}
+            {data === hojeIso() && (
+              <span className="ml-2 rounded-full bg-venda-bg px-2 py-0.5 text-[10.5px] font-bold uppercase tracking-[.06em] text-venda-fg">
+                hoje
+              </span>
+            )}
+          </span>
+        </span>
+        <span className="text-[13px] font-semibold text-[#4a6b8a]">Alterar</span>
+        <input
+          type="date"
+          value={data}
+          onChange={(e) => setData(e.target.value || hojeIso())}
+          onClick={(e) => {
+            // Abre o calendário nativo ao tocar em qualquer lugar da linha
+            try {
+              (e.currentTarget as HTMLInputElement & { showPicker?: () => void }).showPicker?.();
+            } catch {
+              /* navegadores sem showPicker abrem no foco */
+            }
+          }}
+          aria-label="Data do lançamento"
+          className="absolute inset-0 h-full w-full cursor-pointer opacity-0"
+        />
+      </label>
+    </>
+  );
+
+  if (modo === "gestor") {
+    return (
+      <div className="mx-auto max-w-[700px]">
+        <div className="rounded-card border border-line bg-white p-6 shadow-card">
+          <TipoSelector tipos={tiposDisponiveis} tipo={tipo} setTipo={setTipo} />
+          {hintRow}
+
+          <div className="mt-[18px] grid grid-cols-2 gap-[18px]">
+            <div className={tipo === "venda" || tipo === "recebimento" ? "" : "col-span-2"}>
+              <label className="mb-2 block text-[13px] font-bold text-ink-2">Valor</label>
+              <div className="flex h-14 items-center rounded-[12px] border border-input-border bg-white px-4">
+                <span className="mr-1 text-lg font-bold text-muted">R$</span>
+                <input
+                  value={centsDisplay(valorCents)}
+                  onChange={(e) => setValorCents(digitsDe(e.target.value))}
+                  inputMode="numeric"
+                  placeholder="0,00"
+                  className="w-full bg-transparent text-2xl font-extrabold tracking-[-.01em] tnum outline-none"
+                  style={{ color: cor }}
+                />
+              </div>
+            </div>
+            {(tipo === "venda" || tipo === "recebimento") && (
+              <div>
+                <label className="mb-2 block text-[13px] font-bold text-ink-2">Registrado por</label>
+                <select
+                  value={registradoPor}
+                  onChange={(e) => setRegistradoPor(e.target.value)}
+                  className="select-reset focus-ring h-14 w-full rounded-[12px] border border-input-border bg-white px-4 text-[15px] font-semibold"
+                >
+                  <option value="gestor">Gestor</option>
+                  {vendedoras.map((v) => (
+                    <option key={v.id} value={v.id}>
+                      {v.nome}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            )}
+          </div>
+
+          <div className="mt-[18px]">{camposAdaptativos}</div>
+
+          {erro && (
+            <div className="mt-4 rounded-[12px] border border-[#eccec5] bg-desp-bg px-4 py-3 text-sm font-semibold text-desp-fg">
+              {erro}
+            </div>
+          )}
+
+          <div className="mt-6 flex gap-3">
+            <button
+              type="button"
+              onClick={() => router.back()}
+              className="h-[52px] rounded-[12px] border border-input-border bg-white px-6 text-[15px] font-bold text-ink-2"
+            >
+              Cancelar
+            </button>
+            {podeExcluir && (
+              <button
+                type="button"
+                onClick={() => setConfirmaExcluir(true)}
+                className="flex h-[52px] items-center gap-2 rounded-[12px] border border-[#eccec5] bg-[#fbf1ee] px-5 text-[15px] font-bold text-desp-fg"
+              >
+                <Icon name="trash" size={18} /> Excluir
+              </button>
+            )}
+            <button
+              type="button"
+              onClick={salvar}
+              disabled={salvando || valor <= 0}
+              className="flex-1 rounded-[12px] text-[15.5px] font-bold text-white disabled:opacity-50"
+              style={{ background: cor }}
+            >
+              {salvando ? "Salvando…" : editando ? "Salvar alterações" : "Salvar lançamento"}
+            </button>
+          </div>
+        </div>
+
+        <Modal open={confirmaExcluir} onClose={() => setConfirmaExcluir(false)}>
+          <div className="text-[19px] font-extrabold">Excluir lançamento?</div>
+          <div className="mt-2 text-sm leading-[1.5] text-ink-3">
+            Essa ação não pode ser desfeita.
+          </div>
+          <div className="mt-5 flex gap-3">
+            <button
+              onClick={() => setConfirmaExcluir(false)}
+              className="h-12 flex-1 rounded-[11px] border border-input-border bg-white text-[14.5px] font-bold text-ink-2"
+            >
+              Cancelar
+            </button>
+            <button
+              onClick={excluir}
+              className="h-12 flex-1 rounded-[11px] bg-desp-fg text-[14.5px] font-bold text-white"
+            >
+              Excluir
+            </button>
+          </div>
+        </Modal>
+      </div>
+    );
+  }
+
+  // ---- modo vendedora (mobile, com teclado) --------------------------------
+  return (
+    <div className="flex min-h-full flex-col">
+      <div className="flex-1 px-1 pb-6">
+        <TipoSelector tipos={tiposDisponiveis} tipo={tipo} setTipo={setTipo} />
+        {hintRow}
+
+        <div className="mb-6 mt-5 text-center">
+          <div className="text-xs font-bold uppercase tracking-[.14em] text-faint">Valor</div>
+          <div
+            className="mt-1 text-[46px] font-extrabold tracking-[-.02em] tnum"
+            style={{ color: cor }}
+          >
+            {brl(valor)}
+          </div>
+        </div>
+
+        <div className="mb-6 grid grid-cols-3 gap-[9px]">
+          {keypad.map((k) => (
+            <button
+              key={k}
+              type="button"
+              onClick={() => (k === "C" ? limpaValor() : k === "⌫" ? apagaDigito() : apertaDigito(k))}
+              className="flex h-14 items-center justify-center rounded-[13px] border border-[#ece9e2] bg-white text-[22px] font-bold transition-transform active:scale-[.93] active:bg-[#f0eee8]"
+              style={{ color: k === "C" ? "#b04a34" : "#1c1a17" }}
+              aria-label={k === "⌫" ? "Apagar" : k === "C" ? "Limpar" : k}
+            >
+              {k === "⌫" ? <Icon name="backspace" size={22} /> : k}
+            </button>
+          ))}
+        </div>
+
+        {camposAdaptativos}
+
+        {erro && (
+          <div className="mt-4 rounded-[12px] border border-[#eccec5] bg-desp-bg px-4 py-3 text-sm font-semibold text-desp-fg">
+            {erro}
+          </div>
+        )}
+
+        {podeExcluir && (
+          <button
+            type="button"
+            onClick={() => setConfirmaExcluir(true)}
+            className="mt-4 flex h-[52px] w-full items-center justify-center gap-2 rounded-[12px] border border-[#eccec5] bg-[#fbf1ee] text-[15px] font-bold text-desp-fg"
+          >
+            <Icon name="trash" size={18} /> Excluir lançamento
+          </button>
+        )}
+      </div>
+
+      <div className="sticky bottom-0 bg-gradient-to-t from-app from-70% to-transparent px-1 pb-5 pt-3">
+        <button
+          type="button"
+          onClick={salvar}
+          disabled={salvando || valor <= 0}
+          className="h-14 w-full rounded-[14px] text-[16.5px] font-bold text-white transition-transform active:scale-[.99] disabled:opacity-50"
+          style={{ background: cor }}
+        >
+          {salvando ? "Salvando…" : editando ? "Salvar alterações" : "Salvar lançamento"}
+        </button>
+      </div>
+
+      <BottomSheet open={confirmaExcluir} onClose={() => setConfirmaExcluir(false)}>
+        <div className="text-center text-xl font-extrabold">Excluir lançamento?</div>
+        <div className="mt-2 text-center text-[14.5px] leading-[1.5] text-ink-3">
+          Essa ação não pode ser desfeita.
+        </div>
+        <button
+          onClick={excluir}
+          className="mt-6 h-[54px] w-full rounded-[13px] bg-desp-fg text-base font-bold text-white"
+        >
+          Sim, excluir
+        </button>
+        <button
+          onClick={() => setConfirmaExcluir(false)}
+          className="mt-1.5 h-[52px] w-full rounded-[13px] text-[15px] font-bold text-ink-2"
+        >
+          Cancelar
+        </button>
+      </BottomSheet>
+    </div>
+  );
+}
+
+// ---- Campo de cliente com cadastro ------------------------------------------
+function ClienteField({
+  label,
+  placeholder = "Nome da cliente",
+  valor,
+  onChange,
+  clientes,
+  onCadastrada,
+}: {
+  label: string;
+  placeholder?: string;
+  valor: string;
+  onChange: (v: string) => void;
+  clientes: Cliente[];
+  onCadastrada: (c: Cliente) => void;
+}) {
+  const toast = useToast();
+  const [aberto, setAberto] = React.useState(false);
+  const [cadastrando, setCadastrando] = React.useState(false);
+  const [telefone, setTelefone] = React.useState("");
+  const [salvandoCad, setSalvandoCad] = React.useState(false);
+
+  const q = valor.trim().toLowerCase();
+  const matches = React.useMemo(() => {
+    if (!q) return [];
+    return clientes.filter((c) => c.nome.toLowerCase().includes(q)).slice(0, 4);
+  }, [q, clientes]);
+  const jaExiste = clientes.some((c) => c.nome.toLowerCase() === q);
+  const podeCadastrar = q.length >= 2 && !jaExiste;
+
+  async function cadastrar() {
+    setSalvandoCad(true);
+    try {
+      const res = await fetch("/api/clientes", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ nome: valor.trim(), telefone }),
+      });
+      const d = await res.json();
+      if (!res.ok) {
+        toast(d.erro || "Não foi possível cadastrar", "erro");
+        return;
+      }
+      onCadastrada(d.cliente);
+      onChange(d.cliente.nome);
+      toast(d.jaExistia ? "Cliente já estava cadastrada" : "Cliente cadastrada");
+      setCadastrando(false);
+      setTelefone("");
+      setAberto(false);
+    } catch {
+      toast("Sem conexão", "erro");
+    } finally {
+      setSalvandoCad(false);
+    }
+  }
+
+  return (
+    <div className="relative">
+      <label className="mb-2 block text-[13px] font-bold text-ink-2">{label}</label>
+      <input
+        value={valor}
+        onChange={(e) => {
+          onChange(e.target.value);
+          setAberto(true);
+          setCadastrando(false);
+        }}
+        onFocus={() => setAberto(true)}
+        onBlur={() => setTimeout(() => setAberto(false), 180)}
+        placeholder={placeholder}
+        className="focus-ring h-[52px] w-full rounded-[12px] border border-input-border bg-white px-4 text-base"
+      />
+      {aberto && (matches.length > 0 || podeCadastrar) && !cadastrando && (
+        <div className="absolute left-0 right-0 top-[80px] z-10 overflow-hidden rounded-[12px] border border-line bg-white shadow-[0_12px_24px_-10px_rgba(0,0,0,.18)]">
+          {matches.map((c) => (
+            <button
+              key={c.id}
+              type="button"
+              onMouseDown={() => {
+                onChange(c.nome);
+                setAberto(false);
+              }}
+              className="flex w-full items-baseline justify-between gap-3 border-b border-[#f2efe9] px-4 py-3 text-left last:border-0 hover:bg-app active:bg-app"
+            >
+              <span className="truncate text-[15px] font-semibold">{c.nome}</span>
+              {c.telefone && (
+                <span className="flex-none text-[12px] font-medium text-faint">{c.telefone}</span>
+              )}
+            </button>
+          ))}
+          {podeCadastrar && (
+            <button
+              type="button"
+              onMouseDown={(e) => {
+                e.preventDefault();
+                setCadastrando(true);
+                setAberto(false);
+              }}
+              className="flex w-full items-center gap-2 border-t border-[#f2efe9] bg-panel px-4 py-3 text-left text-[14px] font-bold text-venda-fg hover:bg-venda-bg"
+            >
+              <Icon name="plus" size={15} color="#2f7d5b" strokeWidth={2.4} />
+              Cadastrar “{valor.trim()}”
+            </button>
+          )}
+        </div>
+      )}
+      {cadastrando && (
+        <div className="mt-2.5 flex flex-col gap-2.5 rounded-[12px] border border-[#dfe9df] bg-[#f4f9f6] p-3.5">
+          <div className="text-[12.5px] font-bold text-ink-2">
+            Cadastrar “{valor.trim()}”
+          </div>
+          <input
+            value={telefone}
+            onChange={(e) => setTelefone(e.target.value)}
+            inputMode="tel"
+            placeholder="Telefone (opcional)"
+            className="focus-ring h-11 w-full rounded-[10px] border border-input-border bg-white px-3.5 text-[14px]"
+          />
+          <div className="flex gap-2">
+            <button
+              type="button"
+              onClick={() => setCadastrando(false)}
+              className="h-10 rounded-[10px] border border-input-border bg-white px-4 text-[13px] font-bold text-ink-2"
+            >
+              Cancelar
+            </button>
+            <button
+              type="button"
+              onClick={cadastrar}
+              disabled={salvandoCad}
+              className="h-10 flex-1 rounded-[10px] bg-venda-fg text-[13px] font-bold text-white disabled:opacity-60"
+            >
+              {salvandoCad ? "Salvando…" : "Salvar cadastro"}
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ---- subcomponentes ----------------------------------------------------------
+function TipoSelector({
+  tipos,
+  tipo,
+  setTipo,
+}: {
+  tipos: { key: TipoForm; label: string }[];
+  tipo: TipoForm;
+  setTipo: (t: TipoForm) => void;
+}) {
+  return (
+    <div className="flex gap-1.5 rounded-[13px] bg-[#efece5] p-1.5">
+      {tipos.map((t) => {
+        const ativo = t.key === tipo;
+        return (
+          <button
+            key={t.key}
+            type="button"
+            onClick={() => setTipo(t.key)}
+            className="h-[42px] flex-1 rounded-[9px] text-[13.5px] font-bold transition-colors"
+            style={{
+              background: ativo ? "#fff" : "transparent",
+              color: ativo ? "#1c1a17" : "#6f6a63",
+              boxShadow: ativo ? "0 1px 3px rgba(40,36,30,.12)" : "none",
+            }}
+          >
+            {t.label}
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
+function ChipGroup({
+  label,
+  options,
+  value,
+  onChange,
+  fill = false,
+}: {
+  label: string;
+  options: { value: string; label: string }[];
+  value: string;
+  onChange: (v: string) => void;
+  fill?: boolean;
+}) {
+  return (
+    <div>
+      <label className="mb-2.5 block text-[13px] font-bold text-ink-2">{label}</label>
+      <div className={fill ? "flex gap-2" : "flex flex-wrap gap-2"}>
+        {options.map((o) => {
+          const ativo = o.value === value;
+          return (
+            <button
+              key={o.value}
+              type="button"
+              onClick={() => onChange(o.value)}
+              className={
+                (fill ? "h-11 flex-1 rounded-[11px]" : "h-10 rounded-full px-[15px]") +
+                " text-[13.5px] font-semibold transition-colors"
+              }
+              style={{
+                border: `1px solid ${ativo ? "#1c1a17" : "#e3dfd8"}`,
+                background: ativo ? "#1c1a17" : "#fff",
+                color: ativo ? "#fff" : "#42403b",
+              }}
+            >
+              {o.label}
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
