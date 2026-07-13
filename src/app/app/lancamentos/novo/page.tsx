@@ -16,7 +16,7 @@ export default async function NovoLancamentoVendedora() {
       <FormHeader titulo="Novo lançamento" />
       <LancamentoForm
         modo="vendedora"
-        categorias={categorias.map((c) => ({ id: c.id, nome: c.nome }))}
+        categorias={categorias.map((c) => ({ id: c.id, nome: c.nome, grupo: c.grupo_dre }))}
         clientes={clientes}
       />
     </div>

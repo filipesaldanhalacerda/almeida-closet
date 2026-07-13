@@ -7,6 +7,7 @@ import { Icon } from "@/components/Icon";
 import { BottomSheet, Modal } from "@/components/ui/Modal";
 import { useToast } from "@/components/ui/Toast";
 import {
+  DRE_GRUPO_LABEL,
   FORMAS_PAGAMENTO,
   MEIOS_RECEBIMENTO,
   MODALIDADES,
@@ -23,14 +24,26 @@ import {
   numeroParaCentavos,
 } from "@/lib/format";
 import { enfileirar } from "@/lib/offline-queue";
-import type { Cliente, FormaPagamento, LancamentoView, MeioRecebimento } from "@/lib/types";
+import type {
+  Cliente,
+  DreGrupo,
+  FormaPagamento,
+  LancamentoView,
+  MeioRecebimento,
+} from "@/lib/types";
 
 type Modo = "vendedora" | "gestor";
 type TipoForm = "venda" | "recebimento" | "despesa" | "capital";
 type ModoReceb = "tudo" | "parcial" | "nao";
 
-// Bandeiras de cartão (recebimento)
-const BANDEIRAS = ["VISA", "MASTER", "ELO", "HIPERCARD", "AMEX"];
+// Bandeiras de cartão (recebimento) — logo oficial em /public/bandeiras.
+const BANDEIRAS: { valor: string; logo: string }[] = [
+  { valor: "VISA", logo: "/bandeiras/visa.svg" },
+  { valor: "MASTER", logo: "/bandeiras/master.svg" },
+  { valor: "ELO", logo: "/bandeiras/elo.svg" },
+  { valor: "HIPERCARD", logo: "/bandeiras/hipercard.svg" },
+  { valor: "AMEX", logo: "/bandeiras/amex.svg" },
+];
 
 // Dica de um toque sob o seletor de tipo — linguagem do balcão
 const TIPO_HINTS: Record<TipoForm, string> = {
@@ -52,7 +65,7 @@ const MEIO_PADRAO: Record<FormaPagamento, MeioRecebimento> = {
 
 interface Props {
   modo: Modo;
-  categorias: { id: string; nome: string }[];
+  categorias: { id: string; nome: string; grupo?: DreGrupo | null }[];
   vendedoras?: { id: string; nome: string }[];
   clientes?: Cliente[];
   inicial?: LancamentoView | null;
@@ -468,22 +481,30 @@ export function LancamentoForm({
             <label className="mb-2.5 block text-[13px] font-bold text-ink-2">
               Bandeira do cartão <span className="font-semibold text-faint">(quando for repasse da maquininha)</span>
             </label>
-            <div className="flex flex-wrap gap-2">
+            <div className="flex flex-wrap gap-2.5">
               {BANDEIRAS.map((b) => {
-                const ativo = bandeira === b;
+                const ativo = bandeira === b.valor;
                 return (
                   <button
-                    key={b}
+                    key={b.valor}
                     type="button"
-                    onClick={() => setBandeira(ativo ? "" : b)}
-                    className="h-10 rounded-full px-[15px] text-[13px] font-bold transition-colors"
+                    onClick={() => setBandeira(ativo ? "" : b.valor)}
+                    aria-label={b.valor}
+                    aria-pressed={ativo}
+                    title={b.valor}
+                    className="relative h-[42px] w-[66px] overflow-hidden rounded-[9px] bg-white transition-transform active:scale-95"
                     style={{
-                      border: `1px solid ${ativo ? "#1c1a17" : "#e3dfd8"}`,
-                      background: ativo ? "#1c1a17" : "#fff",
-                      color: ativo ? "#fff" : "#42403b",
+                      boxShadow: ativo ? "0 0 0 2px #1c1a17" : "0 0 0 1px #e3dfd8",
+                      opacity: !bandeira || ativo ? 1 : 0.5,
                     }}
                   >
-                    {b}
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={b.logo} alt={b.valor} className="h-full w-full object-cover" />
+                    {ativo && (
+                      <span className="absolute right-1 top-1 flex h-[18px] w-[18px] items-center justify-center rounded-full bg-ink shadow-sm">
+                        <Icon name="check" size={11} color="#fff" strokeWidth={3} />
+                      </span>
+                    )}
                   </button>
                 );
               })}
@@ -500,20 +521,11 @@ export function LancamentoForm({
 
       {tipo === "despesa" && (
         <div className="flex flex-col gap-[18px]">
-          <div>
-            <label className="mb-2 block text-[13px] font-bold text-ink-2">Categoria</label>
-            <select
-              value={categoriaId}
-              onChange={(e) => setCategoriaId(e.target.value)}
-              className="select-reset focus-ring h-[52px] w-full rounded-[12px] border border-input-border bg-white px-4 text-base"
-            >
-              {categorias.map((c) => (
-                <option key={c.id} value={c.id}>
-                  {c.nome}
-                </option>
-              ))}
-            </select>
-          </div>
+          <CategoriaField
+            categorias={categorias}
+            value={categoriaId}
+            onChange={setCategoriaId}
+          />
           <div>
             <label className="mb-2 block text-[13px] font-bold text-ink-2">Credor / detalhamento</label>
             <input
@@ -999,6 +1011,146 @@ function ClienteField({
             </button>
           </div>
         </div>
+      )}
+    </div>
+  );
+}
+
+// ---- Campo de categoria: busca + agrupado por grupo do DRE ------------------
+function CategoriaField({
+  categorias,
+  value,
+  onChange,
+}: {
+  categorias: { id: string; nome: string; grupo?: DreGrupo | null }[];
+  value: string;
+  onChange: (id: string) => void;
+}) {
+  const [aberto, setAberto] = React.useState(false);
+  const [busca, setBusca] = React.useState("");
+  const selecionada = categorias.find((c) => c.id === value);
+
+  const q = normalizarBusca(busca);
+  const filtradas = q
+    ? categorias.filter((c) => normalizarBusca(c.nome).includes(q))
+    : categorias;
+
+  // Agrupa por grupo do DRE, na ordem canônica dos grupos; nomes ordenados A→Z.
+  const grupos = React.useMemo(() => {
+    const ordem = Object.keys(DRE_GRUPO_LABEL) as DreGrupo[];
+    const porGrupo = new Map<string, typeof categorias>();
+    for (const c of filtradas) {
+      const k = c.grupo ?? "outros";
+      const arr = porGrupo.get(k) ?? [];
+      arr.push(c);
+      porGrupo.set(k, arr);
+    }
+    return [...porGrupo.keys()]
+      .sort((a, b) => ordem.indexOf(a as DreGrupo) - ordem.indexOf(b as DreGrupo))
+      .map((k) => ({
+        chave: k,
+        label: DRE_GRUPO_LABEL[k as DreGrupo] ?? "Outros",
+        itens: [...(porGrupo.get(k) ?? [])].sort((a, b) =>
+          a.nome.localeCompare(b.nome, "pt-BR"),
+        ),
+      }));
+  }, [filtradas]);
+
+  function escolher(id: string) {
+    onChange(id);
+    setAberto(false);
+    setBusca("");
+  }
+
+  return (
+    <div className="relative">
+      <label className="mb-2 block text-[13px] font-bold text-ink-2">Categoria</label>
+      <button
+        type="button"
+        onClick={() => setAberto((v) => !v)}
+        className="focus-ring flex h-[52px] w-full items-center justify-between gap-2 rounded-[12px] border border-input-border bg-white px-4 text-left"
+      >
+        <span className="min-w-0 flex-1">
+          <span
+            className={
+              "block truncate text-base " +
+              (selecionada ? "font-semibold text-ink" : "text-faint")
+            }
+          >
+            {selecionada ? selecionada.nome : "Selecione a categoria"}
+          </span>
+          {selecionada?.grupo && (
+            <span className="block truncate text-[11.5px] font-semibold text-faint">
+              {DRE_GRUPO_LABEL[selecionada.grupo]}
+            </span>
+          )}
+        </span>
+        <Icon name="chevronDown" size={18} color="#8a857c" />
+      </button>
+
+      {aberto && (
+        <>
+          {/* clique fora fecha */}
+          <button
+            type="button"
+            aria-label="Fechar"
+            onClick={() => setAberto(false)}
+            className="fixed inset-0 z-10 cursor-default"
+          />
+          <div className="absolute left-0 right-0 top-[80px] z-20 overflow-hidden rounded-[12px] border border-line bg-white shadow-[0_16px_36px_-12px_rgba(0,0,0,.25)]">
+            <div className="border-b border-[#f2efe9] p-2.5">
+              <div className="relative">
+                <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2">
+                  <Icon name="search" size={17} color="#a39d92" />
+                </span>
+                <input
+                  autoFocus
+                  value={busca}
+                  onChange={(e) => setBusca(e.target.value)}
+                  placeholder="Buscar categoria…"
+                  className="focus-ring h-11 w-full rounded-[10px] border border-input-border bg-white pl-10 pr-3 text-[15px]"
+                />
+              </div>
+            </div>
+            <div className="max-h-[280px] overflow-y-auto py-1">
+              {grupos.length === 0 && (
+                <div className="px-4 py-7 text-center text-[13px] text-faint">
+                  Nenhuma categoria encontrada
+                </div>
+              )}
+              {grupos.map((g) => (
+                <div key={g.chave}>
+                  <div className="sticky top-0 z-[1] bg-panel px-4 py-1.5 text-[11px] font-bold uppercase tracking-[.08em] text-faint">
+                    {g.label}
+                  </div>
+                  {g.itens.map((c) => {
+                    const ativa = c.id === value;
+                    return (
+                      <button
+                        key={c.id}
+                        type="button"
+                        onClick={() => escolher(c.id)}
+                        className="flex w-full items-center justify-between gap-3 px-4 py-2.5 text-left hover:bg-app active:bg-app"
+                      >
+                        <span
+                          className={
+                            "text-[15px] " +
+                            (ativa ? "font-bold text-ink" : "font-medium text-ink-2")
+                          }
+                        >
+                          {c.nome}
+                        </span>
+                        {ativa && (
+                          <Icon name="check" size={17} color="#2f7d5b" strokeWidth={2.4} />
+                        )}
+                      </button>
+                    );
+                  })}
+                </div>
+              ))}
+            </div>
+          </div>
+        </>
       )}
     </div>
   );

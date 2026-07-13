@@ -27,7 +27,7 @@ export default async function EditarLancamentoVendedora({
       <FormHeader titulo="Editar lançamento" />
       <LancamentoForm
         modo="vendedora"
-        categorias={categorias.map((c) => ({ id: c.id, nome: c.nome }))}
+        categorias={categorias.map((c) => ({ id: c.id, nome: c.nome, grupo: c.grupo_dre }))}
         clientes={clientes}
         inicial={lanc}
       />

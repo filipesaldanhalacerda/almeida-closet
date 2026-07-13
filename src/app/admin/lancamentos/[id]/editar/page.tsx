@@ -17,7 +17,7 @@ export default async function EditarLancamentoGestor({ params }: { params: { id:
   return (
     <LancamentoForm
       modo="gestor"
-      categorias={categorias.map((c) => ({ id: c.id, nome: c.nome }))}
+      categorias={categorias.map((c) => ({ id: c.id, nome: c.nome, grupo: c.grupo_dre }))}
       vendedoras={vendedoras.map((v) => ({ id: v.id, nome: v.nome }))}
       clientes={clientes}
       inicial={lanc}
