@@ -15,8 +15,10 @@ import {
   brl,
   centavosParaNumero,
   hojeIso,
+  iniciais,
   isoParaBR,
   mesRefLabel,
+  normalizarBusca,
   numeroParaCentavos,
 } from "@/lib/format";
 import { enfileirar } from "@/lib/offline-queue";
@@ -794,10 +796,14 @@ export function LancamentoForm({
   );
 }
 
-// ---- Campo de cliente com cadastro ------------------------------------------
+// ---- Campo de cliente: busca inteligente + cadastro rápido ------------------
+// Busca sem acento/caixa e por várias palavras ("ana sil" acha "Ana Silva").
+// Ao focar com o campo vazio, lista as clientes cadastradas para escolher.
+// O botão "Cadastrar" só aparece quando não há correspondência exata, para
+// empurrar o reúso da mesma grafia e evitar a mesma cliente escrita de N formas.
 function ClienteField({
   label,
-  placeholder = "Nome da cliente",
+  placeholder = "Buscar ou cadastrar cliente",
   valor,
   onChange,
   clientes,
@@ -816,13 +822,31 @@ function ClienteField({
   const [telefone, setTelefone] = React.useState("");
   const [salvandoCad, setSalvandoCad] = React.useState(false);
 
-  const q = valor.trim().toLowerCase();
-  const matches = React.useMemo(() => {
-    if (!q) return [];
-    return clientes.filter((c) => c.nome.toLowerCase().includes(q)).slice(0, 4);
-  }, [q, clientes]);
-  const jaExiste = clientes.some((c) => c.nome.toLowerCase() === q);
-  const podeCadastrar = q.length >= 2 && !jaExiste;
+  const norm = normalizarBusca(valor);
+
+  // Ordena por relevância: exato > começa com > contém; empate por nome (pt-BR).
+  const encontradas = React.useMemo(() => {
+    const base = clientes.map((c) => ({ c, n: normalizarBusca(c.nome) }));
+    const tokens = norm.split(" ").filter(Boolean);
+    const filtradas = tokens.length
+      ? base.filter(({ n }) => tokens.every((t) => n.includes(t)))
+      : base;
+    const rank = (n: string) => (n === norm ? 0 : n.startsWith(norm) ? 1 : 2);
+    return filtradas
+      .sort(
+        (a, b) => rank(a.n) - rank(b.n) || a.c.nome.localeCompare(b.c.nome, "pt-BR"),
+      )
+      .map(({ c }) => c);
+  }, [clientes, norm]);
+
+  // A cliente digitada já existe com a mesma grafia (ignorando acento/caixa)?
+  const jaCadastrada =
+    norm.length > 0 && clientes.some((c) => normalizarBusca(c.nome) === norm);
+  const podeCadastrar = norm.length >= 2 && !jaCadastrada;
+  const temParecidas = encontradas.length > 0;
+
+  // Navegando (campo vazio) mostra todas com rolagem; buscando, as 8 melhores.
+  const lista = norm ? encontradas.slice(0, 8) : encontradas;
 
   async function cadastrar() {
     setSalvandoCad(true);
@@ -850,39 +874,82 @@ function ClienteField({
     }
   }
 
+  function selecionar(nome: string) {
+    onChange(nome);
+    setAberto(false);
+    setCadastrando(false);
+  }
+
   return (
     <div className="relative">
       <label className="mb-2 block text-[13px] font-bold text-ink-2">{label}</label>
-      <input
-        value={valor}
-        onChange={(e) => {
-          onChange(e.target.value);
-          setAberto(true);
-          setCadastrando(false);
-        }}
-        onFocus={() => setAberto(true)}
-        onBlur={() => setTimeout(() => setAberto(false), 180)}
-        placeholder={placeholder}
-        className="focus-ring h-[52px] w-full rounded-[12px] border border-input-border bg-white px-4 text-base"
-      />
-      {aberto && (matches.length > 0 || podeCadastrar) && !cadastrando && (
-        <div className="absolute left-0 right-0 top-[80px] z-10 overflow-hidden rounded-[12px] border border-line bg-white shadow-[0_12px_24px_-10px_rgba(0,0,0,.18)]">
-          {matches.map((c) => (
-            <button
-              key={c.id}
-              type="button"
-              onMouseDown={() => {
-                onChange(c.nome);
-                setAberto(false);
-              }}
-              className="flex w-full items-baseline justify-between gap-3 border-b border-[#f2efe9] px-4 py-3 text-left last:border-0 hover:bg-app active:bg-app"
-            >
-              <span className="truncate text-[15px] font-semibold">{c.nome}</span>
-              {c.telefone && (
-                <span className="flex-none text-[12px] font-medium text-faint">{c.telefone}</span>
-              )}
-            </button>
-          ))}
+      <div className="relative">
+        <span className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2">
+          <Icon name="search" size={18} color="#a39d92" />
+        </span>
+        <input
+          value={valor}
+          onChange={(e) => {
+            onChange(e.target.value);
+            setAberto(true);
+            setCadastrando(false);
+          }}
+          onFocus={() => setAberto(true)}
+          onBlur={() => setTimeout(() => setAberto(false), 180)}
+          placeholder={placeholder}
+          autoComplete="off"
+          className="focus-ring h-[52px] w-full rounded-[12px] border border-input-border bg-white pl-11 pr-10 text-base"
+        />
+        {jaCadastrada && (
+          <span className="pointer-events-none absolute right-3.5 top-1/2 -translate-y-1/2">
+            <Icon name="check" size={19} color="#2f7d5b" strokeWidth={2.4} />
+          </span>
+        )}
+      </div>
+
+      {jaCadastrada && !aberto && (
+        <div className="mt-1.5 flex items-center gap-1 px-0.5 text-[12px] font-semibold text-venda-fg">
+          <Icon name="check" size={13} color="#2f7d5b" strokeWidth={2.6} />
+          Cliente cadastrada
+        </div>
+      )}
+
+      {aberto && !cadastrando && (lista.length > 0 || podeCadastrar) && (
+        <div className="absolute left-0 right-0 top-[80px] z-20 overflow-hidden rounded-[12px] border border-line bg-white shadow-[0_12px_28px_-10px_rgba(0,0,0,.22)]">
+          {!norm && lista.length > 0 && (
+            <div className="border-b border-[#f2efe9] bg-panel px-4 py-2 text-[11px] font-bold uppercase tracking-[.1em] text-faint">
+              {lista.length === 1 ? "1 cliente" : `${lista.length} clientes`} — toque para escolher
+            </div>
+          )}
+          <div className="max-h-[240px] overflow-y-auto">
+            {lista.map((c) => {
+              const exata = norm.length > 0 && normalizarBusca(c.nome) === norm;
+              return (
+                <button
+                  key={c.id}
+                  type="button"
+                  onMouseDown={(e) => {
+                    e.preventDefault();
+                    selecionar(c.nome);
+                  }}
+                  className="flex w-full items-center justify-between gap-3 border-b border-[#f2efe9] px-4 py-3 text-left last:border-0 hover:bg-app active:bg-app"
+                >
+                  <span className="flex min-w-0 items-center gap-2.5">
+                    <span className="flex h-8 w-8 flex-none items-center justify-center rounded-full bg-[#f2efe9] text-[12px] font-extrabold text-ink-3">
+                      {iniciais(c.nome)}
+                    </span>
+                    <span className="truncate text-[15px] font-semibold">{c.nome}</span>
+                  </span>
+                  <span className="flex flex-none items-center gap-2">
+                    {c.telefone && (
+                      <span className="text-[12px] font-medium text-faint">{c.telefone}</span>
+                    )}
+                    {exata && <Icon name="check" size={16} color="#2f7d5b" strokeWidth={2.4} />}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
           {podeCadastrar && (
             <button
               type="button"
@@ -894,11 +961,12 @@ function ClienteField({
               className="flex w-full items-center gap-2 border-t border-[#f2efe9] bg-panel px-4 py-3 text-left text-[14px] font-bold text-venda-fg hover:bg-venda-bg"
             >
               <Icon name="plus" size={15} color="#2f7d5b" strokeWidth={2.4} />
-              Cadastrar “{valor.trim()}”
+              {temParecidas ? "Nenhuma dessas? Cadastrar" : "Cadastrar"} “{valor.trim()}”
             </button>
           )}
         </div>
       )}
+
       {cadastrando && (
         <div className="mt-2.5 flex flex-col gap-2.5 rounded-[12px] border border-[#dfe9df] bg-[#f4f9f6] p-3.5">
           <div className="text-[12.5px] font-bold text-ink-2">

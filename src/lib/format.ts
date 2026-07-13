@@ -69,6 +69,20 @@ export function mesRefLabel(ano: number, mes: number): string {
   return `${nome.charAt(0).toUpperCase()}${nome.slice(1)}/${ano}`;
 }
 
+/**
+ * Normaliza um texto para busca: sem acentos, minúsculo, espaços colapsados.
+ * Ex.: "  Jéssica  Almeida " -> "jessica almeida". Usado para achar clientes
+ * mesmo com acentuação/caixa diferentes e evitar cadastros duplicados.
+ */
+export function normalizarBusca(s: string): string {
+  return (s || "")
+    .normalize("NFD")
+    .replace(/[̀-ͯ]/g, "")
+    .toLowerCase()
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
 /** Iniciais de um nome: "Maria Clara" -> "MC" */
 export function iniciais(nome: string): string {
   return (nome || "")

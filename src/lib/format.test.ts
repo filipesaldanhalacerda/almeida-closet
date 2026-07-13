@@ -1,5 +1,12 @@
 import { describe, expect, it } from "vitest";
-import { brl, brParaIso, centavosParaNumero, isoParaBR, numeroParaCentavos } from "./format";
+import {
+  brl,
+  brParaIso,
+  centavosParaNumero,
+  isoParaBR,
+  normalizarBusca,
+  numeroParaCentavos,
+} from "./format";
 
 describe("format pt-BR", () => {
   it("formata moeda brasileira", () => {
@@ -16,5 +23,14 @@ describe("format pt-BR", () => {
   it("converte centavos digitados", () => {
     expect(centavosParaNumero("12345")).toBe(123.45);
     expect(numeroParaCentavos(123.45)).toBe("12345");
+  });
+
+  it("normaliza texto para busca (sem acento, minúsculo, espaços)", () => {
+    expect(normalizarBusca("Jéssica")).toBe("jessica");
+    expect(normalizarBusca("  Márcia   Almeida ")).toBe("marcia almeida");
+    expect(normalizarBusca("THAINÁ")).toBe("thaina");
+    expect(normalizarBusca("")).toBe("");
+    // mesma cliente escrita de formas diferentes normaliza igual
+    expect(normalizarBusca("Ana Paula")).toBe(normalizarBusca("ana  paula"));
   });
 });
