@@ -83,6 +83,20 @@ export function normalizarBusca(s: string): string {
     .trim();
 }
 
+/**
+ * Máscara de telefone brasileiro, formatando enquanto se digita.
+ * Fixo: "(11) 1234-5678" (10 dígitos) · Celular: "(11) 91234-5678" (11).
+ * Ignora tudo que não for dígito e limita a 11 dígitos.
+ */
+export function mascaraTelefoneBR(v: string): string {
+  const d = (v || "").replace(/\D/g, "").slice(0, 11);
+  if (d.length === 0) return "";
+  if (d.length <= 2) return `(${d}`;
+  if (d.length <= 6) return `(${d.slice(0, 2)}) ${d.slice(2)}`;
+  if (d.length <= 10) return `(${d.slice(0, 2)}) ${d.slice(2, 6)}-${d.slice(6)}`;
+  return `(${d.slice(0, 2)}) ${d.slice(2, 7)}-${d.slice(7)}`;
+}
+
 /** Iniciais de um nome: "Maria Clara" -> "MC" */
 export function iniciais(nome: string): string {
   return (nome || "")

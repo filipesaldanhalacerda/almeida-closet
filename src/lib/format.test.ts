@@ -4,6 +4,7 @@ import {
   brParaIso,
   centavosParaNumero,
   isoParaBR,
+  mascaraTelefoneBR,
   normalizarBusca,
   numeroParaCentavos,
 } from "./format";
@@ -32,5 +33,17 @@ describe("format pt-BR", () => {
     expect(normalizarBusca("")).toBe("");
     // mesma cliente escrita de formas diferentes normaliza igual
     expect(normalizarBusca("Ana Paula")).toBe(normalizarBusca("ana  paula"));
+  });
+
+  it("aplica máscara de telefone brasileiro", () => {
+    expect(mascaraTelefoneBR("")).toBe("");
+    expect(mascaraTelefoneBR("11")).toBe("(11");
+    expect(mascaraTelefoneBR("1199")).toBe("(11) 99");
+    // fixo: 10 dígitos
+    expect(mascaraTelefoneBR("1132654789")).toBe("(11) 3265-4789");
+    // celular: 11 dígitos
+    expect(mascaraTelefoneBR("11991234567")).toBe("(11) 99123-4567");
+    // ignora não-dígitos e limita a 11
+    expect(mascaraTelefoneBR("(11) 99123-45678")).toBe("(11) 99123-4567");
   });
 });

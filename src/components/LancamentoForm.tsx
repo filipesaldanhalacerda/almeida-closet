@@ -17,6 +17,7 @@ import {
   hojeIso,
   iniciais,
   isoParaBR,
+  mascaraTelefoneBR,
   mesRefLabel,
   normalizarBusca,
   numeroParaCentavos,
@@ -974,9 +975,10 @@ function ClienteField({
           </div>
           <input
             value={telefone}
-            onChange={(e) => setTelefone(e.target.value)}
+            onChange={(e) => setTelefone(mascaraTelefoneBR(e.target.value))}
             inputMode="tel"
-            placeholder="Telefone (opcional)"
+            maxLength={15}
+            placeholder="Telefone (opcional) — (11) 91234-5678"
             className="focus-ring h-11 w-full rounded-[10px] border border-input-border bg-white px-3.5 text-[14px]"
           />
           <div className="flex gap-2">
