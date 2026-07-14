@@ -65,20 +65,25 @@ export function AdminShell({
   );
 
   const Rodape = () => (
-    <div className="mt-auto flex items-center gap-3 border-t border-line-2 px-2 pb-1 pt-3.5">
-      <span className="flex h-[38px] w-[38px] flex-none items-center justify-center rounded-full bg-ink text-[13px] font-bold text-white">
-        {iniciais(nome)}
-      </span>
-      <span className="min-w-0 flex-1">
-        <span className="block text-[13.5px] font-bold">{nome}</span>
-        <span className="block text-xs text-muted">Gestor</span>
-      </span>
-      <LogoutButton />
+    <div className="mt-auto flex-none border-t border-line-2 pt-3">
+      <div className="flex items-center gap-2.5 rounded-[12px] bg-[#f2efe9] px-2.5 py-2">
+        <span className="flex h-[38px] w-[38px] flex-none items-center justify-center rounded-full bg-ink text-[13px] font-bold text-white">
+          {iniciais(nome)}
+        </span>
+        <span className="min-w-0 flex-1">
+          <span className="block truncate text-[13.5px] font-bold text-ink">{nome}</span>
+          <span className="block text-[11.5px] font-semibold text-muted">Gestor</span>
+        </span>
+      </div>
+      <LogoutButton
+        iconOnly={false}
+        className="mt-2 h-11 w-full justify-center rounded-[11px] border border-line bg-white text-[13.5px] font-bold transition-colors hover:border-[#eccec5] hover:bg-desp-bg hover:text-desp-fg active:scale-[.99]"
+      />
     </div>
   );
 
   return (
-    <div className="flex min-h-dvh bg-app">
+    <div className="flex h-dvh bg-app">
       {/* Sidebar desktop */}
       <aside className="hidden w-60 flex-none flex-col border-r border-line-2 bg-panel p-[22px_14px] px-3.5 py-5 md:flex">
         <div className="px-2.5 pb-5">
