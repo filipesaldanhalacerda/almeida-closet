@@ -2,14 +2,14 @@
 
 import * as React from "react";
 import { Icon } from "@/components/Icon";
-import { BottomSheet, Modal } from "@/components/ui/Modal";
+import { BottomSheet } from "@/components/ui/Modal";
 
 /**
  * Guia "Venda ou Recebimento?" — explica em linguagem simples o que é cada
  * tipo, quando usar e qual o impacto nos números da loja.
- * Bottom sheet no celular (vendedora), modal no desktop (gestor).
+ * Bottom sheet padrão para vendedora e gestor (centralizado no desktop).
  */
-export function AjudaLancamento({ modo }: { modo: "vendedora" | "gestor" }) {
+export function AjudaLancamento() {
   const [aberto, setAberto] = React.useState(false);
 
   const conteudo = (
@@ -131,15 +131,9 @@ export function AjudaLancamento({ modo }: { modo: "vendedora" | "gestor" }) {
         Entenda a diferença
       </button>
 
-      {modo === "vendedora" ? (
-        <BottomSheet open={aberto} onClose={() => setAberto(false)}>
-          {conteudo}
-        </BottomSheet>
-      ) : (
-        <Modal open={aberto} onClose={() => setAberto(false)} width={520}>
-          {conteudo}
-        </Modal>
-      )}
+      <BottomSheet open={aberto} onClose={() => setAberto(false)}>
+        {conteudo}
+      </BottomSheet>
     </>
   );
 }

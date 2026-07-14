@@ -80,7 +80,7 @@ export function BottomSheet({
       onClick={onClose}
     >
       <div
-        className="animate-sheetup flex max-h-[92dvh] w-full flex-col rounded-t-[26px] bg-app"
+        className="animate-sheetup mx-auto flex max-h-[92dvh] w-full max-w-[520px] flex-col rounded-t-[26px] bg-app"
         onClick={(e) => e.stopPropagation()}
         role="dialog"
         aria-modal="true"

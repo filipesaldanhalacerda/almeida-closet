@@ -358,7 +358,7 @@ export function LancamentoForm({
   const hintRow = (
     <div className="mt-2.5 flex items-center justify-between gap-3 px-0.5">
       <p className="min-w-0 text-[12px] leading-[1.45] text-muted">{TIPO_HINTS[tipo]}</p>
-      <AjudaLancamento modo={modo} />
+      <AjudaLancamento />
     </div>
   );
 
