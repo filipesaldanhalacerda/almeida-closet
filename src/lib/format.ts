@@ -119,6 +119,20 @@ export function numeroParaCentavos(n: number): string {
   return String(Math.round((n || 0) * 100));
 }
 
+/** Centavos (dígitos) -> "1.234,56" para exibir em inputs de moeda (vazio = ""). */
+export function centavosParaExibicao(digits: string): string {
+  if (!digits) return "";
+  return ((parseInt(digits, 10) || 0) / 100).toLocaleString("pt-BR", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  });
+}
+
+/** Mantém só dígitos (máscara de moeda em centavos), sem zeros à esquerda. */
+export function soDigitos(texto: string, max = 12): string {
+  return texto.replace(/\D/g, "").replace(/^0+(?=\d)/, "").slice(0, max);
+}
+
 /** Hoje em ISO (yyyy-mm-dd), fuso local */
 export function hojeIso(): string {
   const d = new Date();

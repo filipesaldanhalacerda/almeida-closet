@@ -2,10 +2,17 @@
 
 import { useRouter } from "next/navigation";
 import * as React from "react";
-import { Icon } from "@/components/Icon";
+import { Icon, type IconName } from "@/components/Icon";
 import { useToast } from "@/components/ui/Toast";
 import { DRE_GRUPOS } from "@/lib/constants";
-import { hojeIso, iniciais } from "@/lib/format";
+import {
+  centavosParaExibicao,
+  centavosParaNumero,
+  hojeIso,
+  iniciais,
+  numeroParaCentavos,
+  soDigitos,
+} from "@/lib/format";
 import type { CategoriaDespesa, DreGrupo } from "@/lib/types";
 
 interface Props {
@@ -15,18 +22,15 @@ interface Props {
   categorias: CategoriaDespesa[];
 }
 
-function parseNum(s: string): number {
-  const n = parseFloat(s.replace(/\./g, "").replace(",", "."));
-  return Number.isFinite(n) ? n : 0;
-}
-
 export function Configuracoes({ saldoInicial, saldoData, vendedoras, categorias }: Props) {
   const router = useRouter();
   const toast = useToast();
-  const [saldo, setSaldo] = React.useState(String(saldoInicial).replace(".", ","));
+  // Valores monetários são guardados como "centavos" (dígitos) e exibidos
+  // formatados em R$ pt-BR (pontos de milhar e vírgula decimal).
+  const [saldo, setSaldo] = React.useState(saldoInicial ? numeroParaCentavos(saldoInicial) : "");
   const [data, setData] = React.useState(saldoData ?? hojeIso());
   const [metas, setMetas] = React.useState<Record<string, string>>(
-    Object.fromEntries(vendedoras.map((v) => [v.id, String(v.meta || 0).replace(".", ",")])),
+    Object.fromEntries(vendedoras.map((v) => [v.id, v.meta ? numeroParaCentavos(v.meta) : ""])),
   );
   const [salvandoSaldo, setSalvandoSaldo] = React.useState(false);
   const [novaCat, setNovaCat] = React.useState("");
@@ -39,7 +43,10 @@ export function Configuracoes({ saldoInicial, saldoData, vendedoras, categorias 
       const res = await fetch("/api/config", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ saldo_inicial_caixa: parseNum(saldo), saldo_inicial_data: data || null }),
+        body: JSON.stringify({
+          saldo_inicial_caixa: centavosParaNumero(saldo),
+          saldo_inicial_data: data || null,
+        }),
       });
       if (!res.ok) {
         const d = await res.json();
@@ -60,7 +67,7 @@ export function Configuracoes({ saldoInicial, saldoData, vendedoras, categorias 
       const res = await fetch("/api/metas", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ vendedora_id: id, valor: parseNum(metas[id] || "0") }),
+        body: JSON.stringify({ vendedora_id: id, valor: centavosParaNumero(metas[id] || "0") }),
       });
       if (!res.ok) {
         const d = await res.json();
@@ -120,60 +127,95 @@ export function Configuracoes({ saldoInicial, saldoData, vendedoras, categorias 
   return (
     <div className="mx-auto flex max-w-[760px] flex-col gap-4">
       {/* Saldo inicial */}
-      <div className="rounded-[14px] border border-line bg-white p-5 shadow-card">
-        <div className="text-[15px] font-extrabold">Saldo inicial do caixa</div>
-        <div className="mt-1 text-[13px] leading-[1.5] text-muted">
-          Base para o cálculo do Fluxo de Caixa. Defina uma vez, ao começar a usar o sistema.
-        </div>
-        <div className="mt-3.5 flex flex-wrap items-end gap-3">
-          <div className="flex h-[52px] max-w-[280px] flex-1 items-center gap-2.5 rounded-[12px] border border-input-border bg-white px-4">
-            <span className="text-[15px] font-bold text-muted">R$</span>
-            <input value={saldo} onChange={(e) => setSaldo(e.target.value)} inputMode="decimal" className="flex-1 bg-transparent text-[17px] font-bold outline-none" />
+      <Secao
+        icon="wallet"
+        cor="#2b6f74"
+        bg="#e2eff0"
+        titulo="Saldo inicial do caixa"
+        desc="Base para o cálculo do Fluxo de Caixa. Defina uma vez, ao começar a usar o sistema."
+      >
+        <div className="flex flex-wrap items-end gap-3">
+          <div className="min-w-[160px] max-w-[300px] flex-1">
+            <label className="mb-1.5 block text-[12px] font-bold text-ink-3">Valor</label>
+            <div className="flex h-[52px] items-center gap-2.5 rounded-[12px] border border-input-border bg-white px-4 focus-within:border-ink">
+              <span className="text-[15px] font-bold text-muted">R$</span>
+              <input
+                value={centavosParaExibicao(saldo)}
+                onChange={(e) => setSaldo(soDigitos(e.target.value))}
+                inputMode="numeric"
+                placeholder="0,00"
+                className="w-full bg-transparent text-right text-[17px] font-bold tnum outline-none"
+              />
+            </div>
           </div>
           <div>
-            <label className="mb-1 block text-[12px] font-semibold text-muted">A partir de</label>
-            <input type="date" value={data} onChange={(e) => setData(e.target.value)} className="h-[52px] rounded-[12px] border border-input-border bg-white px-3 text-[14px]" />
+            <label className="mb-1.5 block text-[12px] font-bold text-ink-3">A partir de</label>
+            <input
+              type="date"
+              value={data}
+              onChange={(e) => setData(e.target.value)}
+              className="focus-ring h-[52px] rounded-[12px] border border-input-border bg-white px-3 text-[14px]"
+            />
           </div>
-          <button onClick={salvarSaldo} disabled={salvandoSaldo} className="h-[52px] rounded-[12px] bg-ink px-6 text-[15px] font-bold text-white disabled:opacity-60">
+          <button
+            onClick={salvarSaldo}
+            disabled={salvandoSaldo}
+            className="h-[52px] rounded-[12px] bg-ink px-6 text-[15px] font-bold text-white transition-transform active:scale-[.98] disabled:opacity-60"
+          >
             {salvandoSaldo ? "Salvando…" : "Salvar"}
           </button>
         </div>
-      </div>
+      </Secao>
 
       {/* Metas */}
-      <div className="rounded-[14px] border border-line bg-white p-5 shadow-card">
-        <div className="text-[15px] font-extrabold">Metas mensais por vendedora</div>
-        <div className="mt-1 text-[13px] text-muted">Usadas para acompanhar o desempenho no Dashboard e no Resultado de Vendas.</div>
-        <div className="mt-4 flex flex-col gap-3">
-          {vendedoras.length === 0 && <p className="text-sm text-muted">Nenhuma vendedora cadastrada.</p>}
+      <Secao
+        icon="target"
+        cor="#2f7d5b"
+        bg="#e7f1ec"
+        titulo="Metas mensais por vendedora"
+        desc="Acompanhadas no Dashboard e no Resultado de Vendas. O valor é salvo ao sair do campo."
+      >
+        <div className="flex flex-col gap-2.5">
+          {vendedoras.length === 0 && (
+            <p className="rounded-[12px] border border-dashed border-line bg-panel px-4 py-6 text-center text-sm text-muted">
+              Nenhuma vendedora cadastrada ainda.
+            </p>
+          )}
           {vendedoras.map((v) => (
-            <div key={v.id} className="flex items-center gap-3.5">
-              <span className="flex h-10 w-10 flex-none items-center justify-center rounded-full bg-[#efece5] text-[13px] font-extrabold text-ink-2">
+            <div
+              key={v.id}
+              className="flex items-center gap-3 rounded-[12px] border border-line-2 bg-panel px-3 py-2.5"
+            >
+              <span className="flex h-10 w-10 flex-none items-center justify-center rounded-full bg-white text-[13px] font-extrabold text-ink-2 shadow-card">
                 {iniciais(v.nome)}
               </span>
               <span className="min-w-0 flex-1 truncate text-sm font-bold">{v.nome}</span>
-              <div className="flex h-[46px] w-[150px] flex-none items-center gap-2 rounded-[11px] border border-input-border bg-white px-3.5 xs:w-[180px] sm:w-[200px]">
+              <div className="flex h-[46px] w-[136px] flex-none items-center gap-1.5 rounded-[11px] border border-input-border bg-white px-3 focus-within:border-ink xs:w-[168px] sm:w-[190px]">
                 <span className="text-[13px] font-bold text-muted">R$</span>
                 <input
-                  value={metas[v.id] ?? ""}
-                  onChange={(e) => setMetas((m) => ({ ...m, [v.id]: e.target.value }))}
+                  value={centavosParaExibicao(metas[v.id] ?? "")}
+                  onChange={(e) => setMetas((m) => ({ ...m, [v.id]: soDigitos(e.target.value) }))}
                   onBlur={() => salvarMeta(v.id)}
-                  inputMode="decimal"
-                  className="w-full bg-transparent text-[15px] font-bold outline-none"
+                  inputMode="numeric"
+                  placeholder="0,00"
+                  className="w-full bg-transparent text-right text-[15px] font-bold tnum outline-none"
                 />
               </div>
             </div>
           ))}
         </div>
-      </div>
+      </Secao>
 
       {/* Categorias */}
-      <div className="rounded-[14px] border border-line bg-white p-5 shadow-card">
-        <div className="text-[15px] font-extrabold">Categorias de despesa e grupo no DRE</div>
-        <div className="mt-1 text-[13px] text-muted">Cada categoria é somada no grupo escolhido dentro do DRE anual.</div>
-
+      <Secao
+        icon="tag"
+        cor="#8c6f52"
+        bg="#f2ece2"
+        titulo="Categorias de despesa e grupo no DRE"
+        desc="Cada categoria é somada no grupo escolhido dentro do DRE anual."
+      >
         {/* Criar nova categoria — rápido e simples */}
-        <div className="mt-3.5 rounded-[12px] border border-dashed border-[#d8d3ca] bg-panel p-3">
+        <div className="rounded-[12px] border border-dashed border-[#d8d3ca] bg-panel p-3">
           <div className="mb-2 text-[12.5px] font-bold text-ink-2">Nova categoria</div>
           <div className="flex flex-col gap-2 sm:flex-row">
             <input
@@ -210,8 +252,14 @@ export function Configuracoes({ saldoInicial, saldoData, vendedoras, categorias 
         </div>
 
         <div className="mt-3 max-h-[420px] overflow-y-auto rounded-[12px] border border-[#f0eee9]">
+          {categorias.length === 0 && (
+            <div className="px-4 py-6 text-center text-sm text-muted">Nenhuma categoria ainda.</div>
+          )}
           {categorias.map((c) => (
-            <div key={c.id} className="flex items-center justify-between gap-3 border-b border-[#f4f1ec] px-4 py-2.5 last:border-0">
+            <div
+              key={c.id}
+              className="flex items-center justify-between gap-3 border-b border-[#f4f1ec] px-4 py-2.5 last:border-0"
+            >
               <span className="min-w-0 flex-1 truncate text-[13.5px] font-semibold">{c.nome}</span>
               <select
                 value={c.grupo_dre}
@@ -227,7 +275,42 @@ export function Configuracoes({ saldoInicial, saldoData, vendedoras, categorias 
             </div>
           ))}
         </div>
-      </div>
+      </Secao>
     </div>
+  );
+}
+
+// Card de seção com cabeçalho (ícone + título + descrição).
+function Secao({
+  icon,
+  cor,
+  bg,
+  titulo,
+  desc,
+  children,
+}: {
+  icon: IconName;
+  cor: string;
+  bg: string;
+  titulo: string;
+  desc: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <section className="rounded-[16px] border border-line bg-white p-4 shadow-card sm:p-5">
+      <div className="flex items-start gap-3">
+        <span
+          className="flex h-10 w-10 flex-none items-center justify-center rounded-[12px]"
+          style={{ background: bg }}
+        >
+          <Icon name={icon} size={19} color={cor} />
+        </span>
+        <div className="min-w-0">
+          <div className="text-[15px] font-extrabold leading-tight">{titulo}</div>
+          <div className="mt-0.5 text-[12.5px] leading-[1.5] text-muted">{desc}</div>
+        </div>
+      </div>
+      <div className="mt-4">{children}</div>
+    </section>
   );
 }
