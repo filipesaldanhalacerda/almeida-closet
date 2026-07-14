@@ -571,7 +571,7 @@ export function LancamentoForm({
                 type="date"
                 value={vencimento}
                 onChange={(e) => setVencimento(e.target.value)}
-                className="focus-ring h-[52px] w-full rounded-[12px] border border-input-border bg-white px-3 text-[15px]"
+                className="focus-ring date-field h-[52px] w-full rounded-[12px] border border-input-border bg-white pl-3 pr-9 text-[15px]"
               />
             </div>
             <div className="min-w-0 flex-1">
