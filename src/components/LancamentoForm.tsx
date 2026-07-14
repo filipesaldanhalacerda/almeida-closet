@@ -13,13 +13,14 @@ import {
   MODALIDADES,
 } from "@/lib/constants";
 import {
+  anoMesParaMesRef,
   brl,
   centavosParaNumero,
   hojeIso,
   iniciais,
   isoParaBR,
   mascaraTelefoneBR,
-  mesRefLabel,
+  mesRefParaAnoMes,
   normalizarBusca,
   numeroParaCentavos,
 } from "@/lib/format";
@@ -120,12 +121,10 @@ export function LancamentoForm({
   const [credor, setCredor] = React.useState(inicial?.credor ?? "");
   const [data, setData] = React.useState(inicial?.data ?? hojeIso());
   const [vencimento, setVencimento] = React.useState(inicial?.data_vencimento ?? "");
-  const [mesRef, setMesRef] = React.useState(
-    inicial?.mes_referencia ??
-      (() => {
-        const p = hojeIso().split("-");
-        return mesRefLabel(+p[0], +p[1]);
-      })(),
+  // Mês de referência guardado como "YYYY-MM" (valor do input[type=month]);
+  // convertido para o rótulo "Julho/2026" ao salvar.
+  const [mesRefMes, setMesRefMes] = React.useState(
+    mesRefParaAnoMes(inicial?.mes_referencia) || hojeIso().slice(0, 7),
   );
   const [descricao, setDescricao] = React.useState(inicial?.descricao ?? "");
   const [capKind, setCapKind] = React.useState<"aporte" | "devolucao">(
@@ -236,7 +235,7 @@ export function LancamentoForm({
         data,
         categoria_id: categoriaId,
         credor,
-        mes_referencia: mesRef,
+        mes_referencia: anoMesParaMesRef(mesRefMes),
         data_vencimento: vencimento || null,
         data_pagamento: data,
       };
@@ -577,10 +576,10 @@ export function LancamentoForm({
             <div className="min-w-0 flex-1">
               <label className="mb-2 block text-[13px] font-bold text-ink-2">Mês ref.</label>
               <input
-                value={mesRef}
-                onChange={(e) => setMesRef(e.target.value)}
-                placeholder="Julho/2026"
-                className="focus-ring h-[52px] w-full rounded-[12px] border border-input-border bg-white px-3 text-[15px]"
+                type="month"
+                value={mesRefMes}
+                onChange={(e) => setMesRefMes(e.target.value)}
+                className="focus-ring date-field h-[52px] w-full rounded-[12px] border border-input-border bg-white pl-3 pr-9 text-[15px]"
               />
             </div>
           </div>

@@ -1,10 +1,12 @@
 import { describe, expect, it } from "vitest";
 import {
+  anoMesParaMesRef,
   brl,
   brParaIso,
   centavosParaNumero,
   isoParaBR,
   mascaraTelefoneBR,
+  mesRefParaAnoMes,
   normalizarBusca,
   numeroParaCentavos,
 } from "./format";
@@ -45,5 +47,17 @@ describe("format pt-BR", () => {
     expect(mascaraTelefoneBR("11991234567")).toBe("(11) 99123-4567");
     // ignora não-dígitos e limita a 11
     expect(mascaraTelefoneBR("(11) 99123-45678")).toBe("(11) 99123-4567");
+  });
+
+  it("converte mês de referência entre 'YYYY-MM' e rótulo", () => {
+    expect(anoMesParaMesRef("2026-07")).toBe("Julho/2026");
+    expect(anoMesParaMesRef("2026-03")).toBe("Março/2026");
+    expect(anoMesParaMesRef("")).toBe("");
+    expect(mesRefParaAnoMes("Julho/2026")).toBe("2026-07");
+    expect(mesRefParaAnoMes("Março/2026")).toBe("2026-03");
+    expect(mesRefParaAnoMes(null)).toBe("");
+    expect(mesRefParaAnoMes("texto qualquer")).toBe("");
+    // round-trip
+    expect(mesRefParaAnoMes(anoMesParaMesRef("2025-12"))).toBe("2025-12");
   });
 });

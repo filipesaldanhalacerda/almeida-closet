@@ -69,6 +69,22 @@ export function mesRefLabel(ano: number, mes: number): string {
   return `${nome.charAt(0).toUpperCase()}${nome.slice(1)}/${ano}`;
 }
 
+/** "2026-07" (valor de input[type=month]) -> "Julho/2026". "" se inválido. */
+export function anoMesParaMesRef(ym: string): string {
+  const m = /^(\d{4})-(\d{2})$/.exec(ym || "");
+  if (!m) return "";
+  return mesRefLabel(+m[1], +m[2]);
+}
+
+/** "Julho/2026" -> "2026-07" (para preencher o input[type=month]). "" se não reconhecer. */
+export function mesRefParaAnoMes(label: string | null | undefined): string {
+  const m = /^(.+)\/(\d{4})$/.exec((label || "").trim());
+  if (!m) return "";
+  const idx = MESES_LONGOS.findIndex((x) => x === m[1].trim().toLowerCase());
+  if (idx < 0) return "";
+  return `${m[2]}-${String(idx + 1).padStart(2, "0")}`;
+}
+
 /**
  * Normaliza um texto para busca: sem acentos, minúsculo, espaços colapsados.
  * Ex.: "  Jéssica  Almeida " -> "jessica almeida". Usado para achar clientes
