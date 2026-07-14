@@ -79,7 +79,9 @@ function vendasMes(ls: LancamentoView[], a: number, m: number) {
 }
 
 function pctDelta(atual: number, anterior: number): number {
-  if (anterior === 0) return atual === 0 ? 0 : 100;
+  // Sem base de comparação: sinaliza pelo sinal do valor atual (evita mostrar
+  // um prejuízo como +100% "verde" quando o ano anterior foi zero).
+  if (anterior === 0) return atual > 0 ? 100 : atual < 0 ? -100 : 0;
   return ((atual - anterior) / Math.abs(anterior)) * 100;
 }
 

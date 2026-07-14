@@ -17,6 +17,9 @@ export default function PrimeiroAcessoPage() {
   const [alvoNome, setAlvoNome] = React.useState<string | null>(null);
   const [erro, setErro] = React.useState<string | null>(null);
   const [carregando, setCarregando] = React.useState(false);
+  // Para onde ir após criar a conta (o servidor pode devolver /login se o
+  // login automático falhar).
+  const [destino, setDestino] = React.useState("/app");
 
   async function validarCodigo(e: React.FormEvent) {
     e.preventDefault();
@@ -64,6 +67,7 @@ export default function PrimeiroAcessoPage() {
         return;
       }
       setNome(data.nome || nome);
+      setDestino(data.redirect || "/app");
       setPasso("boasvindas");
     } catch {
       setErro("Sem conexão. Tente novamente.");
@@ -76,6 +80,7 @@ export default function PrimeiroAcessoPage() {
     e.preventDefault();
     setErro(null);
     if (senha !== senha2) return setErro("As senhas não conferem");
+    if (senha.length < 6) return setErro("A senha precisa ter ao menos 6 caracteres");
     setCarregando(true);
     try {
       const res = await fetch("/api/auth/reset-senha", {
@@ -115,7 +120,7 @@ export default function PrimeiroAcessoPage() {
         </div>
         <button
           onClick={() => {
-            router.replace("/app");
+            router.replace(destino);
             router.refresh();
           }}
           className="mt-10 h-14 w-full rounded-[13px] bg-ink text-base font-bold text-white active:scale-[.99]"

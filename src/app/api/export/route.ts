@@ -19,8 +19,9 @@ export async function GET(req: NextRequest) {
 
   const { searchParams } = new URL(req.url);
   const hoje = new Date();
-  const ano = Number(searchParams.get("ano")) || hoje.getFullYear();
-  const mes = Number(searchParams.get("mes")) || hoje.getMonth() + 1;
+  // Clampa para evitar datas inválidas (ex.: ?mes=13 → "2026-13-01").
+  const ano = Math.min(2100, Math.max(2000, Number(searchParams.get("ano")) || hoje.getFullYear()));
+  const mes = Math.min(12, Math.max(1, Number(searchParams.get("mes")) || hoje.getMonth() + 1));
   const escopo = searchParams.get("escopo") || "mes";
   const formato = searchParams.get("formato") === "pdf" ? "pdf" : "xlsx";
   const isoRe = /^\d{4}-\d{2}-\d{2}$/;

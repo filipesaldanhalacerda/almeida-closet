@@ -28,20 +28,25 @@ export function montarRowLancamento(
     descricao: null,
   };
 
+  // Segurança: a vendedora só atribui a si mesma (ignora vendedora_id enviado);
+  // o gestor pode atribuir a qualquer vendedora (ou a si próprio = null).
+  const vendedoraSolicitada =
+    (input as { vendedora_id?: string | null }).vendedora_id ?? null;
+  const vendedoraId =
+    opts.roleCriador === "vendedora" ? opts.criadoPor : vendedoraSolicitada;
+
   if (input.tipo === "venda") {
     base.cliente = input.cliente;
     base.forma_pagamento = input.forma_pagamento;
     base.modalidade = input.modalidade;
-    base.vendedora_id =
-      input.vendedora_id ?? (opts.roleCriador === "vendedora" ? opts.criadoPor : null);
+    base.vendedora_id = vendedoraId;
   } else if (input.tipo === "recebimento") {
     base.cliente = input.cliente.trim() || null;
     base.bandeira = input.bandeira.trim() || null;
     // compatibilidade com a planilha original: coluna combinada
     base.cliente_ou_bandeira = input.cliente.trim() || input.bandeira.trim() || null;
     base.meio = input.meio;
-    base.vendedora_id =
-      input.vendedora_id ?? (opts.roleCriador === "vendedora" ? opts.criadoPor : null);
+    base.vendedora_id = vendedoraId;
   } else if (input.tipo === "despesa") {
     base.categoria_id = input.categoria_id;
     base.credor = input.credor || null;

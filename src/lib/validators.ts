@@ -143,6 +143,14 @@ export const lancamentoSchema = lancamentoUnion.superRefine((d, ctx) => {
       path: ["cliente"],
     });
   }
+  // Recebimento embutido na venda não pode ser maior que a própria venda.
+  if (d.tipo === "venda" && d.recebimento && d.recebimento.valor > d.valor) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      message: "A entrada não pode ser maior que o valor da venda",
+      path: ["recebimento", "valor"],
+    });
+  }
 });
 
 export type LancamentoInput = z.infer<typeof lancamentoUnion>;

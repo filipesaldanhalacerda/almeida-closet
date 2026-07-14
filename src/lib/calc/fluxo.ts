@@ -86,7 +86,9 @@ export function calcularFluxo(
       saidas: g.saidas,
       saldoDia,
       saldoFinal: saldo,
-      negativo: saldo < 0,
+      // Arredonda a centavos antes de comparar: evita marcar um dia "no zero"
+      // como negativo por ruído de ponto flutuante (ex.: −5e-17).
+      negativo: Math.round(saldo * 100) < 0,
     };
   });
 

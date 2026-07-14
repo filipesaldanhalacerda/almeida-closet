@@ -149,9 +149,10 @@ export function LancamentoForm({
 
   const valor = centavosParaNumero(valorCents);
   const recebValor = centavosParaNumero(recebCents);
-  // Recebimento parcial exige uma entrada > 0 — não deixa seguir com zero.
-  const parcialSemValor =
-    tipo === "venda" && !editando && modoReceb === "parcial" && recebValor <= 0;
+  // Recebimento parcial exige entrada > 0 e não maior que o valor da venda.
+  const ehParcialNova = tipo === "venda" && !editando && modoReceb === "parcial";
+  const parcialSemValor = ehParcialNova && recebValor <= 0;
+  const parcialExcede = ehParcialNova && recebValor > valor;
   const cor =
     tipo === "venda"
       ? "#2f7d5b"
@@ -270,6 +271,8 @@ export function LancamentoForm({
         if (!recebMeio) return setErro("Escolha o meio do recebimento");
         if (modoReceb === "parcial" && recebValor <= 0)
           return setErro("Informe o valor da entrada recebida");
+        if (modoReceb === "parcial" && recebValor > valor)
+          return setErro("A entrada não pode ser maior que o valor da venda");
       }
     }
     if (tipo === "recebimento") {
@@ -422,6 +425,11 @@ export function LancamentoForm({
               {recebValor <= 0 && (
                 <p className="mt-1.5 text-[11.5px] font-semibold text-muted">
                   Informe quanto entrou para poder salvar.
+                </p>
+              )}
+              {recebValor > valor && valor > 0 && (
+                <p className="mt-1.5 text-[11.5px] font-semibold text-desp-fg">
+                  A entrada não pode ser maior que a venda ({brl(valor)}).
                 </p>
               )}
             </div>
@@ -712,7 +720,7 @@ export function LancamentoForm({
             <button
               type="button"
               onClick={salvar}
-              disabled={salvando || valor <= 0 || parcialSemValor}
+              disabled={salvando || valor <= 0 || parcialSemValor || parcialExcede}
               className="flex-1 rounded-[12px] text-[15.5px] font-bold text-white disabled:opacity-50"
               style={{ background: cor }}
             >
@@ -810,7 +818,7 @@ export function LancamentoForm({
         <button
           type="button"
           onClick={salvar}
-          disabled={salvando || valor <= 0 || parcialSemValor}
+          disabled={salvando || valor <= 0 || parcialSemValor || parcialExcede}
           className="flex h-[58px] w-full items-center justify-center gap-2.5 rounded-[16px] text-[16.5px] font-bold text-white shadow-[0_14px_26px_-12px_rgba(28,26,23,.5)] transition-transform active:scale-[.99] disabled:opacity-50"
           style={{ background: cor }}
         >

@@ -42,6 +42,18 @@ export async function POST(req: NextRequest) {
       .maybeSingle();
     if (existente) return jsonError("Esse nome de usuário já existe. Escolha outro.");
 
+    // 2.1) Reserva o convite atomicamente (fecha a corrida do código de uso
+    // único). Marca usado_em; só 1 requisição concorrente consegue o update.
+    const { data: claim } = await admin
+      .from("convites")
+      .update({ usado_em: new Date().toISOString() })
+      .eq("id", convite.id)
+      .is("usado_por", null)
+      .is("usado_em", null)
+      .select("id")
+      .maybeSingle();
+    if (!claim) return jsonError("Este código já foi utilizado", 410);
+
     // 3) Cria usuário no Auth (e-mail sintético, sem confirmação)
     const email = usernameParaEmail(username);
     const { data: created, error: createErr } = await admin.auth.admin.createUser({
@@ -52,6 +64,7 @@ export async function POST(req: NextRequest) {
       user_metadata: { nome, username },
     });
     if (createErr || !created.user) {
+      await admin.from("convites").update({ usado_em: null }).eq("id", convite.id); // desfaz reserva
       return jsonError(createErr?.message || "Não foi possível criar o acesso");
     }
     const userId = created.user.id;
@@ -65,16 +78,14 @@ export async function POST(req: NextRequest) {
       ativo: true,
     });
     if (profErr) {
-      // rollback do usuário criado
+      // rollback do usuário criado e da reserva do convite
       await admin.auth.admin.deleteUser(userId);
+      await admin.from("convites").update({ usado_em: null }).eq("id", convite.id);
       return jsonError("Não foi possível criar o perfil: " + profErr.message);
     }
 
-    // 5) Marca convite como usado
-    await admin
-      .from("convites")
-      .update({ usado_por: userId, usado_em: new Date().toISOString() })
-      .eq("id", convite.id);
+    // 5) Consumo definitivo do convite (usado_em já foi reservado no passo 2.1)
+    await admin.from("convites").update({ usado_por: userId }).eq("id", convite.id);
 
     // 6) Login automático (define cookies de sessão)
     const supabase = createClient();

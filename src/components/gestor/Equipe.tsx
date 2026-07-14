@@ -26,6 +26,7 @@ export function Equipe({ time, periodo }: { time: TeamRow[]; periodo: string }) 
   async function gerar(tipo: "novo_acesso" | "reset_senha", alvo?: string) {
     setGerando(true);
     setCodigo(null);
+    setExpira(null);
     setModal(true);
     try {
       const res = await fetch("/api/convites", {

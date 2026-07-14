@@ -40,15 +40,25 @@ export async function POST(req: NextRequest) {
       .single();
     if (!alvo) return jsonError("Vendedora não encontrada", 404);
 
+    // Reserva o convite atomicamente antes de redefinir (fecha a corrida de
+    // uso concorrente do mesmo código). Só 1 requisição "ganha" o update.
+    const { data: claim } = await admin
+      .from("convites")
+      .update({ usado_por: alvo.id, usado_em: new Date().toISOString() })
+      .eq("id", convite.id)
+      .is("usado_por", null)
+      .select("id")
+      .maybeSingle();
+    if (!claim) return jsonError("Este código já foi utilizado", 410);
+
     const { error: updErr } = await admin.auth.admin.updateUserById(alvo.id, {
       password: senha,
     });
-    if (updErr) return jsonError("Não foi possível redefinir a senha: " + updErr.message);
-
-    await admin
-      .from("convites")
-      .update({ usado_por: alvo.id, usado_em: new Date().toISOString() })
-      .eq("id", convite.id);
+    if (updErr) {
+      // desfaz a reserva para permitir nova tentativa
+      await admin.from("convites").update({ usado_por: null, usado_em: null }).eq("id", convite.id);
+      return jsonError("Não foi possível redefinir a senha: " + updErr.message);
+    }
 
     // Login automático
     const supabase = createClient();

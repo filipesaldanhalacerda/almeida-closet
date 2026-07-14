@@ -292,7 +292,8 @@ function BreakCard({ titulo, itens, cor }: { titulo: string; itens: { label: str
 }
 
 function CompCell({ label, atual, ant, bomSeMaior }: { label: string; atual: number; ant: number; bomSeMaior: boolean }) {
-  const delta = ant === 0 ? (atual === 0 ? 0 : 100) : ((atual - ant) / Math.abs(ant)) * 100;
+  const delta =
+    ant === 0 ? (atual > 0 ? 100 : atual < 0 ? -100 : 0) : ((atual - ant) / Math.abs(ant)) * 100;
   const bom = bomSeMaior ? delta >= 0 : delta <= 0;
   return (
     <div className="min-w-0 rounded-[12px] bg-app p-2.5 sm:p-3">
