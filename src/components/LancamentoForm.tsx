@@ -744,29 +744,39 @@ export function LancamentoForm({
         <TipoSelector tipos={tiposDisponiveis} tipo={tipo} setTipo={setTipo} />
         {hintRow}
 
-        <div className="mb-6 mt-5 text-center">
-          <div className="text-xs font-bold uppercase tracking-[.14em] text-faint">Valor</div>
+        <div className="mb-5 mt-4 text-center">
+          <div className="text-[11px] font-bold uppercase tracking-[.16em] text-faint">
+            Valor do lançamento
+          </div>
           <div
-            className="mt-1 text-[46px] font-extrabold tracking-[-.02em] tnum"
-            style={{ color: cor }}
+            className="mt-1.5 text-[clamp(40px,13vw,54px)] font-extrabold leading-none tracking-[-.02em] tnum transition-colors"
+            style={{ color: valor > 0 ? cor : "#cbc6bd" }}
           >
             {brl(valor)}
           </div>
         </div>
 
-        <div className="mb-6 grid grid-cols-3 gap-[9px]">
-          {keypad.map((k) => (
-            <button
-              key={k}
-              type="button"
-              onClick={() => (k === "C" ? limpaValor() : k === "⌫" ? apagaDigito() : apertaDigito(k))}
-              className="flex h-14 items-center justify-center rounded-[13px] border border-[#ece9e2] bg-white text-[22px] font-bold transition-transform active:scale-[.93] active:bg-[#f0eee8]"
-              style={{ color: k === "C" ? "#b04a34" : "#1c1a17" }}
-              aria-label={k === "⌫" ? "Apagar" : k === "C" ? "Limpar" : k}
-            >
-              {k === "⌫" ? <Icon name="backspace" size={22} /> : k}
-            </button>
-          ))}
+        <div className="mb-6 grid grid-cols-3 gap-2.5">
+          {keypad.map((k) => {
+            const util = k === "C" || k === "⌫";
+            return (
+              <button
+                key={k}
+                type="button"
+                onClick={() => (k === "C" ? limpaValor() : k === "⌫" ? apagaDigito() : apertaDigito(k))}
+                className={
+                  "flex h-[58px] items-center justify-center rounded-[15px] text-[23px] font-bold transition-all active:scale-[.94] " +
+                  (util
+                    ? "bg-[#eae6df] text-ink-2 active:bg-[#e0dbd2]"
+                    : "border border-line bg-white text-ink shadow-[0_1px_2px_rgba(40,36,30,.05)] active:bg-[#f4f1ec]")
+                }
+                style={k === "C" ? { color: "#b04a34" } : undefined}
+                aria-label={k === "⌫" ? "Apagar" : k === "C" ? "Limpar" : k}
+              >
+                {k === "⌫" ? <Icon name="backspace" size={23} /> : k}
+              </button>
+            );
+          })}
         </div>
 
         {camposAdaptativos}
@@ -788,15 +798,25 @@ export function LancamentoForm({
         )}
       </div>
 
-      <div className="sticky bottom-0 bg-gradient-to-t from-app from-70% to-transparent px-1 pb-5 pt-3">
+      <div className="sticky bottom-0 bg-gradient-to-t from-app from-70% to-transparent px-1 pb-[calc(1.25rem+env(safe-area-inset-bottom))] pt-3">
         <button
           type="button"
           onClick={salvar}
           disabled={salvando || valor <= 0}
-          className="h-14 w-full rounded-[14px] text-[16.5px] font-bold text-white transition-transform active:scale-[.99] disabled:opacity-50"
+          className="flex h-[58px] w-full items-center justify-center gap-2.5 rounded-[16px] text-[16.5px] font-bold text-white shadow-[0_14px_26px_-12px_rgba(28,26,23,.5)] transition-transform active:scale-[.99] disabled:opacity-50"
           style={{ background: cor }}
         >
-          {salvando ? "Salvando…" : editando ? "Salvar alterações" : "Salvar lançamento"}
+          {salvando ? (
+            <>
+              <span className="h-5 w-5 animate-spin rounded-full border-2 border-white/30 border-t-white" />
+              Salvando…
+            </>
+          ) : (
+            <>
+              <Icon name="check" size={19} color="#fff" strokeWidth={2.4} />
+              {editando ? "Salvar alterações" : "Salvar lançamento"}
+            </>
+          )}
         </button>
       </div>
 
