@@ -435,7 +435,7 @@ export function LancamentoForm({
           )}
           <div>
             <label className="mb-2 block text-[12.5px] font-bold text-ink-2">Meio do recebimento</label>
-            <div className="flex flex-wrap gap-2">
+            <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
               {MEIOS_RECEBIMENTO.map((o) => {
                 const ativo = o.value === recebMeio;
                 return (
@@ -443,7 +443,7 @@ export function LancamentoForm({
                     key={o.value}
                     type="button"
                     onClick={() => setRecebMeio(o.value)}
-                    className="h-9 rounded-full px-3.5 text-[12.5px] font-semibold transition-colors"
+                    className="h-11 whitespace-nowrap rounded-[11px] px-2 text-[13px] font-semibold transition-colors"
                     style={{
                       border: `1px solid ${ativo ? "#2b6f74" : "#d5e0da"}`,
                       background: ativo ? "#2b6f74" : "#fff",
