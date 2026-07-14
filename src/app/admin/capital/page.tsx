@@ -7,7 +7,8 @@ export const dynamic = "force-dynamic";
 export const metadata = { title: "Capital · Almeida Closet" };
 
 export default async function CapitalPage() {
-  const lancamentos = await getLancamentos({});
+  // Só os tipos de capital (fração mínima dos lançamentos), não a tabela toda.
+  const lancamentos = await getLancamentos({ tipos: ["investimento", "devolucao_capital"] });
   const c = calcularCapital(lancamentos);
 
   return (

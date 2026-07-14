@@ -123,9 +123,10 @@ export function LancamentoForm({
   const [data, setData] = React.useState(inicial?.data ?? hojeIso());
   const [vencimento, setVencimento] = React.useState(inicial?.data_vencimento ?? "");
   // Mês de referência guardado como "YYYY-MM" (valor do input[type=month]);
-  // convertido para o rótulo "Julho/2026" ao salvar.
+  // convertido para o rótulo "Julho/2026" ao salvar. Em NOVO lançamento sugere
+  // o mês atual; ao EDITAR não fabrica um valor se o registro não tinha um.
   const [mesRefMes, setMesRefMes] = React.useState(
-    mesRefParaAnoMes(inicial?.mes_referencia) || hojeIso().slice(0, 7),
+    mesRefParaAnoMes(inicial?.mes_referencia) || (inicial ? "" : hojeIso().slice(0, 7)),
   );
   const [descricao, setDescricao] = React.useState(inicial?.descricao ?? "");
   const [capKind, setCapKind] = React.useState<"aporte" | "devolucao">(
@@ -165,12 +166,16 @@ export function LancamentoForm({
           ? "#8c6f52"
           : "#b04a34";
 
-  // Ao escolher a forma da venda, sugere o modo e o meio do recebimento
+  // Ao escolher a forma da venda, sugere o modo e o meio do recebimento.
+  // Só aplica quando a forma REALMENTE muda (evita resetar ao re-tocar, o que
+  // recriava um recebimento indevido) e nunca sobrescreve "Ainda não".
   function escolherForma(f: FormaPagamento) {
+    const mudou = f !== forma;
     setForma(f);
-    if (!editando) {
+    if (editando || !mudou) return;
+    setRecebMeio(MEIO_PADRAO[f]);
+    if (modoReceb !== "nao") {
       setModoReceb(f === "crediario" ? "parcial" : "tudo");
-      setRecebMeio(MEIO_PADRAO[f]);
       if (f !== "crediario") setRecebCents("");
     }
   }

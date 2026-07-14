@@ -1,5 +1,5 @@
 import { RelatoriosControls } from "@/components/gestor/RelatoriosControls";
-import { contarLinhas } from "@/lib/export/excel";
+import { contarLinhas } from "@/lib/export/contagem";
 import { ABAS_INFO } from "@/lib/export/tipos";
 import { getConfig, getLancamentos } from "@/lib/data";
 import { hojeIso, isoParaBR, periodoLabel } from "@/lib/format";

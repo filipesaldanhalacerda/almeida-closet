@@ -1,4 +1,5 @@
 import "server-only";
+import { cache } from "react";
 import { createClient } from "./supabase/server";
 import type {
   CategoriaDespesa,
@@ -9,8 +10,11 @@ import type {
   Profile,
 } from "./types";
 
+// Funções de leitura envolvidas em React.cache: dentro de UMA requisição,
+// chamadas repetidas (ex.: layout + página) colapsam numa única query.
+
 /** Perfil do usuário logado (ou null). */
-export async function getSessionProfile(): Promise<Profile | null> {
+export const getSessionProfile = cache(async (): Promise<Profile | null> => {
   const supabase = createClient();
   const {
     data: { user },
@@ -18,39 +22,39 @@ export async function getSessionProfile(): Promise<Profile | null> {
   if (!user) return null;
   const { data } = await supabase.from("profiles").select("*").eq("id", user.id).single();
   return (data as Profile) ?? null;
-}
+});
 
-export async function getCategorias(): Promise<CategoriaDespesa[]> {
+export const getCategorias = cache(async (): Promise<CategoriaDespesa[]> => {
   const supabase = createClient();
   const { data } = await supabase
     .from("categorias_despesa")
     .select("id,nome,grupo_dre")
     .order("nome");
   return (data as CategoriaDespesa[]) ?? [];
-}
+});
 
-export async function getProfiles(): Promise<Profile[]> {
+export const getProfiles = cache(async (): Promise<Profile[]> => {
   const supabase = createClient();
   const { data } = await supabase.from("profiles").select("*").order("nome");
   return (data as Profile[]) ?? [];
-}
+});
 
 export async function getVendedoras(): Promise<Profile[]> {
   const profiles = await getProfiles();
   return profiles.filter((p) => p.role === "vendedora");
 }
 
-export async function getConfig(): Promise<Configuracao | null> {
+export const getConfig = cache(async (): Promise<Configuracao | null> => {
   const supabase = createClient();
   const { data } = await supabase.from("configuracoes").select("*").eq("id", 1).single();
   return (data as Configuracao) ?? null;
-}
+});
 
-export async function getMetas(): Promise<Meta[]> {
+export const getMetas = cache(async (): Promise<Meta[]> => {
   const supabase = createClient();
   const { data } = await supabase.from("metas").select("*");
   return (data as Meta[]) ?? [];
-}
+});
 
 interface FetchLancamentosOptions {
   desde?: string; // ISO inclusive
@@ -72,10 +76,14 @@ export async function getLancamentos(
   if (opts.ate) q = q.lte("data", opts.ate);
   if (opts.tipos && opts.tipos.length) q = q.in("tipo", opts.tipos);
 
-  const { data: rows } = await q;
+  // Roda as 3 leituras em paralelo (a query e os lookups não dependem entre si).
+  const [{ data: rows }, categorias, profiles] = await Promise.all([
+    q,
+    getCategorias(),
+    getProfiles(),
+  ]);
   const lancamentos = (rows as Lancamento[]) ?? [];
 
-  const [categorias, profiles] = await Promise.all([getCategorias(), getProfiles()]);
   const catById = new Map(categorias.map((c) => [c.id, c]));
   const profById = new Map(profiles.map((p) => [p.id, p]));
 
@@ -103,15 +111,13 @@ export function getLancamentosDoAno(ano: number) {
 /** Um lançamento específico (RLS aplica). Null se não encontrado/sem acesso. */
 export async function getLancamentoById(id: string): Promise<LancamentoView | null> {
   const supabase = createClient();
-  const { data: row } = await supabase
-    .from("lancamentos")
-    .select("*")
-    .eq("id", id)
-    .maybeSingle();
+  const [{ data: row }, categorias, profiles] = await Promise.all([
+    supabase.from("lancamentos").select("*").eq("id", id).maybeSingle(),
+    getCategorias(),
+    getProfiles(),
+  ]);
   if (!row) return null;
   const l = row as Lancamento;
-
-  const [categorias, profiles] = await Promise.all([getCategorias(), getProfiles()]);
   const cat = l.categoria_id ? categorias.find((c) => c.id === l.categoria_id) : undefined;
   const vend = l.vendedora_id ? profiles.find((p) => p.id === l.vendedora_id) : undefined;
   const criador = profiles.find((p) => p.id === l.criado_por);
