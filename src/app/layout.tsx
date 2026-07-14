@@ -1,6 +1,8 @@
 import type { Metadata, Viewport } from "next";
 import { Public_Sans } from "next/font/google";
+import { Suspense } from "react";
 import { PWARegister } from "@/components/PWARegister";
+import { TopProgressBar } from "@/components/TopProgressBar";
 import "./globals.css";
 
 const publicSans = Public_Sans({
@@ -42,6 +44,9 @@ export default function RootLayout({
   return (
     <html lang="pt-BR" className={publicSans.variable}>
       <body className="min-h-screen bg-app text-ink antialiased">
+        <Suspense fallback={null}>
+          <TopProgressBar />
+        </Suspense>
         <PWARegister />
         {children}
       </body>

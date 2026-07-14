@@ -248,9 +248,20 @@ export function LancamentoForm({
   async function salvar() {
     setErro(null);
     if (valor <= 0) return setErro("Informe um valor maior que zero");
+
+    // A cliente precisa existir no cadastro (ou ser a mesma do lançamento em edição).
+    // Não deixa salvar só com o nome digitado: tem que cadastrar ou escolher da lista.
+    const clienteCadastrado =
+      listaClientes.some((c) => normalizarBusca(c.nome) === normalizarBusca(cliente)) ||
+      (editando &&
+        normalizarBusca(cliente) ===
+          normalizarBusca(inicial?.cliente ?? inicial?.cliente_ou_bandeira ?? ""));
+
     // Validação amigável antes de enviar
     if (tipo === "venda") {
       if (!cliente.trim()) return setErro("Informe o nome da cliente");
+      if (!clienteCadastrado)
+        return setErro("Cadastre a cliente ou selecione uma já cadastrada antes de salvar");
       if (!forma) return setErro("Escolha a forma de pagamento");
       if (!editando && modoReceb !== "nao") {
         if (!recebMeio) return setErro("Escolha o meio do recebimento");
@@ -260,6 +271,8 @@ export function LancamentoForm({
     }
     if (tipo === "recebimento") {
       if (!cliente.trim() && !bandeira) return setErro("Informe a cliente ou escolha a bandeira");
+      if (cliente.trim() && !clienteCadastrado)
+        return setErro("Cadastre a cliente ou selecione uma já cadastrada antes de salvar");
       if (!meio) return setErro("Escolha o meio do recebimento");
     }
     if (tipo === "despesa" && !categoriaId) return setErro("Selecione a categoria");
@@ -924,6 +937,13 @@ function ClienteField({
         <div className="mt-1.5 flex items-center gap-1 px-0.5 text-[12px] font-semibold text-venda-fg">
           <Icon name="check" size={13} color="#2f7d5b" strokeWidth={2.6} />
           Cliente cadastrada
+        </div>
+      )}
+
+      {!jaCadastrada && norm.length > 0 && !aberto && (
+        <div className="mt-1.5 flex items-center gap-1 px-0.5 text-[12px] font-semibold text-desp-fg">
+          <Icon name="alert" size={13} color="#b04a34" strokeWidth={2.4} />
+          Cliente não cadastrada — cadastre ou selecione uma da lista
         </div>
       )}
 
