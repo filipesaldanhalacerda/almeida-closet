@@ -13,7 +13,7 @@ export function AjudaLancamento({ modo }: { modo: "vendedora" | "gestor" }) {
   const [aberto, setAberto] = React.useState(false);
 
   const conteudo = (
-    <div className={modo === "vendedora" ? "max-h-[70vh] overflow-y-auto pb-1" : ""}>
+    <div>
       <div className="text-center text-xl font-extrabold tracking-[-.01em]">
         Venda ou Recebimento?
       </div>
