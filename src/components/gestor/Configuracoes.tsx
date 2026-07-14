@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import * as React from "react";
+import { Icon } from "@/components/Icon";
 import { useToast } from "@/components/ui/Toast";
 import { DRE_GRUPOS } from "@/lib/constants";
 import { hojeIso, iniciais } from "@/lib/format";
@@ -28,6 +29,9 @@ export function Configuracoes({ saldoInicial, saldoData, vendedoras, categorias 
     Object.fromEntries(vendedoras.map((v) => [v.id, String(v.meta || 0).replace(".", ",")])),
   );
   const [salvandoSaldo, setSalvandoSaldo] = React.useState(false);
+  const [novaCat, setNovaCat] = React.useState("");
+  const [novoGrupo, setNovoGrupo] = React.useState<DreGrupo>("despesas_administrativas");
+  const [criandoCat, setCriandoCat] = React.useState(false);
 
   async function salvarSaldo() {
     setSalvandoSaldo(true);
@@ -88,6 +92,31 @@ export function Configuracoes({ saldoInicial, saldoData, vendedoras, categorias 
     }
   }
 
+  async function criarCategoria() {
+    const nome = novaCat.trim();
+    if (nome.length < 2) return;
+    setCriandoCat(true);
+    try {
+      const res = await fetch("/api/categorias", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ nome, grupo_dre: novoGrupo }),
+      });
+      const d = await res.json();
+      if (!res.ok) {
+        toast(d.erro || "Não foi possível criar a categoria", "erro");
+        return;
+      }
+      toast("Categoria criada");
+      setNovaCat("");
+      router.refresh();
+    } catch {
+      toast("Sem conexão", "erro");
+    } finally {
+      setCriandoCat(false);
+    }
+  }
+
   return (
     <div className="mx-auto flex max-w-[760px] flex-col gap-4">
       {/* Saldo inicial */}
@@ -142,7 +171,45 @@ export function Configuracoes({ saldoInicial, saldoData, vendedoras, categorias 
       <div className="rounded-[14px] border border-line bg-white p-5 shadow-card">
         <div className="text-[15px] font-extrabold">Categorias de despesa e grupo no DRE</div>
         <div className="mt-1 text-[13px] text-muted">Cada categoria é somada no grupo escolhido dentro do DRE anual.</div>
-        <div className="mt-3.5 max-h-[420px] overflow-y-auto rounded-[12px] border border-[#f0eee9]">
+
+        {/* Criar nova categoria — rápido e simples */}
+        <div className="mt-3.5 rounded-[12px] border border-dashed border-[#d8d3ca] bg-panel p-3">
+          <div className="mb-2 text-[12.5px] font-bold text-ink-2">Nova categoria</div>
+          <div className="flex flex-col gap-2 sm:flex-row">
+            <input
+              value={novaCat}
+              onChange={(e) => setNovaCat(e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && criarCategoria()}
+              placeholder="ex: Aluguel"
+              maxLength={60}
+              className="focus-ring h-11 min-w-0 flex-1 rounded-[10px] border border-input-border bg-white px-3.5 text-[14px]"
+            />
+            <div className="flex gap-2">
+              <select
+                value={novoGrupo}
+                onChange={(e) => setNovoGrupo(e.target.value as DreGrupo)}
+                className="select-reset focus-ring h-11 min-w-0 flex-1 rounded-[10px] border border-input-border bg-white px-3 pr-8 text-[13px] font-semibold text-ink-2 sm:w-[188px] sm:flex-none"
+              >
+                {DRE_GRUPOS.map((g) => (
+                  <option key={g.value} value={g.value}>
+                    {g.label}
+                  </option>
+                ))}
+              </select>
+              <button
+                type="button"
+                onClick={criarCategoria}
+                disabled={criandoCat || novaCat.trim().length < 2}
+                className="flex h-11 flex-none items-center gap-1.5 rounded-[10px] bg-ink px-4 text-[13.5px] font-bold text-white transition-transform active:scale-[.98] disabled:opacity-50"
+              >
+                <Icon name="plus" size={16} color="#fff" strokeWidth={2.2} />
+                {criandoCat ? "…" : "Adicionar"}
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div className="mt-3 max-h-[420px] overflow-y-auto rounded-[12px] border border-[#f0eee9]">
           {categorias.map((c) => (
             <div key={c.id} className="flex items-center justify-between gap-3 border-b border-[#f4f1ec] px-4 py-2.5 last:border-0">
               <span className="min-w-0 flex-1 truncate text-[13.5px] font-semibold">{c.nome}</span>

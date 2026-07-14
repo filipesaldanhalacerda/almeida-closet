@@ -169,17 +169,24 @@ export const metaSchema = z.object({
   valor: z.number().min(0),
 });
 
+const dreGrupoEnum = z.enum([
+  "deducoes",
+  "custos_variaveis",
+  "despesas_administrativas",
+  "despesas_funcionarios",
+  "despesas_financeiras",
+  "investimentos",
+  "dividas",
+]);
+
 export const categoriaGrupoSchema = z.object({
   id: z.string().uuid(),
-  grupo_dre: z.enum([
-    "deducoes",
-    "custos_variaveis",
-    "despesas_administrativas",
-    "despesas_funcionarios",
-    "despesas_financeiras",
-    "investimentos",
-    "dividas",
-  ]),
+  grupo_dre: dreGrupoEnum,
+});
+
+export const categoriaNovaSchema = z.object({
+  nome: z.string().trim().min(2, "Informe o nome da categoria").max(60),
+  grupo_dre: dreGrupoEnum,
 });
 
 export { tipoEnum, formaEnum, meioEnum, modalidadeEnum };
