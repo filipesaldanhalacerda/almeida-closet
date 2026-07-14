@@ -9,6 +9,7 @@ import { useToast } from "@/components/ui/Toast";
 import {
   DRE_GRUPO_LABEL,
   FORMAS_PAGAMENTO,
+  MEIO_LABEL,
   MEIOS_RECEBIMENTO,
   MODALIDADES,
 } from "@/lib/constants";
@@ -152,6 +153,9 @@ export function LancamentoForm({
   const ehParcialNova = tipo === "venda" && !editando && modoReceb === "parcial";
   const parcialSemValor = ehParcialNova && recebValor <= 0;
   const parcialExcede = ehParcialNova && recebValor > valor;
+  // A forma de pagamento da venda já define o meio do recebimento; só o
+  // crediário precisa perguntar (a entrada pode ser paga por outro meio).
+  const mostrarMeioReceb = !forma || forma === "crediario";
   const cor =
     tipo === "venda"
       ? "#2f7d5b"
@@ -433,6 +437,7 @@ export function LancamentoForm({
               )}
             </div>
           )}
+          {mostrarMeioReceb && (
           <div>
             <label className="mb-2 block text-[12.5px] font-bold text-ink-2">Meio do recebimento</label>
             <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
@@ -456,10 +461,12 @@ export function LancamentoForm({
               })}
             </div>
           </div>
+          )}
           {valor > 0 && (
             <div className="text-[12px] font-semibold text-receb-fg">
               Será registrado: venda de {brl(valor)} + recebimento de{" "}
               {brl(modoReceb === "tudo" ? valor : recebValor)}
+              {recebMeio && ` em ${MEIO_LABEL[recebMeio]}`}
             </div>
           )}
         </div>
