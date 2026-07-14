@@ -10,11 +10,11 @@ export function FormHeader({ titulo }: { titulo: string }) {
       <button
         onClick={() => router.back()}
         aria-label="Voltar"
-        className="flex h-10 w-10 items-center justify-center rounded-full border border-line bg-white"
+        className="flex h-10 w-10 flex-none items-center justify-center rounded-full border border-line bg-white active:scale-95"
       >
         <Icon name="back" size={18} />
       </button>
-      <span className="text-[18px] font-extrabold tracking-[-.01em]">{titulo}</span>
+      <span className="truncate text-[18px] font-extrabold tracking-[-.01em]">{titulo}</span>
     </div>
   );
 }

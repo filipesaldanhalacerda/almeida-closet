@@ -44,21 +44,29 @@ export function MeusLancamentos({ lancamentos, hoje }: { lancamentos: Lancamento
     return [...mapa.entries()].sort((a, b) => b[0].localeCompare(a[0]));
   }, [filtrados]);
 
+  const buscando = query.trim() !== "" || filtro !== "todos";
+
   return (
     <div className="flex min-h-dvh flex-col">
-      <div className="flex-none px-6 pb-2.5 pt-[calc(env(safe-area-inset-top)+0.375rem)]">
+      {/* Cabeçalho fixo: voltar + título + busca + filtros */}
+      <div className="flex-none border-b border-line-2 bg-app px-5 pb-3 pt-[calc(env(safe-area-inset-top)+0.375rem)]">
         <div className="mb-3.5 flex items-center gap-2.5">
           <Link
             href="/app"
             aria-label="Voltar"
-            className="flex h-10 w-10 items-center justify-center rounded-full border border-line bg-white"
+            className="flex h-10 w-10 flex-none items-center justify-center rounded-full border border-line bg-white active:scale-95"
           >
             <Icon name="back" size={18} />
           </Link>
-          <span className="text-xl font-extrabold tracking-[-.01em]">Meus lançamentos</span>
+          <div className="min-w-0">
+            <div className="truncate text-xl font-extrabold tracking-[-.01em]">Meus lançamentos</div>
+            <div className="text-[12.5px] font-semibold text-muted">
+              {lancamentos.length} {lancamentos.length === 1 ? "lançamento" : "lançamentos"}
+            </div>
+          </div>
         </div>
 
-        <div className="flex h-12 items-center gap-2.5 rounded-[12px] border border-line bg-white px-3.5">
+        <div className="flex h-12 items-center gap-2.5 rounded-[13px] border border-line bg-white px-3.5 focus-within:border-ink">
           <Icon name="search" size={20} color="#a09a90" />
           <input
             value={query}
@@ -66,6 +74,15 @@ export function MeusLancamentos({ lancamentos, hoje }: { lancamentos: Lancamento
             placeholder="Buscar por cliente ou categoria"
             className="flex-1 bg-transparent text-[15px] outline-none"
           />
+          {query && (
+            <button
+              onClick={() => setQuery("")}
+              aria-label="Limpar busca"
+              className="flex h-7 w-7 flex-none items-center justify-center rounded-full text-faint active:bg-app"
+            >
+              <Icon name="x" size={16} />
+            </button>
+          )}
         </div>
 
         <div className="no-scrollbar mt-3 flex gap-2 overflow-x-auto pb-0.5">
@@ -75,7 +92,7 @@ export function MeusLancamentos({ lancamentos, hoje }: { lancamentos: Lancamento
               <button
                 key={f.key}
                 onClick={() => setFiltro(f.key)}
-                className="h-9 flex-none rounded-full px-[15px] text-[13px] font-bold transition-colors"
+                className="h-9 flex-none rounded-full px-[15px] text-[13px] font-bold transition-colors active:scale-95"
                 style={{
                   border: `1px solid ${ativo ? "#1c1a17" : "#e3dfd8"}`,
                   background: ativo ? "#1c1a17" : "#fff",
@@ -89,29 +106,44 @@ export function MeusLancamentos({ lancamentos, hoje }: { lancamentos: Lancamento
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto px-6 pb-[calc(8rem+env(safe-area-inset-bottom))] pt-2">
+      {/* Lista agrupada por dia, com cabeçalho de dia fixo ao rolar */}
+      <div className="flex-1 overflow-y-auto px-5 pb-[calc(8rem+env(safe-area-inset-bottom))] pt-2">
         {grupos.length === 0 ? (
-          <div className="flex flex-col items-center px-5 py-12 text-center">
-            <div className="flex h-14 w-14 items-center justify-center rounded-[14px] bg-[#f2efe9] text-faint-3">
-              <Icon name="search" size={24} />
+          <div className="mt-6 flex flex-col items-center rounded-[18px] border border-dashed border-[#ddd8cf] bg-white px-5 py-12 text-center">
+            <div className="flex h-14 w-14 items-center justify-center rounded-[16px] bg-[#f2efe9] text-faint-3">
+              <Icon name={buscando ? "search" : "list"} size={24} />
             </div>
-            <div className="mt-4 text-base font-bold">Nada encontrado</div>
-            <div className="mt-1.5 text-sm text-muted">Tente outro filtro ou busca.</div>
+            <div className="mt-4 text-base font-bold">
+              {buscando ? "Nada encontrado" : "Nenhum lançamento ainda"}
+            </div>
+            <div className="mt-1.5 max-w-[240px] text-sm leading-[1.5] text-muted">
+              {buscando
+                ? "Tente outro filtro ou termo de busca."
+                : "Seus lançamentos vão aparecer aqui conforme você registra."}
+            </div>
           </div>
         ) : (
-          grupos.map(([dia, itens]) => (
-            <div key={dia} className="mb-5">
-              <div className="mx-0.5 mb-2.5 text-[12.5px] font-bold uppercase tracking-[.06em] text-faint">
-                {dia === hoje.slice(0, 10) ? "Hoje · " : ""}
-                {isoParaBR(dia)}
+          grupos.map(([dia, itens]) => {
+            const ehHoje = dia === hoje.slice(0, 10);
+            return (
+              <div key={dia} className="mb-1">
+                <div className="sticky top-0 z-10 -mx-5 flex items-center justify-between bg-app/90 px-5 py-2 backdrop-blur">
+                  <span className="text-[12.5px] font-bold uppercase tracking-[.06em] text-faint">
+                    {ehHoje && <span className="text-ink">Hoje · </span>}
+                    {isoParaBR(dia)}
+                  </span>
+                  <span className="text-[12px] font-semibold text-faint-2">
+                    {itens.length} {itens.length === 1 ? "item" : "itens"}
+                  </span>
+                </div>
+                <div className="flex flex-col gap-2.5 pb-4 pt-1">
+                  {itens.map((l) => (
+                    <LancamentoCard key={l.id} l={l} href={`/app/lancamentos/${l.id}/editar`} />
+                  ))}
+                </div>
               </div>
-              <div className="flex flex-col gap-2.5">
-                {itens.map((l) => (
-                  <LancamentoCard key={l.id} l={l} href={`/app/lancamentos/${l.id}/editar`} />
-                ))}
-              </div>
-            </div>
-          ))
+            );
+          })
         )}
       </div>
 
