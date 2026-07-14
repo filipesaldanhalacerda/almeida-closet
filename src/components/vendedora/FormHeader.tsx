@@ -6,7 +6,7 @@ import { Icon } from "@/components/Icon";
 export function FormHeader({ titulo }: { titulo: string }) {
   const router = useRouter();
   return (
-    <div className="flex flex-none items-center gap-2.5 px-1 pb-3 pt-1.5">
+    <div className="flex flex-none items-center gap-2.5 px-1 pb-3 pt-[calc(env(safe-area-inset-top)+0.375rem)]">
       <button
         onClick={() => router.back()}
         aria-label="Voltar"

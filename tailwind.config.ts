@@ -12,6 +12,17 @@ const config: Config = {
     "./src/lib/**/*.{ts,tsx}",
   ],
   theme: {
+    // Redefinição completa (não `extend`) para inserir o breakpoint `xs` na
+    // ordem correta — senão o Tailwind o geraria por último e quebraria a
+    // cascata mobile-first dos utilitários md:/lg:/xl:.
+    screens: {
+      xs: "400px",
+      sm: "640px",
+      md: "768px",
+      lg: "1024px",
+      xl: "1280px",
+      "2xl": "1536px",
+    },
     extend: {
       colors: {
         ink: "#1c1a17", // tinta principal (texto / botão primário)

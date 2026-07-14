@@ -34,6 +34,8 @@ export const viewport: Viewport = {
   initialScale: 1,
   maximumScale: 1,
   userScalable: false,
+  // Necessário para que env(safe-area-inset-*) funcione (notch/home-indicator).
+  viewportFit: "cover",
 };
 
 export default function RootLayout({
@@ -43,7 +45,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="pt-BR" className={publicSans.variable}>
-      <body className="min-h-screen bg-app text-ink antialiased">
+      <body className="min-h-dvh bg-app text-ink antialiased">
         <Suspense fallback={null}>
           <TopProgressBar />
         </Suspense>

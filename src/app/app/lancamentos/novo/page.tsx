@@ -12,7 +12,7 @@ export default async function NovoLancamentoVendedora() {
   ]);
 
   return (
-    <div className="flex min-h-screen flex-col px-5 pt-2">
+    <div className="flex min-h-dvh flex-col px-5 pt-2">
       <FormHeader titulo="Novo lançamento" />
       <LancamentoForm
         modo="vendedora"

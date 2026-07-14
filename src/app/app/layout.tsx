@@ -14,8 +14,10 @@ export default async function AppLayout({ children }: { children: React.ReactNod
   return (
     <ToastProvider>
       <ToastFromSession />
-      <div className="mx-auto flex min-h-screen w-full max-w-[430px] flex-col bg-app">
-        {children}
+      <div className="flex min-h-dvh justify-center bg-app sm:bg-[#e9e4db]">
+        <div className="relative flex w-full max-w-[440px] flex-col bg-app sm:border-x sm:border-black/[.06]">
+          {children}
+        </div>
       </div>
     </ToastProvider>
   );

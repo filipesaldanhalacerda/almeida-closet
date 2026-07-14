@@ -106,10 +106,10 @@ export function Equipe({ time, periodo }: { time: TeamRow[]; periodo: string }) 
               {iniciais(t.nome)}
             </span>
             <div className="min-w-0 flex-1">
-              <div className="flex items-center gap-2.5">
-                <span className="text-[15px] font-bold">{t.nome}</span>
+              <div className="flex min-w-0 items-center gap-2.5">
+                <span className="min-w-0 truncate text-[15px] font-bold">{t.nome}</span>
                 <span
-                  className="rounded-full px-2.5 py-[3px] text-[11.5px] font-bold"
+                  className="flex-none rounded-full px-2.5 py-[3px] text-[11.5px] font-bold"
                   style={{
                     background: t.ativo ? "#edf3ee" : "#f2efe9",
                     color: t.ativo ? "#2f7d5b" : "#a09a90",

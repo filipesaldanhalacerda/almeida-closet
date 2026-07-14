@@ -99,7 +99,7 @@ export function DreTable({
       </div>
 
       {/* Cards resumo — com comparativo vs ano anterior */}
-      <div className="grid grid-cols-2 gap-3.5 lg:grid-cols-4">
+      <div className="grid grid-cols-1 gap-3.5 xs:grid-cols-2 lg:grid-cols-4">
         <StatCard
           titulo="Receita Bruta"
           valor={brl(model.resumo.receitaBruta)}

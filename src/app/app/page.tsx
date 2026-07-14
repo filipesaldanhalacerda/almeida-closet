@@ -21,8 +21,8 @@ export default async function HomeVendedora() {
   const qtd = meus.length;
 
   return (
-    <div className="flex min-h-screen flex-col">
-      <div className="flex-1 overflow-y-auto px-6 pb-32 pt-3">
+    <div className="flex min-h-dvh flex-col">
+      <div className="flex-1 overflow-y-auto px-6 pb-[calc(8rem+env(safe-area-inset-bottom))] pt-[calc(env(safe-area-inset-top)+0.75rem)]">
         <div className="flex items-center justify-between pt-2.5">
           <div className="flex items-center gap-3.5">
             <span className="flex h-[46px] w-[46px] flex-none items-center justify-center rounded-full bg-ink text-[17px] font-extrabold text-white">

@@ -47,7 +47,7 @@ export default async function FluxoDeCaixaPage({
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="grid grid-cols-2 gap-3.5 lg:grid-cols-4">
+      <div className="grid grid-cols-1 gap-3.5 xs:grid-cols-2 lg:grid-cols-4">
         <StatCard titulo="Saldo inicial" valor={brl(f.saldoInicialMes)} />
         <StatCard titulo="Entradas no mês" valor={brl(f.entradas)} cor="#2f7d5b" />
         <StatCard titulo="Saídas no mês" valor={brl(f.saidas)} cor="#b04a34" />
@@ -101,6 +101,8 @@ export default async function FluxoDeCaixaPage({
       </div>
 
       <div className="overflow-hidden rounded-[14px] border border-line bg-white shadow-card">
+       <div className="overflow-x-auto">
+        <div className="min-w-[600px]">
         <div className="grid grid-cols-[90px_1fr_1fr_1fr_1fr] gap-3 border-b border-line-2 bg-panel px-5 py-3 text-[11.5px] font-bold uppercase tracking-[.04em] text-faint md:grid-cols-[110px_1fr_1fr_1fr_1fr]">
           <span>Dia</span>
           <span className="text-right">Entradas</span>
@@ -126,6 +128,8 @@ export default async function FluxoDeCaixaPage({
             </span>
           </div>
         ))}
+        </div>
+       </div>
       </div>
     </div>
   );

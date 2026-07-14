@@ -41,7 +41,8 @@ export function ResultadoVendas({ model, ano, anos }: { model: ResultadoVendasMo
       {/* Barras empilhadas por mês */}
       <div className="rounded-[14px] border border-line bg-white p-5 shadow-card">
         <span className="text-[15px] font-bold">Vendas mensais por vendedora</span>
-        <div className="mt-4 flex h-[190px] items-end justify-between gap-1.5">
+        <div className="mt-4 overflow-x-auto">
+        <div className="flex h-[190px] min-w-[480px] items-end justify-between gap-1.5">
           {model.barras.map((b) => (
             <div key={b.mes} className="flex flex-1 flex-col items-center gap-2.5">
               <div className="flex h-[150px] w-full max-w-[30px] flex-col-reverse overflow-hidden rounded-[5px]" title={brl(b.total)}>
@@ -52,6 +53,7 @@ export function ResultadoVendas({ model, ano, anos }: { model: ResultadoVendasMo
               <span className="text-[11.5px] font-semibold text-muted">{MESES_ABBR[b.mes - 1]}</span>
             </div>
           ))}
+        </div>
         </div>
       </div>
 

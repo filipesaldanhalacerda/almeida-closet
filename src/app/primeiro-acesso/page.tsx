@@ -102,8 +102,8 @@ export default function PrimeiroAcessoPage() {
 
   if (passo === "boasvindas") {
     return (
-      <div className="min-h-screen md:flex md:items-center md:justify-center md:bg-[radial-gradient(115%_90%_at_50%_-12%,#efece5_0%,#e6e2da_52%,#ded9d0_100%)] md:px-6 md:py-12">
-      <main className="mx-auto flex min-h-screen w-full max-w-[420px] flex-col items-center justify-center px-9 text-center md:min-h-[560px] md:rounded-[32px] md:border md:border-black/5 md:bg-app md:shadow-[0_40px_70px_-28px_rgba(0,0,0,.35)]">
+      <div className="min-h-dvh md:flex md:items-center md:justify-center md:bg-[radial-gradient(115%_90%_at_50%_-12%,#efece5_0%,#e6e2da_52%,#ded9d0_100%)] md:px-6 md:py-12">
+      <main className="mx-auto flex min-h-dvh w-full max-w-[420px] flex-col items-center justify-center px-9 text-center md:min-h-[560px] md:rounded-[32px] md:border md:border-black/5 md:bg-app md:shadow-[0_40px_70px_-28px_rgba(0,0,0,.35)]">
         <div className="flex h-[88px] w-[88px] animate-pop items-center justify-center rounded-full bg-venda-bg">
           <Icon name="check" size={42} color="#2f7d5b" strokeWidth={2.2} />
         </div>
@@ -128,8 +128,8 @@ export default function PrimeiroAcessoPage() {
   }
 
   return (
-    <div className="min-h-screen md:flex md:items-center md:justify-center md:bg-[radial-gradient(115%_90%_at_50%_-12%,#efece5_0%,#e6e2da_52%,#ded9d0_100%)] md:px-6 md:py-12">
-    <main className="mx-auto flex min-h-screen w-full max-w-[420px] flex-col px-8 pb-8 pt-6 md:min-h-[560px] md:rounded-[32px] md:border md:border-black/5 md:bg-app md:px-10 md:py-10 md:shadow-[0_40px_70px_-28px_rgba(0,0,0,.35)]">
+    <div className="min-h-dvh md:flex md:items-center md:justify-center md:bg-[radial-gradient(115%_90%_at_50%_-12%,#efece5_0%,#e6e2da_52%,#ded9d0_100%)] md:px-6 md:py-12">
+    <main className="mx-auto flex min-h-dvh w-full max-w-[420px] flex-col px-8 pb-8 pt-6 md:min-h-[560px] md:rounded-[32px] md:border md:border-black/5 md:bg-app md:px-10 md:py-10 md:shadow-[0_40px_70px_-28px_rgba(0,0,0,.35)]">
       <button
         onClick={() => (passo === "codigo" ? router.push("/login") : setPasso("codigo"))}
         className="mb-2 flex items-center gap-1 self-start py-1.5 text-sm font-semibold text-ink-3"

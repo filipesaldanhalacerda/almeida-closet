@@ -4,7 +4,7 @@ export const metadata = { title: "Sem conexão — Almeida Closet" };
 
 export default function OfflinePage() {
   return (
-    <main className="mx-auto flex min-h-screen w-full max-w-[420px] flex-col items-center justify-center px-9 text-center">
+    <main className="mx-auto flex min-h-dvh w-full max-w-[420px] flex-col items-center justify-center px-9 text-center">
       <div className="flex h-[88px] w-[88px] items-center justify-center rounded-full bg-desp-bg">
         <Icon name="wifi" size={40} color="#b04a34" />
       </div>

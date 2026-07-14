@@ -32,6 +32,8 @@ function ListaCapital({ titulo, cor, itens }: { titulo: string; cor: string; ite
       <div className="px-5 pb-3 pt-4 text-xs font-bold uppercase tracking-[.08em]" style={{ color: cor }}>
         {titulo}
       </div>
+      <div className="overflow-x-auto">
+       <div className="min-w-[480px]">
       <div className="grid grid-cols-[1fr_82px_96px_100px] gap-2 px-5 pb-2.5 text-[11px] font-bold uppercase text-faint">
         <span>Descrição</span>
         <span>Data</span>
@@ -47,6 +49,8 @@ function ListaCapital({ titulo, cor, itens }: { titulo: string; cor: string; ite
           <span className="text-right text-[13px] font-extrabold tnum">{brl(x.acumulado)}</span>
         </div>
       ))}
+       </div>
+      </div>
     </div>
   );
 }

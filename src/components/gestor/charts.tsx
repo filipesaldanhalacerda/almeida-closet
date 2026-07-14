@@ -27,7 +27,7 @@ export function Sparkline({
     })
     .join(" ");
   return (
-    <svg width={width} height={height} viewBox={`0 0 ${width} ${height}`} fill="none">
+    <svg width={width} height={height} viewBox={`0 0 ${width} ${height}`} fill="none" className="h-auto max-w-full">
       <polyline points={pts} stroke={color} strokeWidth={strokeWidth} strokeLinejoin="round" strokeLinecap="round" fill="none" />
     </svg>
   );
@@ -87,7 +87,7 @@ export function StatCard({
         {titulo}
       </div>
       <div
-        className="mt-1.5 text-[20px] font-extrabold tnum"
+        className="mt-1.5 text-[18px] font-extrabold tnum sm:text-[20px]"
         style={{ color: dark ? "#fff" : cor || "#1c1a17" }}
       >
         {valor}

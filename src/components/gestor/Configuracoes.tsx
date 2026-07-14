@@ -122,8 +122,8 @@ export function Configuracoes({ saldoInicial, saldoData, vendedoras, categorias 
               <span className="flex h-10 w-10 flex-none items-center justify-center rounded-full bg-[#efece5] text-[13px] font-extrabold text-ink-2">
                 {iniciais(v.nome)}
               </span>
-              <span className="flex-1 text-sm font-bold">{v.nome}</span>
-              <div className="flex h-[46px] w-[200px] items-center gap-2 rounded-[11px] border border-input-border bg-white px-3.5">
+              <span className="min-w-0 flex-1 truncate text-sm font-bold">{v.nome}</span>
+              <div className="flex h-[46px] w-[150px] flex-none items-center gap-2 rounded-[11px] border border-input-border bg-white px-3.5 xs:w-[180px] sm:w-[200px]">
                 <span className="text-[13px] font-bold text-muted">R$</span>
                 <input
                   value={metas[v.id] ?? ""}
@@ -145,11 +145,11 @@ export function Configuracoes({ saldoInicial, saldoData, vendedoras, categorias 
         <div className="mt-3.5 max-h-[420px] overflow-y-auto rounded-[12px] border border-[#f0eee9]">
           {categorias.map((c) => (
             <div key={c.id} className="flex items-center justify-between gap-3 border-b border-[#f4f1ec] px-4 py-2.5 last:border-0">
-              <span className="text-[13.5px] font-semibold">{c.nome}</span>
+              <span className="min-w-0 flex-1 truncate text-[13.5px] font-semibold">{c.nome}</span>
               <select
                 value={c.grupo_dre}
                 onChange={(e) => salvarGrupo(c, e.target.value as DreGrupo)}
-                className="select-reset h-[38px] rounded-[9px] border border-input-border bg-white px-3 pr-8 text-[12.5px] font-semibold text-ink-2"
+                className="select-reset h-[38px] max-w-[52%] flex-none rounded-[9px] border border-input-border bg-white px-3 pr-8 text-[12.5px] font-semibold text-ink-2"
               >
                 {DRE_GRUPOS.map((g) => (
                   <option key={g.value} value={g.value}>

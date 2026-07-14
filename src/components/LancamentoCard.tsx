@@ -36,7 +36,7 @@ export function LancamentoCard({ l, href }: { l: LancamentoView; href: string })
   return (
     <Link
       href={href}
-      className="flex items-center gap-3 rounded-card border border-line bg-white p-[14px_15px] px-[15px] py-3.5 text-left shadow-card active:bg-[#faf9f6]"
+      className="flex items-center gap-3 rounded-card border border-line bg-white px-[15px] py-3.5 text-left shadow-card active:bg-[#faf9f6]"
     >
       <span
         className="flex h-[42px] w-[42px] flex-none items-center justify-center rounded-[11px]"

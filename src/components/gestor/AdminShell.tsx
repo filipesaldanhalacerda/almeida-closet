@@ -78,7 +78,7 @@ export function AdminShell({
   );
 
   return (
-    <div className="flex min-h-screen bg-app">
+    <div className="flex min-h-dvh bg-app">
       {/* Sidebar desktop */}
       <aside className="hidden w-60 flex-none flex-col border-r border-line-2 bg-panel p-[22px_14px] px-3.5 py-5 md:flex">
         <div className="px-2.5 pb-5">
@@ -96,7 +96,7 @@ export function AdminShell({
         <div className="fixed inset-0 z-50 flex md:hidden" onClick={() => setDrawer(false)}>
           <div className="absolute inset-0 bg-[rgba(20,18,15,.4)] animate-fadein" />
           <aside
-            className="relative flex w-64 flex-col border-r border-line-2 bg-panel px-3.5 py-5"
+            className="relative flex w-64 flex-col border-r border-line-2 bg-panel px-3.5 pb-[max(1.25rem,env(safe-area-inset-bottom))] pt-[max(1.25rem,env(safe-area-inset-top))]"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="px-2.5 pb-5">
@@ -113,7 +113,7 @@ export function AdminShell({
 
       {/* Área principal */}
       <div className="flex min-w-0 flex-1 flex-col">
-        <header className="flex h-[66px] flex-none items-center justify-between border-b border-line-2 bg-[#fbfaf8] px-4 md:px-7">
+        <header className="flex min-h-[66px] flex-none items-center justify-between border-b border-line-2 bg-[#fbfaf8] px-4 pt-[env(safe-area-inset-top)] md:px-7">
           <div className="flex min-w-0 items-center gap-3">
             <button
               onClick={() => setDrawer(true)}
@@ -135,7 +135,9 @@ export function AdminShell({
             </button>
           </div>
         </header>
-        <main className="flex-1 overflow-y-auto p-4 md:p-7">{children}</main>
+        <main className="flex-1 overflow-y-auto overflow-x-hidden p-4 pb-[max(1rem,env(safe-area-inset-bottom))] md:p-7 md:pb-[max(1.75rem,env(safe-area-inset-bottom))]">
+          {children}
+        </main>
       </div>
     </div>
   );

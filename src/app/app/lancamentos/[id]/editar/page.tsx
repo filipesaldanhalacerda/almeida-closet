@@ -23,7 +23,7 @@ export default async function EditarLancamentoVendedora({
   if (!lanc) notFound();
 
   return (
-    <div className="flex min-h-screen flex-col px-5 pt-2">
+    <div className="flex min-h-dvh flex-col px-5 pt-2">
       <FormHeader titulo="Editar lançamento" />
       <LancamentoForm
         modo="vendedora"

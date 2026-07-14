@@ -87,11 +87,11 @@ export default async function DashboardGestor({
             "radial-gradient(130% 180% at 88% -30%, #34302a 0%, #262320 45%, #1c1a17 100%)",
         }}
       >
-        <div>
+        <div className="min-w-0">
           <div className="text-[13px] font-semibold tracking-[.03em] text-white/60">
             Resultado do mês · {periodoLabel(ano, mes)}
           </div>
-          <div className="mt-1.5 text-[42px] font-extrabold tracking-[-.02em] tnum">{brl(d.resultado)}</div>
+          <div className="mt-1.5 text-[clamp(28px,8vw,42px)] font-extrabold tracking-[-.02em] tnum">{brl(d.resultado)}</div>
           <div className="mt-2 text-[13.5px] text-white/70">
             Entrou <b className="text-[#8fd6b4]">{brl(d.recebido)}</b> · Saiu{" "}
             <b className="text-[#e6a993]">{brl(d.despesas)}</b>
@@ -106,16 +106,16 @@ export default async function DashboardGestor({
       </div>
 
       {/* KPIs */}
-      <div className="grid grid-cols-2 gap-3.5 md:grid-cols-3 xl:grid-cols-5">
+      <div className="grid grid-cols-1 gap-3.5 xs:grid-cols-2 md:grid-cols-3 xl:grid-cols-5">
         {kpis.map((k) => (
-          <div key={k.label} className="rounded-card border border-line bg-white p-[18px] shadow-card">
+          <div key={k.label} className="min-w-0 rounded-card border border-line bg-white p-[18px] shadow-card">
             <div className="flex items-center justify-between">
               <span className="flex h-[38px] w-[38px] items-center justify-center rounded-[11px]" style={{ background: k.bg }}>
                 <Icon name={k.icon} size={18} color={k.color} />
               </span>
               {k.delta !== null && <DeltaBadge valor={k.delta} bom={k.bom} />}
             </div>
-            <div className="mt-4 text-[23px] font-extrabold tracking-[-.015em] tnum" style={{ color: k.color }}>
+            <div className="mt-4 text-[19px] font-extrabold tracking-[-.015em] tnum sm:text-[23px]" style={{ color: k.color }}>
               {k.value}
             </div>
             <div className="mt-1 text-[13px] font-bold text-ink-2">{k.label}</div>
@@ -137,9 +137,9 @@ export default async function DashboardGestor({
           <div className="flex h-[184px] items-end justify-between pt-4">
             {d.serie6.map((s) => (
               <div key={`${s.ano}-${s.mes}`} className="flex flex-1 flex-col items-center gap-2.5">
-                <div className="flex h-[150px] items-end gap-[5px]">
-                  <div className="w-4 rounded-t-[4px] bg-venda-fg" style={{ height: `${(s.recebido / maxBar) * 150}px` }} title={brl(s.recebido)} />
-                  <div className="w-4 rounded-t-[4px] bg-[#d99a86]" style={{ height: `${(s.despesa / maxBar) * 150}px` }} title={brl(s.despesa)} />
+                <div className="flex h-[150px] items-end gap-[3px] sm:gap-[5px]">
+                  <div className="w-3 rounded-t-[4px] bg-venda-fg sm:w-4" style={{ height: `${(s.recebido / maxBar) * 150}px` }} title={brl(s.recebido)} />
+                  <div className="w-3 rounded-t-[4px] bg-[#d99a86] sm:w-4" style={{ height: `${(s.despesa / maxBar) * 150}px` }} title={brl(s.despesa)} />
                 </div>
                 <span className="text-xs font-semibold text-muted">{s.label}</span>
               </div>
@@ -295,9 +295,9 @@ function CompCell({ label, atual, ant, bomSeMaior }: { label: string; atual: num
   const delta = ant === 0 ? (atual === 0 ? 0 : 100) : ((atual - ant) / Math.abs(ant)) * 100;
   const bom = bomSeMaior ? delta >= 0 : delta <= 0;
   return (
-    <div className="rounded-[12px] bg-app p-3">
-      <div className="text-[11px] font-bold uppercase tracking-[.05em] text-faint">{label}</div>
-      <div className="mt-1 text-[15px] font-extrabold tnum">{brl(atual)}</div>
+    <div className="min-w-0 rounded-[12px] bg-app p-2.5 sm:p-3">
+      <div className="truncate text-[11px] font-bold uppercase tracking-[.05em] text-faint">{label}</div>
+      <div className="mt-1 text-[13px] font-extrabold tnum sm:text-[15px]">{brl(atual)}</div>
       <div className="mt-0.5 text-[11.5px] font-semibold" style={{ color: bom ? "#2f7d5b" : "#b04a34" }}>
         {delta >= 0 ? "+" : "−"}
         {pct(Math.abs(delta), 0)}

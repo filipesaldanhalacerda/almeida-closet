@@ -45,8 +45,8 @@ export function MeusLancamentos({ lancamentos, hoje }: { lancamentos: Lancamento
   }, [filtrados]);
 
   return (
-    <div className="flex min-h-screen flex-col">
-      <div className="flex-none px-6 pb-2.5 pt-1.5">
+    <div className="flex min-h-dvh flex-col">
+      <div className="flex-none px-6 pb-2.5 pt-[calc(env(safe-area-inset-top)+0.375rem)]">
         <div className="mb-3.5 flex items-center gap-2.5">
           <Link
             href="/app"
@@ -89,7 +89,7 @@ export function MeusLancamentos({ lancamentos, hoje }: { lancamentos: Lancamento
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto px-6 pb-32 pt-2">
+      <div className="flex-1 overflow-y-auto px-6 pb-[calc(8rem+env(safe-area-inset-bottom))] pt-2">
         {grupos.length === 0 ? (
           <div className="flex flex-col items-center px-5 py-12 text-center">
             <div className="flex h-14 w-14 items-center justify-center rounded-[14px] bg-[#f2efe9] text-faint-3">

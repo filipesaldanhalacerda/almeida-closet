@@ -11,7 +11,7 @@ export function BottomNav() {
   const lista = pathname.startsWith("/app/lancamentos") && !pathname.includes("/novo");
 
   return (
-    <div className="pointer-events-none fixed inset-x-0 bottom-0 z-40 mx-auto flex h-[88px] w-full max-w-[430px] items-start justify-around bg-gradient-to-t from-app from-[62%] to-transparent px-8 pt-3.5">
+    <div className="pointer-events-none fixed inset-x-0 bottom-0 z-40 mx-auto flex h-[calc(88px+env(safe-area-inset-bottom))] w-full max-w-[440px] items-start justify-around bg-gradient-to-t from-app from-[62%] to-transparent px-8 pb-[env(safe-area-inset-bottom)] pt-3.5">
       <Link
         href="/app"
         className="pointer-events-auto flex flex-col items-center gap-[3px]"
