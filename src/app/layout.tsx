@@ -13,7 +13,7 @@ const publicSans = Public_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "Almeida Closet — Gestão de Lançamentos",
+  title: "Almeida Closet · Gestão de Lançamentos",
   description:
     "Sistema de gestão de vendas, recebimentos e despesas da Almeida Closet.",
   manifest: "/manifest.webmanifest",

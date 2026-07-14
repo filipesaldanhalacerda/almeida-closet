@@ -71,7 +71,7 @@ export function esvaziarFila(): Promise<number> {
           // Sessão expirada / servidor indisponível: mantém e tenta mais tarde.
           break;
         } else {
-          // 4xx real de validação: o payload nunca vai passar — descarta para
+          // 4xx real de validação: o payload nunca vai passar, descarta para
           // não travar a fila (o item era válido quando salvo; caso raro).
           removerDaFila(item.id);
         }

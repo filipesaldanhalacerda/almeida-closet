@@ -14,7 +14,7 @@ export interface NavGroup {
   itens: NavItem[];
 }
 
-// Menu do gestor, agrupado por área. "Novo lançamento" não entra aqui — já há
+// Menu do gestor, agrupado por área. "Novo lançamento" não entra aqui, já há
 // o botão fixo no topo. "Relatório mensal" foi removido por ser redundante com
 // o Dashboard.
 export const NAV_GROUPS: NavGroup[] = [
@@ -26,7 +26,7 @@ export const NAV_GROUPS: NavGroup[] = [
     titulo: "Movimentações",
     itens: [
       { href: "/admin/lancamentos", label: "Lançamentos", icon: "list", titulo: "Lançamentos" },
-      { href: "/admin/capital", label: "Capital", icon: "banknote", titulo: "Capital — investimentos e devoluções" },
+      { href: "/admin/capital", label: "Capital", icon: "banknote", titulo: "Capital" },
     ],
   },
   {

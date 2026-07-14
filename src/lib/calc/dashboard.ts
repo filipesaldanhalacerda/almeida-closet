@@ -1,4 +1,4 @@
-// Dashboard do gestor — KPIs, gráficos e "extras" (resumo do dia, top clientes,
+// Dashboard do gestor, KPIs, gráficos e "extras" (resumo do dia, top clientes,
 // comparativo anual, metas). Tudo calculado dos lançamentos.
 import { FORMA_LABEL } from "../constants";
 import type { LancamentoView } from "../types";

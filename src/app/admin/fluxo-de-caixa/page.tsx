@@ -4,7 +4,7 @@ import { getConfig, getLancamentos } from "@/lib/data";
 import { brl, hojeIso, isoParaBR, periodoLabel } from "@/lib/format";
 
 export const dynamic = "force-dynamic";
-export const metadata = { title: "Fluxo de caixa — Almeida Closet" };
+export const metadata = { title: "Fluxo de caixa · Almeida Closet" };
 
 export default async function FluxoDeCaixaPage({
   searchParams,

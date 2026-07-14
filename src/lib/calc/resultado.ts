@@ -1,4 +1,4 @@
-// Resultado de Vendas — por vendedora/mês e por modalidade. Ver README §8.
+// Resultado de Vendas, por vendedora/mês e por modalidade. Ver README §8.
 import { MODALIDADE_LABEL } from "../constants";
 import type { LancamentoView, ModalidadeVenda } from "../types";
 import { arr12, ymOf } from "./helpers";

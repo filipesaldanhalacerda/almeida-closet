@@ -2,7 +2,7 @@ import { Configuracoes } from "@/components/gestor/Configuracoes";
 import { getCategorias, getConfig, getMetas, getVendedoras } from "@/lib/data";
 
 export const dynamic = "force-dynamic";
-export const metadata = { title: "Configurações — Almeida Closet" };
+export const metadata = { title: "Configurações · Almeida Closet" };
 
 export default async function ConfiguracoesPage() {
   const [config, categorias, vendedoras, metas] = await Promise.all([

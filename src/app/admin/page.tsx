@@ -8,7 +8,7 @@ import { getConfig, getLancamentos, getMetas, getVendedoras } from "@/lib/data";
 import { brl, brlSinal, fmtInt, hojeIso, iniciais, isoParaBR, pct, periodoLabel } from "@/lib/format";
 
 export const dynamic = "force-dynamic";
-export const metadata = { title: "Dashboard — Almeida Closet" };
+export const metadata = { title: "Dashboard · Almeida Closet" };
 
 export default async function DashboardGestor({
   searchParams,
@@ -41,7 +41,7 @@ export default async function DashboardGestor({
   const kpis = [
     { label: "Recebido no mês", hint: "o que entrou", value: brl(d.recebido), color: "#2f7d5b", bg: "#e7f1ec", icon: "banknote" as const, delta: d.delta.recebido, bom: d.delta.recebido >= 0 },
     { label: "Despesas", hint: "o que saiu", value: brl(d.despesas), color: "#b04a34", bg: "#f7e8e2", icon: "arrowOut" as const, delta: d.delta.despesas, bom: d.delta.despesas <= 0 },
-    { label: "Vendas (volume)", hint: `${d.vendasCount} vendas`, value: brl(d.vendasVolume), color: "#2b6f74", bg: "#e2eff0", icon: "tag" as const, delta: d.delta.vendas, bom: d.delta.vendas >= 0 },
+    { label: "Vendas (volume)", hint: `${d.vendasCount} ${d.vendasCount === 1 ? "venda" : "vendas"}`, value: brl(d.vendasVolume), color: "#2b6f74", bg: "#e2eff0", icon: "tag" as const, delta: d.delta.vendas, bom: d.delta.vendas >= 0 },
     { label: "Ticket médio", hint: "por venda", value: brl(d.ticketMedio), color: "#42403b", bg: "#efece5", icon: "chart" as const, delta: d.delta.ticket, bom: d.delta.ticket >= 0 },
     { label: "Saldo de caixa", hint: "acumulado", value: brl(d.saldoCaixa), color: d.saldoCaixa < 0 ? "#b04a34" : "#1c1a17", bg: "#f2ece2", icon: "wallet" as const, delta: null, bom: true },
   ];
@@ -59,7 +59,7 @@ export default async function DashboardGestor({
         {d.semLancamentosHoje ? (
           <span className="flex items-center gap-2 text-desp-fg">
             <Icon name="alert" size={18} color="#b04a34" />
-            Nenhum lançamento registrado hoje ainda.
+            Nenhum lançamento registrado ainda hoje.
           </span>
         ) : (
           <>

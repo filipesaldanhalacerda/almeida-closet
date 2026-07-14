@@ -3,7 +3,7 @@ import { FormHeader } from "@/components/vendedora/FormHeader";
 import { getCategorias, getClientes } from "@/lib/data";
 
 export const dynamic = "force-dynamic";
-export const metadata = { title: "Novo lançamento — Almeida Closet" };
+export const metadata = { title: "Novo lançamento · Almeida Closet" };
 
 export default async function NovoLancamentoVendedora() {
   const [categorias, clientes] = await Promise.all([

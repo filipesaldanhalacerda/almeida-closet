@@ -61,7 +61,7 @@ interface FetchLancamentosOptions {
 
 /**
  * Busca lançamentos e resolve dados relacionados (categoria, vendedora, criador)
- * em JS — evita ambiguidade de embedding do PostgREST (vários FKs a profiles).
+ * em JS, evita ambiguidade de embedding do PostgREST (vários FKs a profiles).
  */
 export async function getLancamentos(
   opts: FetchLancamentosOptions = {},

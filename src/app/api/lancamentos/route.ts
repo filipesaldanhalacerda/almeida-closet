@@ -12,7 +12,7 @@ export async function POST(req: NextRequest) {
     const user = await requireUser();
     const body = await req.json().catch(() => ({}));
 
-    // Vendedora só cria capital? Não — capital é só do gestor.
+    // Vendedora só cria capital? Não, capital é só do gestor.
     const parsed = lancamentoSchema.safeParse(body);
     if (!parsed.success) {
       return jsonError(parsed.error.issues[0]?.message ?? "Dados inválidos");

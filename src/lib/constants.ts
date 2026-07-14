@@ -43,7 +43,7 @@ export const FORMA_LABEL: Record<FormaPagamento, string> = Object.fromEntries(
 
 // ---- Meios de recebimento --------------------------------------------------
 export const MEIOS_RECEBIMENTO: { value: MeioRecebimento; label: string }[] = [
-  { value: "pix", label: "PIX" },
+  { value: "pix", label: "Pix" },
   { value: "cartao_credito", label: "SIPAG Crédito" },
   { value: "cartao_debito", label: "SIPAG Débito" },
   { value: "dinheiro", label: "Dinheiro" },

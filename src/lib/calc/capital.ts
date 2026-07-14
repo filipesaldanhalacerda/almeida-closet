@@ -1,4 +1,4 @@
-// Capital — listas de aportes (investimento) e devoluções, com acumulado.
+// Capital, listas de aportes (investimento) e devoluções, com acumulado.
 import type { LancamentoView } from "../types";
 import { noAno } from "./helpers";
 

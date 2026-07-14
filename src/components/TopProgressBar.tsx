@@ -4,8 +4,8 @@ import { usePathname, useSearchParams } from "next/navigation";
 import * as React from "react";
 
 // Barra de progresso no topo (estilo YouTube). Dá feedback IMEDIATO de que
-// algo está carregando ao navegar — em links e em navegações programáticas
-// (router.push/replace) — já que páginas dinâmicas do App Router podem levar
+// algo está carregando ao navegar, em links e em navegações programáticas
+// (router.push/replace), já que páginas dinâmicas do App Router podem levar
 // alguns segundos para trocar. Sem isso, o usuário clica e "nada acontece".
 export function TopProgressBar() {
   const pathname = usePathname();

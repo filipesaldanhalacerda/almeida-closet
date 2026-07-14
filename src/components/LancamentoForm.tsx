@@ -36,7 +36,7 @@ type Modo = "vendedora" | "gestor";
 type TipoForm = "venda" | "recebimento" | "despesa" | "capital";
 type ModoReceb = "tudo" | "parcial" | "nao";
 
-// Bandeiras de cartão (recebimento) — logo oficial em /public/bandeiras.
+// Bandeiras de cartão (recebimento), logo oficial em /public/bandeiras.
 const BANDEIRAS: { valor: string; logo: string }[] = [
   { valor: "VISA", logo: "/bandeiras/visa.svg" },
   { valor: "MASTER", logo: "/bandeiras/master.svg" },
@@ -45,12 +45,12 @@ const BANDEIRAS: { valor: string; logo: string }[] = [
   { valor: "AMEX", logo: "/bandeiras/amex.svg" },
 ];
 
-// Dica de um toque sob o seletor de tipo — linguagem do balcão
+// Dica de um toque sob o seletor de tipo, linguagem do balcão
 const TIPO_HINTS: Record<TipoForm, string> = {
-  venda: "O que a cliente levou — valor cheio, mesmo se for pagar depois. Conta nas metas.",
+  venda: "O que a cliente levou: valor cheio, mesmo se for pagar depois. Conta nas metas.",
   recebimento: "Dinheiro que entrou no caixa: parcela do crediário, repasse da maquininha…",
-  despesa: "Dinheiro que saiu — contas e pagamentos da loja.",
-  capital: "Aportes e retiradas dos sócios — não entram no resultado da loja.",
+  despesa: "Dinheiro que saiu: contas e pagamentos da loja.",
+  capital: "Aportes e retiradas dos sócios. Não entram no resultado da loja.",
 };
 
 // Meio de recebimento sugerido a partir da forma de pagamento da venda
@@ -318,11 +318,11 @@ export function LancamentoForm({
       if (!editando) {
         enfileirar(body);
         if (modo === "vendedora") {
-          sessionStorage.setItem("ac_toast", "Salvo no aparelho — enviaremos ao reconectar");
+          sessionStorage.setItem("ac_toast", "Salvo no aparelho. Enviaremos ao reconectar");
           router.replace("/app/sucesso");
           return;
         }
-        toast("Sem conexão — salvo no aparelho, enviaremos ao reconectar");
+        toast("Sem conexão. Salvo no aparelho, enviaremos ao reconectar");
         router.replace("/admin/lancamentos");
         return;
       }
@@ -372,7 +372,7 @@ export function LancamentoForm({
         <span className="text-[13px] font-bold text-ink-2">Já entrou dinheiro?</span>
       </div>
       <div className="mb-3 text-[12px] leading-[1.45] text-muted">
-        Registre a venda e o que entrou no caixa de uma vez só — sem precisar lançar duas vezes.
+        Registre a venda e o que entrou no caixa de uma vez só, sem precisar lançar duas vezes.
       </div>
       <div className="flex gap-2">
         {(
@@ -615,7 +615,7 @@ export function LancamentoForm({
         </div>
       )}
 
-      {/* Data — a linha inteira abre o calendário */}
+      {/* Data, a linha inteira abre o calendário */}
       <label className="relative mt-[18px] flex cursor-pointer items-center gap-3 rounded-[12px] border border-line bg-white px-4 py-3 shadow-card transition-colors hover:border-input-border">
         <Icon name="calendar" size={20} color="#8a857c" />
         <span className="flex-1">
@@ -979,7 +979,7 @@ function ClienteField({
       {!jaCadastrada && norm.length > 0 && !aberto && (
         <div className="mt-1.5 flex items-center gap-1 px-0.5 text-[12px] font-semibold text-desp-fg">
           <Icon name="alert" size={13} color="#b04a34" strokeWidth={2.4} />
-          Cliente não cadastrada — cadastre ou selecione uma da lista
+          Cliente não cadastrada. Cadastre ou selecione uma da lista
         </div>
       )}
 
@@ -987,7 +987,7 @@ function ClienteField({
         <div className="absolute left-0 right-0 top-[80px] z-20 overflow-hidden rounded-[12px] border border-line bg-white shadow-[0_12px_28px_-10px_rgba(0,0,0,.22)]">
           {!norm && lista.length > 0 && (
             <div className="border-b border-[#f2efe9] bg-panel px-4 py-2 text-[11px] font-bold uppercase tracking-[.1em] text-faint">
-              {lista.length === 1 ? "1 cliente" : `${lista.length} clientes`} — toque para escolher
+              {lista.length === 1 ? "1 cliente" : `${lista.length} clientes`} · toque para escolher
             </div>
           )}
           <div className="max-h-[240px] overflow-y-auto">
@@ -1046,7 +1046,7 @@ function ClienteField({
             onChange={(e) => setTelefone(mascaraTelefoneBR(e.target.value))}
             inputMode="tel"
             maxLength={15}
-            placeholder="Telefone (opcional) — (11) 91234-5678"
+            placeholder="Telefone (opcional)"
             className="focus-ring h-11 w-full rounded-[10px] border border-input-border bg-white px-3.5 text-[14px]"
           />
           <div className="flex gap-2">

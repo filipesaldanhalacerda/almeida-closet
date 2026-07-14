@@ -146,7 +146,7 @@ export default function PrimeiroAcessoPage() {
         <form onSubmit={validarCodigo} className="flex flex-1 flex-col justify-center">
           <div className="text-2xl font-extrabold tracking-[-.01em]">Ative seu acesso</div>
           <div className="mt-3 text-[15px] leading-[1.5] text-ink-3">
-            Digite o código que a gerência enviou pra você.
+            Digite o código que a gerência enviou para você.
           </div>
           <input
             value={codigo}

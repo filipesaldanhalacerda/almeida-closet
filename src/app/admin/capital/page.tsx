@@ -4,7 +4,7 @@ import { getLancamentos } from "@/lib/data";
 import { brl, isoParaBR } from "@/lib/format";
 
 export const dynamic = "force-dynamic";
-export const metadata = { title: "Capital — Almeida Closet" };
+export const metadata = { title: "Capital · Almeida Closet" };
 
 export default async function CapitalPage() {
   const lancamentos = await getLancamentos({});

@@ -1,4 +1,4 @@
-// DRE anual — matriz meses × contas, calculada dos lançamentos.
+// DRE anual, matriz meses × contas, calculada dos lançamentos.
 // Regras: ver design/README.md §8 e enunciado.
 import { DRE_GRUPO_LABEL, FORMA_LABEL, RECEITA_BRUTA_FORMAS } from "../constants";
 import type { DreGrupo, LancamentoView } from "../types";

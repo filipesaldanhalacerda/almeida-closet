@@ -5,7 +5,7 @@ import { Icon } from "@/components/Icon";
 import { BottomSheet } from "@/components/ui/Modal";
 
 /**
- * Guia "Venda ou Recebimento?" — explica em linguagem simples o que é cada
+ * Guia "Venda ou Recebimento?", explica em linguagem simples o que é cada
  * tipo, quando usar e qual o impacto nos números da loja.
  * Bottom sheet padrão para vendedora e gestor (centralizado no desktop).
  */
@@ -18,7 +18,7 @@ export function AjudaLancamento() {
         Venda ou Recebimento?
       </div>
       <div className="mx-auto mt-1.5 max-w-[340px] text-center text-[13px] leading-[1.5] text-ink-3">
-        O sistema separa <b>o que foi vendido</b> de <b>o dinheiro que entrou</b>. É isso que
+        O sistema separa <b>o que foi vendido</b> <b>do dinheiro que entrou</b>. É isso que
         deixa os números da loja certos.
       </div>
 
@@ -35,9 +35,9 @@ export function AjudaLancamento() {
             </div>
           </div>
           <ul className="mt-2.5 flex flex-col gap-1 text-[13px] leading-[1.5] text-ink-2">
-            <li>• Registre <b>na hora da venda</b>, pelo <b>valor cheio</b> — mesmo que ela vá pagar depois (crediário).</li>
+            <li>• Registre <b>na hora da venda</b>, pelo <b>valor cheio</b>, mesmo que ela vá pagar depois (crediário).</li>
             <li>
-              • <b>Impacto:</b> conta nas <b>suas metas</b>, no ranking das vendedoras, no nº de
+              • <b>Impacto:</b> conta nas <b>suas metas</b>, no ranking das vendedoras, no número de
               vendas e no ticket médio.
             </li>
           </ul>
@@ -74,12 +74,12 @@ export function AjudaLancamento() {
         <div className="mt-2 flex flex-col gap-1.5 text-[13px] leading-[1.55] text-ink-2">
           <div>
             <b className="text-venda-fg">Hoje:</b> venda de <b>R$ 300</b> + recebimento de{" "}
-            <b>R$ 100</b> (a entrada). O app já registra os dois juntos no bloco{" "}
+            <b>R$ 100</b> (a entrada). O sistema já registra os dois juntos no bloco{" "}
             <i>“Já entrou dinheiro?”</i>.
           </div>
           <div>
             <b className="text-receb-fg">Mês que vem:</b> quando ela pagar a 2ª parcela, lance{" "}
-            <b>só um recebimento</b> de R$ 100. A venda já foi registrada — não registre de novo!
+            <b>só um recebimento</b> de R$ 100. A venda já foi registrada, não registre de novo!
           </div>
         </div>
       </div>
@@ -106,9 +106,9 @@ export function AjudaLancamento() {
       </div>
 
       <div className="mt-4 rounded-[10px] bg-app px-3.5 py-2.5 text-[12px] leading-[1.5] text-muted">
-        O sistema não controla “quanto falta pagar” — ele registra o que foi vendido, o que entrou
-        e o que saiu. Sem registrar a venda, a loja perde o desempenho; sem o recebimento, o caixa
-        fica errado.
+        O sistema não controla “quanto falta pagar”: ele registra o que foi vendido, o que entrou
+        e o que saiu. Sem registrar a venda, o seu desempenho fica errado; sem o recebimento, o
+        caixa fica errado.
       </div>
 
       <button

@@ -3,7 +3,7 @@ import { LancamentoForm } from "@/components/LancamentoForm";
 import { getCategorias, getClientes, getLancamentoById, getVendedoras } from "@/lib/data";
 
 export const dynamic = "force-dynamic";
-export const metadata = { title: "Editar lançamento — Almeida Closet" };
+export const metadata = { title: "Editar lançamento · Almeida Closet" };
 
 export default async function EditarLancamentoGestor({ params }: { params: { id: string } }) {
   const [lanc, categorias, vendedoras, clientes] = await Promise.all([

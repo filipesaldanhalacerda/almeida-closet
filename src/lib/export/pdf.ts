@@ -1,7 +1,7 @@
-// Relatório em PDF do Almeida Closet — layout profissional com a identidade
+// Relatório em PDF do Almeida Closet, layout profissional com a identidade
 // do sistema: capa com resumo, seções com tabelas zebradas, DRE e Resultado
 // de Vendas em paisagem, rodapé com paginação. Gerado com pdfkit (fontes
-// padrão Helvetica, WinAnsi — pt-BR ok).
+// padrão Helvetica, WinAnsi, pt-BR ok).
 import PDFDocument from "pdfkit";
 import { calcularCapital } from "@/lib/calc/capital";
 import { calcularDre, type DreGrupoAgg, type DreModel, type DreSubtotal } from "@/lib/calc/dre";
@@ -238,7 +238,7 @@ function secaoReceita(doc: Doc, p: ExportParams) {
     .filter((l) => (l.tipo === "venda" || l.tipo === "recebimento") && noRange(l.data))
     .sort((a, b) => a.data.localeCompare(b.data));
 
-  tituloSecao(doc, "Receita", VENDA, `${itens.length} lançamentos no período`);
+  tituloSecao(doc, "Receita", VENDA, `${itens.length} ${itens.length === 1 ? "lançamento" : "lançamentos"} no período`);
 
   const cols: Col[] = [
     { label: "Descrição", width: 118 },
@@ -279,7 +279,7 @@ function secaoDespesa(doc: Doc, p: ExportParams) {
     .filter((l) => l.tipo === "despesa" && noRange(l.data))
     .sort((a, b) => a.data.localeCompare(b.data));
 
-  tituloSecao(doc, "Despesa", DESP, `${itens.length} lançamentos no período`);
+  tituloSecao(doc, "Despesa", DESP, `${itens.length} ${itens.length === 1 ? "lançamento" : "lançamentos"} no período`);
 
   const cols: Col[] = [
     { label: "Categoria", width: 125 },

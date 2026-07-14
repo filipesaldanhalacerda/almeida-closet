@@ -5,7 +5,7 @@ import { getSessionProfile } from "@/lib/data";
 
 export const dynamic = "force-dynamic";
 
-// Área da vendedora — sempre mobile. O gestor é redirecionado para /admin.
+// Área da vendedora, sempre mobile. O gestor é redirecionado para /admin.
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
   const profile = await getSessionProfile();
   if (!profile) redirect("/login");

@@ -4,7 +4,7 @@ import { getLancamentos } from "@/lib/data";
 import { hojeIso } from "@/lib/format";
 
 export const dynamic = "force-dynamic";
-export const metadata = { title: "DRE anual — Almeida Closet" };
+export const metadata = { title: "DRE anual · Almeida Closet" };
 
 export default async function DrePage({ searchParams }: { searchParams: { ano?: string } }) {
   const anoAtual = Number(hojeIso().slice(0, 4));

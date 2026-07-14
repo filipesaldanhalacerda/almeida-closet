@@ -5,7 +5,7 @@ import { getConfig, getLancamentos } from "@/lib/data";
 import { hojeIso, isoParaBR, periodoLabel } from "@/lib/format";
 
 export const dynamic = "force-dynamic";
-export const metadata = { title: "Relatórios — Almeida Closet" };
+export const metadata = { title: "Relatórios · Almeida Closet" };
 
 export default async function RelatoriosPage({
   searchParams,

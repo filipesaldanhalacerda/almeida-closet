@@ -3,7 +3,7 @@ import { getLancamentos, getVendedoras } from "@/lib/data";
 import { hojeIso, periodoLabel } from "@/lib/format";
 
 export const dynamic = "force-dynamic";
-export const metadata = { title: "Equipe — Almeida Closet" };
+export const metadata = { title: "Equipe · Almeida Closet" };
 
 export default async function EquipePage({
   searchParams,

@@ -1,4 +1,4 @@
-// Planilha Excel do Almeida Closet — mesmo formato da planilha original do
+// Planilha Excel do Almeida Closet, mesmo formato da planilha original do
 // gestor (abas Receita, Despesa, DRE, Fluxo de Caixa, Resultado de Vendas,
 // Investimento e Devolução), com identidade da loja: faixa-título em cada aba,
 // cabeçalhos estilizados, zebra, totais e impressão configurada.
@@ -18,7 +18,7 @@ import { TODAS_ABAS, type AbaKey, type ExportParams } from "./tipos";
 
 const MOEDA = '"R$" #,##0.00';
 
-// Paleta (ARGB) — mesmos tokens do app
+// Paleta (ARGB), mesmos tokens do app
 const INK = "FF1C1A17";
 const INK2 = "FF42403B";
 const BRANCO = "FFFFFFFF";
@@ -170,7 +170,7 @@ function setupImpressao(ws: ExcelJS.Worksheet, paisagem = false) {
     margins: { left: 0.35, right: 0.35, top: 0.5, bottom: 0.55, header: 0.2, footer: 0.25 },
   };
   ws.headerFooter = {
-    oddFooter: "&L&8Almeida Closet — Gestão de Lançamentos&R&8Página &P de &N",
+    oddFooter: "&L&8Almeida Closet · Gestão de Lançamentos&R&8Página &P de &N",
   };
 }
 
@@ -265,7 +265,7 @@ export async function gerarWorkbook(
       "Data do Recebimento",
       "Detalhamento (Cliente)",
       "Valor",
-      "Vendedor Responsável",
+      "Vendedora Responsável",
       "Modalidade de Venda",
     ]);
 
@@ -312,7 +312,7 @@ export async function gerarWorkbook(
     ] as Partial<ExcelJS.Column>[];
     tituloAba(ws, "Despesa", periodo, N, DESP);
     headerColunas(ws, [
-      "Descrição da Despesa",
+      "Categoria",
       "Data de Vencimento",
       "Data do Pagamento",
       "Detalhamento (Credor)",
@@ -353,7 +353,7 @@ export async function gerarWorkbook(
     ws.getColumn(1).width = 32;
     for (let i = 2; i <= 13; i++) ws.getColumn(i).width = 12;
     ws.getColumn(14).width = 14;
-    tituloAba(ws, `DRE — Demonstração do Resultado · Ano ${p.ano}`, periodo, N, CAPITAL);
+    tituloAba(ws, `Demonstração do Resultado (DRE) · Ano ${p.ano}`, periodo, N, CAPITAL);
     headerColunas(ws, ["Conta", ...MESES_ABBR, "Total"]);
 
     const dre = calcularDre(p.lancamentos, p.ano);
@@ -388,7 +388,7 @@ export async function gerarWorkbook(
       { key: "saldoFinal", width: 17 },
     ] as Partial<ExcelJS.Column>[];
     tituloAba(ws, "Fluxo de Caixa", periodo, N, RECEB);
-    headerColunas(ws, ["Data", "Entrada", "Saída", "Saldo do Dia", "Saldo Final"]);
+    headerColunas(ws, ["Data", "Entradas", "Saídas", "Saldo do Dia", "Saldo Final"]);
 
     const fx = fluxoRange(p.lancamentos, p);
     const ini = ws.addRow({ data: "Saldo inicial", saldoFinal: fx.saldoAntes });

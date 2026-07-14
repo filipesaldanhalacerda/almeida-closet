@@ -8,7 +8,7 @@ import { getLancamentos, getSessionProfile } from "@/lib/data";
 import { anoMes, brl, dataPorExtenso, hojeIso, iniciais } from "@/lib/format";
 
 export const dynamic = "force-dynamic";
-export const metadata = { title: "Início — Almeida Closet" };
+export const metadata = { title: "Início · Almeida Closet" };
 
 export default async function HomeVendedora() {
   const profile = await getSessionProfile();
@@ -40,7 +40,7 @@ export default async function HomeVendedora() {
   return (
     <div className="flex min-h-dvh flex-col">
       <div className="flex-1 overflow-y-auto px-5 pb-[calc(8rem+env(safe-area-inset-bottom))] pt-[calc(env(safe-area-inset-top)+0.75rem)]">
-        {/* Cabeçalho — saudação + Sair claro */}
+        {/* Cabeçalho, saudação + Sair claro */}
         <header className="flex items-center justify-between gap-3">
           <div className="flex min-w-0 items-center gap-3">
             <span className="flex h-12 w-12 flex-none items-center justify-center rounded-full bg-ink text-[16px] font-extrabold text-white">

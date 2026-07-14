@@ -103,11 +103,11 @@ export function DreTable({
           {pending && <Spinner size={16} />}
         </div>
         <div className="text-[12.5px] font-semibold text-muted">
-          Calculado automaticamente dos lançamentos · negativos em vermelho
+          Calculado automaticamente a partir dos lançamentos · negativos em vermelho
         </div>
       </div>
 
-      {/* Cards resumo — com comparativo vs ano anterior */}
+      {/* Cards resumo, com comparativo vs ano anterior */}
       <div className="grid grid-cols-1 gap-3.5 xs:grid-cols-2 lg:grid-cols-4">
         <StatCard
           titulo="Receita Bruta"

@@ -1,6 +1,6 @@
 import { Icon } from "@/components/Icon";
 
-export const metadata = { title: "Sem conexão — Almeida Closet" };
+export const metadata = { title: "Sem conexão · Almeida Closet" };
 
 export default function OfflinePage() {
   return (

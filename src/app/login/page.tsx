@@ -57,7 +57,7 @@ export default function LoginPage() {
           </h1>
         </header>
 
-        {/* Formulário — no mobile fica na metade de baixo (perto do polegar) */}
+        {/* Formulário, no mobile fica na metade de baixo (perto do polegar) */}
         <form onSubmit={entrar} className="mt-auto pt-10 md:mt-9 md:pt-0" noValidate>
           <div className="text-[19px] font-extrabold tracking-[-.01em]">Entrar na sua conta</div>
           <p className="mt-1 text-[13.5px] text-muted">Acesse com seu usuário e senha.</p>

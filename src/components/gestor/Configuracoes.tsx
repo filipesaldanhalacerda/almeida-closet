@@ -173,7 +173,7 @@ export function Configuracoes({ saldoInicial, saldoData, vendedoras, categorias 
         cor="#2f7d5b"
         bg="#e7f1ec"
         titulo="Metas mensais por vendedora"
-        desc="Acompanhadas no Dashboard e no Resultado de Vendas. O valor é salvo ao sair do campo."
+        desc="Acompanhadas no Dashboard. O valor é salvo ao sair do campo."
       >
         <div className="flex flex-col gap-2.5">
           {vendedoras.length === 0 && (
@@ -214,7 +214,7 @@ export function Configuracoes({ saldoInicial, saldoData, vendedoras, categorias 
         titulo="Categorias de despesa e grupo no DRE"
         desc="Cada categoria é somada no grupo escolhido dentro do DRE anual."
       >
-        {/* Criar nova categoria — rápido e simples */}
+        {/* Criar nova categoria, rápido e simples */}
         <div className="rounded-[12px] border border-dashed border-[#d8d3ca] bg-panel p-3">
           <div className="mb-2 text-[12.5px] font-bold text-ink-2">Nova categoria</div>
           <div className="flex flex-col gap-2 sm:flex-row">
@@ -222,7 +222,7 @@ export function Configuracoes({ saldoInicial, saldoData, vendedoras, categorias 
               value={novaCat}
               onChange={(e) => setNovaCat(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && criarCategoria()}
-              placeholder="ex: Aluguel"
+              placeholder="ex.: Aluguel"
               maxLength={60}
               className="focus-ring h-11 min-w-0 flex-1 rounded-[10px] border border-input-border bg-white px-3.5 text-[14px]"
             />

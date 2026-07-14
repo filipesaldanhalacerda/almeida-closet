@@ -4,7 +4,7 @@ import { FormHeader } from "@/components/vendedora/FormHeader";
 import { getCategorias, getClientes, getLancamentoById, getSessionProfile } from "@/lib/data";
 
 export const dynamic = "force-dynamic";
-export const metadata = { title: "Editar lançamento — Almeida Closet" };
+export const metadata = { title: "Editar lançamento · Almeida Closet" };
 
 export default async function EditarLancamentoVendedora({
   params,

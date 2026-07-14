@@ -1,4 +1,4 @@
-// Fluxo de Caixa — série diária a partir do saldo inicial.
+// Fluxo de Caixa, série diária a partir do saldo inicial.
 // Entradas = Σ recebimentos do dia. Saídas = despesas pagas (data_pagamento)
 // + devoluções de capital. Saldo Final = acumulado. Ver design/README.md §8.
 import type { LancamentoView } from "../types";

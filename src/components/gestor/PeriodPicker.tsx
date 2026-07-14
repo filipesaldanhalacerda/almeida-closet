@@ -27,7 +27,7 @@ export function PeriodPicker({ ano, mes }: { ano: number; mes: number }) {
     const p = new URLSearchParams(params.toString());
     p.set("ano", String(a));
     p.set("mes", String(m));
-    // useTransition mantém isPending=true enquanto a nova página carrega —
+    // useTransition mantém isPending=true enquanto a nova página carrega:
     // feedback imediato de "carregando" mesmo sem trocar de rota.
     startTransition(() => router.push(`${pathname}?${p.toString()}`));
   }
