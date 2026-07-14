@@ -509,7 +509,7 @@ export function LancamentoForm({
             <label className="mb-2.5 block text-[13px] font-bold text-ink-2">
               Bandeira do cartão <span className="font-semibold text-faint">(quando for repasse da maquininha)</span>
             </label>
-            <div className="flex flex-wrap gap-2.5">
+            <div className="grid max-w-[420px] grid-cols-5 gap-2">
               {BANDEIRAS.map((b) => {
                 const ativo = bandeira === b.valor;
                 return (
@@ -520,7 +520,7 @@ export function LancamentoForm({
                     aria-label={b.valor}
                     aria-pressed={ativo}
                     title={b.valor}
-                    className="relative h-[42px] w-[66px] overflow-hidden rounded-[9px] bg-white transition-transform active:scale-95"
+                    className="relative aspect-[79/50] w-full overflow-hidden rounded-[9px] bg-white transition-transform active:scale-95"
                     style={{
                       boxShadow: ativo ? "0 0 0 2px #1c1a17" : "0 0 0 1px #e3dfd8",
                       opacity: !bandeira || ativo ? 1 : 0.5,
@@ -529,8 +529,8 @@ export function LancamentoForm({
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img src={b.logo} alt={b.valor} className="h-full w-full object-cover" />
                     {ativo && (
-                      <span className="absolute right-1 top-1 flex h-[18px] w-[18px] items-center justify-center rounded-full bg-ink shadow-sm">
-                        <Icon name="check" size={11} color="#fff" strokeWidth={3} />
+                      <span className="absolute right-0.5 top-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-ink shadow-sm">
+                        <Icon name="check" size={10} color="#fff" strokeWidth={3} />
                       </span>
                     )}
                   </button>
@@ -1264,7 +1264,7 @@ function ChipGroup({
   return (
     <div>
       <label className="mb-2.5 block text-[13px] font-bold text-ink-2">{label}</label>
-      <div className={fill ? "flex gap-2" : "flex flex-wrap gap-2"}>
+      <div className={fill ? "flex gap-2" : "grid grid-cols-2 gap-2 sm:grid-cols-3"}>
         {options.map((o) => {
           const ativo = o.value === value;
           return (
@@ -1275,7 +1275,7 @@ function ChipGroup({
               className={
                 (fill
                   ? "h-11 flex-1 rounded-[11px] px-1 text-[12.5px]"
-                  : "h-10 rounded-full px-[15px] text-[13.5px]") +
+                  : "h-11 rounded-[11px] px-2 text-[13px]") +
                 " whitespace-nowrap font-semibold transition-colors"
               }
               style={{
