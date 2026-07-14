@@ -1,32 +1,42 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import { useTransition } from "react";
 import { HBar } from "@/components/gestor/charts";
+import { Spinner } from "@/components/ui/Spinner";
 import type { ResultadoVendasModel } from "@/lib/calc/resultado";
 import { MESES_ABBR } from "@/lib/constants";
 import { brl, pct } from "@/lib/format";
 
 export function ResultadoVendas({ model, ano, anos }: { model: ResultadoVendasModel; ano: number; anos: number[] }) {
   const router = useRouter();
+  const [pending, startTransition] = useTransition();
   const maxBar = Math.max(1, ...model.barras.map((b) => b.total));
 
   return (
     <div className="flex flex-col gap-4">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <div className="flex gap-1.5 rounded-[10px] bg-[#efece5] p-1">
-          {anos.map((y) => {
-            const ativo = y === ano;
-            return (
-              <button
-                key={y}
-                onClick={() => router.push(`/admin/resultado-de-vendas?ano=${y}`)}
-                className="h-[34px] rounded-[7px] px-4 text-[13px] font-bold"
-                style={{ background: ativo ? "#1c1a17" : "transparent", color: ativo ? "#fff" : "#6f6a63" }}
-              >
-                {y}
-              </button>
-            );
-          })}
+        <div className="flex items-center gap-2">
+          <div
+            className="flex gap-1.5 rounded-[10px] bg-[#efece5] p-1 transition-opacity"
+            style={{ opacity: pending ? 0.55 : 1 }}
+          >
+            {anos.map((y) => {
+              const ativo = y === ano;
+              return (
+                <button
+                  key={y}
+                  disabled={pending}
+                  onClick={() => startTransition(() => router.push(`/admin/resultado-de-vendas?ano=${y}`))}
+                  className="h-[34px] rounded-[7px] px-4 text-[13px] font-bold"
+                  style={{ background: ativo ? "#1c1a17" : "transparent", color: ativo ? "#fff" : "#6f6a63" }}
+                >
+                  {y}
+                </button>
+              );
+            })}
+          </div>
+          {pending && <Spinner size={16} />}
         </div>
         <div className="flex flex-wrap gap-4">
           {model.vendedoras.map((v) => (

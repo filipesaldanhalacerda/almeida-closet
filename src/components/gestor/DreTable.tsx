@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import * as React from "react";
 import { Icon } from "@/components/Icon";
 import { StatCard, StatDelta } from "@/components/gestor/charts";
+import { Spinner } from "@/components/ui/Spinner";
 import type { DreGrupoAgg, DreModel, DreSubtotal } from "@/lib/calc/dre";
 import { MESES_ABBR } from "@/lib/constants";
 import { brl, fmtInt, pct } from "@/lib/format";
@@ -47,6 +48,7 @@ export function DreTable({
 }) {
   const router = useRouter();
   const [exp, setExp] = React.useState<Record<string, boolean>>({ rb: true });
+  const [pending, startTransition] = React.useTransition();
   const toggle = (k: string) => setExp((s) => ({ ...s, [k]: !s[k] }));
 
   const linhas: Linha[] = [
@@ -78,20 +80,27 @@ export function DreTable({
   return (
     <div className="flex flex-col gap-4">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <div className="flex gap-1.5 rounded-[10px] bg-[#efece5] p-1">
-          {anos.map((y) => {
-            const ativo = y === ano;
-            return (
-              <button
-                key={y}
-                onClick={() => router.push(`/admin/dre?ano=${y}`)}
-                className="h-[34px] rounded-[7px] px-4 text-[13px] font-bold"
-                style={{ background: ativo ? "#1c1a17" : "transparent", color: ativo ? "#fff" : "#6f6a63" }}
-              >
-                {y}
-              </button>
-            );
-          })}
+        <div className="flex items-center gap-2">
+          <div
+            className="flex gap-1.5 rounded-[10px] bg-[#efece5] p-1 transition-opacity"
+            style={{ opacity: pending ? 0.55 : 1 }}
+          >
+            {anos.map((y) => {
+              const ativo = y === ano;
+              return (
+                <button
+                  key={y}
+                  disabled={pending}
+                  onClick={() => startTransition(() => router.push(`/admin/dre?ano=${y}`))}
+                  className="h-[34px] rounded-[7px] px-4 text-[13px] font-bold"
+                  style={{ background: ativo ? "#1c1a17" : "transparent", color: ativo ? "#fff" : "#6f6a63" }}
+                >
+                  {y}
+                </button>
+              );
+            })}
+          </div>
+          {pending && <Spinner size={16} />}
         </div>
         <div className="text-[12.5px] font-semibold text-muted">
           Calculado automaticamente dos lançamentos · negativos em vermelho
