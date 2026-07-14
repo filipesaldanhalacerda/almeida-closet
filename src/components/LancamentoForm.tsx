@@ -372,7 +372,7 @@ export function LancamentoForm({
         {(
           [
             { key: "tudo", label: "Recebi tudo" },
-            { key: "parcial", label: "Entrada (parcial)" },
+            { key: "parcial", label: "Parcial" },
             { key: "nao", label: "Ainda não" },
           ] as { key: ModoReceb; label: string }[]
         ).map((o) => {
@@ -385,7 +385,7 @@ export function LancamentoForm({
                 setModoReceb(o.key);
                 if (o.key !== "nao" && !recebMeio && forma) setRecebMeio(MEIO_PADRAO[forma as FormaPagamento]);
               }}
-              className="h-10 flex-1 rounded-[10px] text-[12.5px] font-bold transition-colors"
+              className="h-10 flex-1 whitespace-nowrap rounded-[10px] px-1 text-[12.5px] font-bold transition-colors"
               style={{
                 border: `1px solid ${ativo ? "#2b6f74" : "#d5e0da"}`,
                 background: ativo ? "#2b6f74" : "#fff",
@@ -548,8 +548,8 @@ export function LancamentoForm({
               className="focus-ring h-[52px] w-full rounded-[12px] border border-input-border bg-white px-4 text-base"
             />
           </div>
-          <div className="flex gap-3">
-            <div className="flex-1">
+          <div className="flex flex-col gap-3 sm:flex-row">
+            <div className="min-w-0 flex-1">
               <label className="mb-2 block text-[13px] font-bold text-ink-2">Vencimento</label>
               <input
                 type="date"
@@ -558,7 +558,7 @@ export function LancamentoForm({
                 className="focus-ring h-[52px] w-full rounded-[12px] border border-input-border bg-white px-3 text-[15px]"
               />
             </div>
-            <div className="flex-1">
+            <div className="min-w-0 flex-1">
               <label className="mb-2 block text-[13px] font-bold text-ink-2">Mês ref.</label>
               <input
                 value={mesRef}
@@ -638,12 +638,12 @@ export function LancamentoForm({
   if (modo === "gestor") {
     return (
       <div className="mx-auto max-w-[700px]">
-        <div className="rounded-card border border-line bg-white p-6 shadow-card">
+        <div className="rounded-card border border-line bg-white p-4 shadow-card sm:p-6">
           <TipoSelector tipos={tiposDisponiveis} tipo={tipo} setTipo={setTipo} />
           {hintRow}
 
-          <div className="mt-[18px] grid grid-cols-2 gap-[18px]">
-            <div className={tipo === "venda" || tipo === "recebimento" ? "" : "col-span-2"}>
+          <div className="mt-[18px] grid grid-cols-1 gap-[18px] sm:grid-cols-2">
+            <div className={tipo === "venda" || tipo === "recebimento" ? "" : "sm:col-span-2"}>
               <label className="mb-2 block text-[13px] font-bold text-ink-2">Valor</label>
               <div className="flex h-14 items-center rounded-[12px] border border-input-border bg-white px-4">
                 <span className="mr-1 text-lg font-bold text-muted">R$</span>
@@ -1206,8 +1206,11 @@ function TipoSelector({
   tipo: TipoForm;
   setTipo: (t: TipoForm) => void;
 }) {
+  // 4 abas (gestor) quebram em 2×2 no celular e viram 1×4 no desktop; 3 abas
+  // (vendedora) ficam sempre em uma linha. Evita rótulos longos se sobreporem.
+  const cols = tipos.length > 3 ? "grid-cols-2 sm:grid-cols-4" : "grid-cols-3";
   return (
-    <div className="flex gap-1.5 rounded-[13px] bg-[#efece5] p-1.5">
+    <div className={`grid gap-1.5 rounded-[13px] bg-[#efece5] p-1.5 ${cols}`}>
       {tipos.map((t) => {
         const ativo = t.key === tipo;
         return (
@@ -1215,7 +1218,7 @@ function TipoSelector({
             key={t.key}
             type="button"
             onClick={() => setTipo(t.key)}
-            className="h-[42px] flex-1 rounded-[9px] text-[13.5px] font-bold transition-colors"
+            className="h-[42px] whitespace-nowrap rounded-[9px] text-[13px] font-bold transition-colors sm:text-[13.5px]"
             style={{
               background: ativo ? "#fff" : "transparent",
               color: ativo ? "#1c1a17" : "#6f6a63",
@@ -1255,8 +1258,10 @@ function ChipGroup({
               type="button"
               onClick={() => onChange(o.value)}
               className={
-                (fill ? "h-11 flex-1 rounded-[11px]" : "h-10 rounded-full px-[15px]") +
-                " text-[13.5px] font-semibold transition-colors"
+                (fill
+                  ? "h-11 flex-1 rounded-[11px] px-1 text-[12.5px]"
+                  : "h-10 rounded-full px-[15px] text-[13.5px]") +
+                " whitespace-nowrap font-semibold transition-colors"
               }
               style={{
                 border: `1px solid ${ativo ? "#1c1a17" : "#e3dfd8"}`,
