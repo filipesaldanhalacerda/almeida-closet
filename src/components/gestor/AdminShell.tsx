@@ -122,8 +122,8 @@ export function AdminShell({
 
       {/* Área principal */}
       <div className="flex min-w-0 flex-1 flex-col">
-        <header className="flex min-h-[66px] flex-none items-center justify-between border-b border-line-2 bg-[#fbfaf8] px-4 pt-[env(safe-area-inset-top)] md:px-7">
-          <div className="flex min-w-0 items-center gap-3">
+        <header className="flex min-h-[66px] flex-none items-center gap-2 border-b border-line-2 bg-[#fbfaf8] px-4 pt-[env(safe-area-inset-top)] md:gap-3 md:px-7">
+          <div className="flex min-w-0 flex-1 items-center gap-3">
             <button
               onClick={() => setDrawer(true)}
               aria-label="Abrir menu"
@@ -133,7 +133,7 @@ export function AdminShell({
             </button>
             <div className="truncate text-[18px] font-extrabold tracking-[-.01em] md:text-[20px]">{titulo}</div>
           </div>
-          <div className="flex items-center gap-2 md:gap-3">
+          <div className="flex flex-none items-center gap-2 md:gap-3">
             {mostraPeriodo && <PeriodPicker ano={ano} mes={mes} />}
             <button
               onClick={() => router.push("/admin/lancamentos/novo")}

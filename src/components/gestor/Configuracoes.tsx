@@ -134,8 +134,9 @@ export function Configuracoes({ saldoInicial, saldoData, vendedoras, categorias 
         titulo="Saldo inicial do caixa"
         desc="Base para o cálculo do Fluxo de Caixa. Defina uma vez, ao começar a usar o sistema."
       >
-        <div className="flex flex-wrap items-end gap-3">
-          <div className="min-w-[160px] max-w-[300px] flex-1">
+        {/* No mobile empilha (campos e Salvar em largura cheia); no desktop em linha. */}
+        <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-end">
+          <div className="w-full sm:min-w-[160px] sm:max-w-[300px] sm:flex-1">
             <label className="mb-1.5 block text-[12px] font-bold text-ink-3">Valor</label>
             <div className="flex h-[52px] items-center gap-2.5 rounded-[12px] border border-input-border bg-white px-4 focus-within:border-ink">
               <span className="text-[15px] font-bold text-muted">R$</span>
@@ -148,19 +149,19 @@ export function Configuracoes({ saldoInicial, saldoData, vendedoras, categorias 
               />
             </div>
           </div>
-          <div>
+          <div className="w-full sm:w-auto">
             <label className="mb-1.5 block text-[12px] font-bold text-ink-3">A partir de</label>
             <input
               type="date"
               value={data}
               onChange={(e) => setData(e.target.value)}
-              className="focus-ring h-[52px] rounded-[12px] border border-input-border bg-white px-3 text-[14px]"
+              className="focus-ring h-[52px] w-full rounded-[12px] border border-input-border bg-white px-3 text-[14px] sm:w-auto"
             />
           </div>
           <button
             onClick={salvarSaldo}
             disabled={salvandoSaldo}
-            className="h-[52px] rounded-[12px] bg-ink px-6 text-[15px] font-bold text-white transition-transform active:scale-[.98] disabled:opacity-60"
+            className="h-[52px] w-full rounded-[12px] bg-ink px-6 text-[15px] font-bold text-white transition-transform active:scale-[.98] disabled:opacity-60 sm:w-auto"
           >
             {salvandoSaldo ? "Salvando…" : "Salvar"}
           </button>

@@ -146,6 +146,11 @@ export function MeusLancamentos({
 
       {/* Lista agrupada por dia, com cabeçalho de dia fixo ao rolar */}
       <div className="flex-1 overflow-y-auto px-5 pb-[calc(8rem+env(safe-area-inset-bottom))] pt-2">
+        {grupos.length > 0 && (
+          <p className="mb-2 flex items-center gap-1.5 px-0.5 text-[12px] font-medium text-faint">
+            <Icon name="edit" size={13} /> Toque em um lançamento para editar
+          </p>
+        )}
         {grupos.length === 0 ? (
           <div className="mt-6 flex flex-col items-center rounded-[18px] border border-dashed border-[#ddd8cf] bg-white px-5 py-12 text-center">
             <div className="flex h-14 w-14 items-center justify-center rounded-[16px] bg-[#f2efe9] text-faint-3">

@@ -54,6 +54,8 @@ export function LancamentoCard({ l, href }: { l: LancamentoView; href: string })
         </span>
         <span className="text-[11.5px] font-semibold text-faint-3">{isoParaBR(l.data)}</span>
       </span>
+      {/* Seta indica que o card é tocável (abre a edição). */}
+      <Icon name="chevronRight" size={18} color="#cbc6bd" className="-ml-1 flex-none" />
     </Link>
   );
 }

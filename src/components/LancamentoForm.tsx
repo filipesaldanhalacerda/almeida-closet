@@ -711,11 +711,12 @@ export function LancamentoForm({
             </div>
           )}
 
-          <div className="mt-6 flex gap-3">
+          {/* No mobile empilha (Salvar embaixo, cheio); no desktop fica em linha. */}
+          <div className="mt-6 flex flex-col gap-3 sm:flex-row">
             <button
               type="button"
               onClick={() => router.back()}
-              className="h-[52px] rounded-[12px] border border-input-border bg-white px-6 text-[15px] font-bold text-ink-2"
+              className="flex h-[52px] items-center justify-center rounded-[12px] border border-input-border bg-white px-6 text-[15px] font-bold text-ink-2"
             >
               Cancelar
             </button>
@@ -723,7 +724,7 @@ export function LancamentoForm({
               <button
                 type="button"
                 onClick={() => setConfirmaExcluir(true)}
-                className="flex h-[52px] items-center gap-2 rounded-[12px] border border-[#eccec5] bg-[#fbf1ee] px-5 text-[15px] font-bold text-desp-fg"
+                className="flex h-[52px] items-center justify-center gap-2 rounded-[12px] border border-[#eccec5] bg-[#fbf1ee] px-5 text-[15px] font-bold text-desp-fg"
               >
                 <Icon name="trash" size={18} /> Excluir
               </button>
@@ -732,7 +733,7 @@ export function LancamentoForm({
               type="button"
               onClick={salvar}
               disabled={salvando || valor <= 0 || parcialSemValor || parcialExcede}
-              className="flex-1 rounded-[12px] text-[15.5px] font-bold text-white disabled:opacity-50"
+              className="flex h-[52px] items-center justify-center whitespace-nowrap rounded-[12px] text-[15.5px] font-bold text-white disabled:opacity-50 sm:flex-1"
               style={{ background: cor }}
             >
               {salvando ? "Salvando…" : editando ? "Salvar alterações" : "Salvar lançamento"}

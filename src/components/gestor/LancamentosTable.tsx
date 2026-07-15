@@ -183,6 +183,11 @@ export function LancamentosTable({
       </div>
 
       {/* Cards (mobile) */}
+      {filtrados.length > 0 && (
+        <p className="-mt-1 flex items-center gap-1.5 px-1 text-[12px] font-medium text-faint md:hidden">
+          <Icon name="edit" size={13} /> Toque em um lançamento para editar
+        </p>
+      )}
       <div className="flex flex-col gap-2.5 md:hidden">
         {filtrados.length === 0 && (
           <div className="rounded-[14px] border border-line bg-white p-8 text-center text-sm text-muted">
@@ -194,11 +199,15 @@ export function LancamentosTable({
           const cor = corDoTipo(l.tipo);
           const saida = l.tipo === "despesa" || l.tipo === "devolucao_capital";
           return (
-            <div key={l.id} className="flex items-center gap-3 rounded-[15px] border border-line bg-white p-3.5 shadow-card">
+            <div
+              key={l.id}
+              onClick={() => router.push(`/admin/lancamentos/${l.id}/editar`)}
+              className="flex cursor-pointer items-center gap-3 rounded-[15px] border border-line bg-white p-3.5 shadow-card transition-colors active:bg-[#faf9f6]"
+            >
               <span className="flex h-10 w-10 flex-none items-center justify-center rounded-[11px]" style={{ background: cor.bg }}>
                 <Icon name={iconeDoTipo(l.tipo)} size={18} color={cor.fg} />
               </span>
-              <div className="min-w-0 flex-1" onClick={() => router.push(`/admin/lancamentos/${l.id}/editar`)}>
+              <div className="min-w-0 flex-1">
                 <div className="truncate text-sm font-bold">{titulo}</div>
                 <div className="truncate text-xs text-muted">{sub} · {l.vendedora_nome || l.criado_por_nome || "—"}</div>
               </div>
@@ -206,7 +215,16 @@ export function LancamentosTable({
                 <div className="text-sm font-extrabold tnum" style={{ color: cor.fg }}>{brlSinal(l.valor, saida)}</div>
                 <div className="text-[11px] text-faint-3">{isoParaBR(l.data)}</div>
               </div>
-              <button onClick={() => setExcluir(l)} aria-label="Excluir" className="flex h-8 w-8 items-center justify-center rounded-lg border border-[#eccec5]">
+              {/* Seta indica que o card abre a edição ao tocar. */}
+              <Icon name="chevronRight" size={17} color="#cbc6bd" className="-mx-1 flex-none" />
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setExcluir(l);
+                }}
+                aria-label="Excluir"
+                className="flex h-8 w-8 flex-none items-center justify-center rounded-lg border border-[#eccec5]"
+              >
                 <Icon name="trash" size={15} color="#b04a34" />
               </button>
             </div>
