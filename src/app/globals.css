@@ -106,6 +106,28 @@ select:focus-visible {
   }
 }
 
+/* Skeleton com shimmer (carregamento estilo iFood): bloco cinza-bege com um
+   brilho que atravessa. Espelha a forma do conteúdo em vez de um spinner. */
+@keyframes shimmer {
+  0% {
+    background-position: 100% 0;
+  }
+  100% {
+    background-position: 0 0;
+  }
+}
+.skeleton {
+  background: linear-gradient(90deg, #e9e5dd 25%, #f3f1ec 37%, #e9e5dd 63%);
+  background-size: 400% 100%;
+  animation: shimmer 1.4s ease-in-out infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .skeleton {
+    animation: none;
+    background: #e9e5dd;
+  }
+}
+
 /* Reset de aparência para selects estilizados */
 .select-reset {
   appearance: none;

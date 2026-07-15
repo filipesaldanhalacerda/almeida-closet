@@ -1,11 +1,7 @@
-import { CarregandoTela } from "@/components/ui/Spinner";
+import { HomeVendedoraSkeleton } from "@/components/ui/Skeleton";
 
-// Estado de carregamento instantâneo da área da vendedora (Suspense do App
-// Router). Aparece na hora ao navegar para qualquer tela de /app.
+// Carregamento da home da vendedora: skeleton que espelha o layout real
+// (aparece na hora ao navegar, sem tela em branco nem salto de conteúdo).
 export default function Loading() {
-  return (
-    <div className="flex min-h-dvh flex-col">
-      <CarregandoTela />
-    </div>
-  );
+  return <HomeVendedoraSkeleton />;
 }

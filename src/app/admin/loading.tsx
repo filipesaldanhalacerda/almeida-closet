@@ -1,7 +1,8 @@
-import { CarregandoTela } from "@/components/ui/Spinner";
+import { AdminSkeleton } from "@/components/ui/Skeleton";
 
-// Estado de carregamento instantâneo do conteúdo do gestor. A barra lateral e
-// o cabeçalho permanecem (estão no layout); só a área principal mostra o spinner.
+// Carregamento do conteúdo do gestor (dentro da AdminShell). A barra lateral e
+// o cabeçalho permanecem (estão no layout); só a área principal mostra o
+// skeleton de cards + tabela, espelhando a forma do conteúdo.
 export default function Loading() {
-  return <CarregandoTela />;
+  return <AdminSkeleton />;
 }

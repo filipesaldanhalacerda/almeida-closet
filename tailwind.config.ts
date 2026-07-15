@@ -57,6 +57,10 @@ const config: Config = {
       fontFamily: {
         sans: ["var(--font-public-sans)", "system-ui", "sans-serif"],
       },
+      transitionTimingFunction: {
+        // Easing natural padrão (material standard) para transições de UI.
+        swift: "cubic-bezier(.4,0,.2,1)",
+      },
       borderRadius: {
         input: "12px",
         card: "16px",

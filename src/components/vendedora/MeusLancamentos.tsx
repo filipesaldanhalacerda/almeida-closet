@@ -4,6 +4,7 @@ import Link from "next/link";
 import * as React from "react";
 import { Icon } from "@/components/Icon";
 import { LancamentoCard, tituloLancamento } from "@/components/LancamentoCard";
+import { PullToRefresh } from "@/components/ui/PullToRefresh";
 import { Spinner } from "@/components/ui/Spinner";
 import { isoParaBR } from "@/lib/format";
 import type { LancamentoView } from "@/lib/types";
@@ -145,7 +146,7 @@ export function MeusLancamentos({
       </div>
 
       {/* Lista agrupada por dia, com cabeçalho de dia fixo ao rolar */}
-      <div className="flex-1 overflow-y-auto px-5 pb-[calc(8rem+env(safe-area-inset-bottom))] pt-2">
+      <PullToRefresh className="flex-1 overflow-y-auto px-5 pb-[calc(8rem+env(safe-area-inset-bottom))] pt-2">
         {grupos.length > 0 && (
           <p className="mb-2 flex items-center gap-1.5 px-0.5 text-[12px] font-medium text-faint">
             <Icon name="edit" size={13} /> Toque em um lançamento para editar
@@ -202,7 +203,7 @@ export function MeusLancamentos({
             {carregando ? "Carregando…" : "Carregar mais"}
           </button>
         )}
-      </div>
+      </PullToRefresh>
 
       <BottomNav />
     </div>

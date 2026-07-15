@@ -25,6 +25,7 @@ import {
   normalizarBusca,
   numeroParaCentavos,
 } from "@/lib/format";
+import { haptics } from "@/lib/haptics";
 import { enfileirar } from "@/lib/offline-queue";
 import type {
   Cliente,
@@ -147,6 +148,11 @@ export function LancamentoForm({
   const [salvando, setSalvando] = React.useState(false);
   const [confirmaExcluir, setConfirmaExcluir] = React.useState(false);
   const [erro, setErro] = React.useState<string | null>(null);
+
+  // Vibra ao surgir um erro de validação (feedback tátil, estilo app nativo).
+  React.useEffect(() => {
+    if (erro) haptics.erro();
+  }, [erro]);
 
   const valor = centavosParaNumero(valorCents);
   const recebValor = centavosParaNumero(recebCents);
@@ -313,6 +319,7 @@ export function LancamentoForm({
         : editando
           ? "Lançamento atualizado"
           : "Lançamento salvo";
+      haptics.sucesso();
       if (modo === "vendedora") {
         sessionStorage.setItem("ac_toast", msgOk);
         router.replace("/app/sucesso");
@@ -1245,8 +1252,11 @@ function TipoSelector({
           <button
             key={t.key}
             type="button"
-            onClick={() => setTipo(t.key)}
-            className="h-[42px] whitespace-nowrap rounded-[9px] text-[13px] font-bold transition-colors sm:text-[13.5px]"
+            onClick={() => {
+              if (t.key !== tipo) haptics.leve();
+              setTipo(t.key);
+            }}
+            className="h-[42px] whitespace-nowrap rounded-[9px] text-[13px] font-bold active:scale-[.97] sm:text-[13.5px]"
             style={{
               background: ativo ? "#fff" : "transparent",
               color: ativo ? "#1c1a17" : "#6f6a63",
