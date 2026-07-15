@@ -205,7 +205,7 @@ export default async function DashboardGestor({
                   </span>
                 </div>
                 <HBar largura={m.pct} cor={m.pctReal >= 100 ? "#2f7d5b" : "#8c6f52"} />
-                <div className="mt-1 text-[11.5px] font-semibold" style={{ color: m.pctReal >= 100 ? "#2f7d5b" : "#a09a90" }}>
+                <div className="mt-1 text-[11.5px] font-semibold" style={{ color: m.pctReal >= 100 ? "#2f7d5b" : "#8c867b" }}>
                   {m.meta > 0 ? `${pct(m.pctReal, 0)} da meta` : "sem meta definida"}
                 </div>
               </div>

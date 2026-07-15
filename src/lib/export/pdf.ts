@@ -14,8 +14,8 @@ import type { AbaKey, ExportParams } from "./tipos";
 // ---- tokens ----------------------------------------------------------------
 const INK = "#1c1a17";
 const INK2 = "#42403b";
-const MUTED = "#8a857c";
-const FAINT = "#a09a90";
+const MUTED = "#78726a";
+const FAINT = "#8c867b";
 const LINE = "#ece7df";
 const PANEL = "#faf9f6";
 const PANEL2 = "#f3f1ec";

@@ -113,7 +113,7 @@ export function Equipe({ time, periodo }: { time: TeamRow[]; periodo: string }) 
                   className="flex-none rounded-full px-2.5 py-[3px] text-[11.5px] font-bold"
                   style={{
                     background: t.ativo ? "#edf3ee" : "#f2efe9",
-                    color: t.ativo ? "#2f7d5b" : "#a09a90",
+                    color: t.ativo ? "#2f7d5b" : "#8c867b",
                   }}
                 >
                   {t.ativo ? "Ativa" : "Inativa"}

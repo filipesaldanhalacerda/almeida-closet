@@ -269,7 +269,7 @@ function FormatoBtn({
       </div>
       <div
         className="mt-0.5 text-[11.5px] leading-[1.4]"
-        style={{ color: ativo ? "rgba(255,255,255,.65)" : "#8a857c" }}
+        style={{ color: ativo ? "rgba(255,255,255,.65)" : "#78726a" }}
       >
         {sub}
       </div>

@@ -180,7 +180,7 @@ export function DreTable({
                     style={{ paddingLeft: indent, fontWeight: fw, background: bg, cursor: podeExpandir ? "pointer" : "default", color: l.destaque ? "#1c1a17" : "#42403b" }}
                   >
                     {podeExpandir ? (
-                      <Icon name={exp[l.grupoKey!] ? "chevronDown" : "chevronRight"} size={12} color="#a09a90" />
+                      <Icon name={exp[l.grupoKey!] ? "chevronDown" : "chevronRight"} size={12} color="#8c867b" />
                     ) : (
                       <span className="w-3" />
                     )}

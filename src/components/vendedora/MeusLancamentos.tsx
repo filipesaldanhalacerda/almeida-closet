@@ -106,7 +106,7 @@ export function MeusLancamentos({
         </div>
 
         <div className="flex h-12 items-center gap-2.5 rounded-[13px] border border-line bg-white px-3.5 focus-within:border-ink">
-          <Icon name="search" size={20} color="#a09a90" />
+          <Icon name="search" size={20} color="#8c867b" />
           <input
             value={query}
             onChange={(e) => setQuery(e.target.value)}

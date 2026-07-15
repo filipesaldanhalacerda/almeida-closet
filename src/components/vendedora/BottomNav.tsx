@@ -19,7 +19,7 @@ export function BottomNav() {
         onClick={() => haptics.leve()}
         aria-current={inicio ? "page" : undefined}
         className="pointer-events-auto flex flex-1 flex-col items-center gap-[3px] transition-transform active:scale-95"
-        style={{ color: inicio ? "#1c1a17" : "#a09a90" }}
+        style={{ color: inicio ? "#1c1a17" : "#8c867b" }}
       >
         <Icon name="home" size={22} />
         <span className="text-[11px] font-semibold">Início</span>
@@ -41,7 +41,7 @@ export function BottomNav() {
         onClick={() => haptics.leve()}
         aria-current={lista ? "page" : undefined}
         className="pointer-events-auto flex flex-1 flex-col items-center gap-[3px] transition-transform active:scale-95"
-        style={{ color: lista ? "#1c1a17" : "#a09a90" }}
+        style={{ color: lista ? "#1c1a17" : "#8c867b" }}
       >
         <Icon name="list" size={22} />
         <span className="text-[11px] font-semibold">Lançamentos</span>

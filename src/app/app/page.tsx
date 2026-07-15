@@ -65,7 +65,7 @@ export default async function HomeVendedora() {
         {/* Resumo do dia */}
         <div className="mt-5 rounded-[22px] border border-line bg-white p-5 shadow-card">
           <div className="flex items-center gap-1.5 text-[12px] font-semibold text-faint">
-            <Icon name="calendar" size={14} color="#a09a90" />
+            <Icon name="calendar" size={14} color="#8c867b" />
             {dataExtenso}
           </div>
           <div className="mt-3 text-[13px] font-semibold text-muted">Suas vendas de hoje</div>

@@ -28,10 +28,10 @@ const config: Config = {
         ink: "#1c1a17", // tinta principal (texto / botão primário)
         "ink-2": "#42403b", // texto médio
         "ink-3": "#6f6a63", // texto médio 2
-        muted: "#8a857c", // auxiliar
-        faint: "#a09a90", // texto fraco
-        "faint-2": "#b0a99e",
-        "faint-3": "#b4afa6", // placeholder
+        muted: "#78726a", // auxiliar (AA ~4.7:1)
+        faint: "#8c867b", // texto fraco (AA grande ~3.6:1)
+        "faint-2": "#9a9488", // ~3.0:1
+        "faint-3": "#b4afa6", // placeholder / micro texto decorativo
         surface: "#ffffff", // card
         app: "#f7f6f3", // fundo do app
         line: "#ece7df", // borda de card

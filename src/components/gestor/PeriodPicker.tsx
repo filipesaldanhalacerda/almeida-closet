@@ -65,13 +65,13 @@ export function PeriodPicker({ ano, mes }: { ano: number; mes: number }) {
           {pending ? (
             <Spinner size={14} />
           ) : (
-            <Icon name="calendar" size={15} color="#8a857c" className="hidden sm:block" />
+            <Icon name="calendar" size={15} color="#78726a" className="hidden sm:block" />
           )}
           <span className="sm:hidden">
             {MESES_ABBR[mes - 1]} {ano}
           </span>
           <span className="hidden sm:inline">{periodoLabel(ano, mes)}</span>
-          <Icon name="chevronDown" size={15} color="#8a857c" />
+          <Icon name="chevronDown" size={15} color="#78726a" />
         </button>
         <button
           onClick={() => passo(1)}

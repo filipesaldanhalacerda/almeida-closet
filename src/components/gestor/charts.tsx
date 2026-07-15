@@ -83,7 +83,7 @@ export function StatCard({
         (dark ? "border-transparent bg-ink" : "border-line bg-white shadow-card")
       }
     >
-      <div className="text-xs font-bold" style={{ color: dark ? "rgba(255,255,255,.6)" : "#8a857c" }}>
+      <div className="text-xs font-bold" style={{ color: dark ? "rgba(255,255,255,.6)" : "#78726a" }}>
         {titulo}
       </div>
       <div

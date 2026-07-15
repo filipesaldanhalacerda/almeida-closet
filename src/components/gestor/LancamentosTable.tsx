@@ -104,7 +104,7 @@ export function LancamentosTable({
           <option value="capital">Capital</option>
         </select>
         <div className="flex h-10 min-w-[200px] flex-1 items-center gap-2.5 rounded-[10px] border border-input-border bg-white px-3">
-          <Icon name="search" size={18} color="#a09a90" />
+          <Icon name="search" size={18} color="#8c867b" />
           <input
             value={query}
             onChange={(e) => setQuery(e.target.value)}

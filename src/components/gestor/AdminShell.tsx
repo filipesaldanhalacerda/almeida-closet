@@ -35,7 +35,7 @@ function NavList({ pathname, onNavigate }: { pathname: string; onNavigate?: () =
                   (ativo ? "bg-[#efece5] text-ink" : "text-ink-3 hover:bg-[#f2efe9] hover:text-ink")
                 }
               >
-                <Icon name={n.icon} size={19} color={ativo ? "#1c1a17" : "#8a857c"} />
+                <Icon name={n.icon} size={19} color={ativo ? "#1c1a17" : "#78726a"} />
                 <span>{n.label}</span>
               </Link>
             );

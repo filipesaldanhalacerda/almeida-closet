@@ -635,7 +635,7 @@ export function LancamentoForm({
 
       {/* Data, a linha inteira abre o calendário */}
       <label className="relative mt-[18px] flex cursor-pointer items-center gap-3 rounded-[12px] border border-line bg-white px-4 py-3 shadow-card transition-colors hover:border-input-border">
-        <Icon name="calendar" size={20} color="#8a857c" />
+        <Icon name="calendar" size={20} color="#78726a" />
         <span className="flex-1">
           <span className="block text-[11.5px] font-bold uppercase tracking-[.1em] text-faint">
             Data
@@ -1160,7 +1160,7 @@ function CategoriaField({
             </span>
           )}
         </span>
-        <Icon name="chevronDown" size={18} color="#8a857c" />
+        <Icon name="chevronDown" size={18} color="#78726a" />
       </button>
 
       {aberto && (
