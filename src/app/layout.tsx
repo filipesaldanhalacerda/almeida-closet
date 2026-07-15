@@ -23,7 +23,7 @@ export const metadata: Metadata = {
     title: "Almeida Closet",
   },
   icons: {
-    icon: "/icons/icon-192.png",
+    icon: "/icon.svg", // vestido (src/app/icon.svg)
     apple: "/icons/icon-192.png",
   },
 };
