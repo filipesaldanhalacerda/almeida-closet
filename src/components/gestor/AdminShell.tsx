@@ -144,7 +144,12 @@ export function AdminShell({
             </button>
           </div>
         </header>
-        <main className="flex-1 overflow-y-auto overflow-x-hidden p-4 pb-[max(1rem,env(safe-area-inset-bottom))] md:p-7 md:pb-[max(1.75rem,env(safe-area-inset-bottom))]">
+        {/* key={pathname} remonta o conteúdo a cada navegação (não a cada
+            troca de período) para reproduzir a transição de entrada. */}
+        <main
+          key={pathname}
+          className="animate-page flex-1 overflow-y-auto overflow-x-hidden p-4 pb-[max(1rem,env(safe-area-inset-bottom))] md:p-7 md:pb-[max(1.75rem,env(safe-area-inset-bottom))]"
+        >
           {children}
         </main>
       </div>

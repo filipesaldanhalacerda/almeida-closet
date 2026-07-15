@@ -39,7 +39,7 @@ export default async function HomeVendedora() {
   })();
 
   return (
-    <div className="flex min-h-dvh flex-col">
+    <div className="animate-page-fade flex min-h-dvh flex-col">
       <PullToRefresh className="flex-1 overflow-y-auto px-5 pb-[calc(8rem+env(safe-area-inset-bottom))] pt-[calc(env(safe-area-inset-top)+0.75rem)]">
         {/* Cabeçalho, saudação + Sair claro */}
         <header className="flex items-center justify-between gap-3">

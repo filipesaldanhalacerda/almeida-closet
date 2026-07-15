@@ -85,14 +85,14 @@ export function MeusLancamentos({
   const buscando = query.trim() !== "" || filtro !== "todos";
 
   return (
-    <div className="flex min-h-dvh flex-col">
+    <div className="animate-page-fade flex min-h-dvh flex-col">
       {/* Cabeçalho fixo: voltar + título + busca + filtros */}
       <div className="flex-none border-b border-line-2 bg-app px-5 pb-3 pt-[calc(env(safe-area-inset-top)+0.375rem)]">
         <div className="mb-3.5 flex items-center gap-2.5">
           <Link
             href="/app"
             aria-label="Voltar"
-            className="flex h-10 w-10 flex-none items-center justify-center rounded-full border border-line bg-white active:scale-95"
+            className="flex h-11 w-11 flex-none items-center justify-center rounded-full border border-line bg-white active:scale-95"
           >
             <Icon name="back" size={18} />
           </Link>
@@ -117,7 +117,7 @@ export function MeusLancamentos({
             <button
               onClick={() => setQuery("")}
               aria-label="Limpar busca"
-              className="flex h-7 w-7 flex-none items-center justify-center rounded-full text-faint active:bg-app"
+              className="flex h-9 w-9 flex-none items-center justify-center rounded-full text-faint active:bg-app"
             >
               <Icon name="x" size={16} />
             </button>

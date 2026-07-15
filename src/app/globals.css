@@ -128,6 +128,42 @@ select:focus-visible {
   }
 }
 
+/* Transição de entrada de página. Duas variantes por causa de posicionamento:
+   - .animate-page (slide + fade): telas SEM elemento fixed/sticky que possa
+     ser deslocado pelo transform do ancestral (main do gestor, formulário).
+   - .animate-page-fade (só opacity): telas COM BottomNav fixo (home/lista da
+     vendedora); opacity não cria bloco de contenção para position:fixed. */
+@keyframes pageenter {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.animate-page {
+  animation: pageenter 0.26s cubic-bezier(0.4, 0, 0.2, 1) both;
+}
+@keyframes pagefade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+.animate-page-fade {
+  animation: pagefade 0.24s ease both;
+}
+@media (prefers-reduced-motion: reduce) {
+  .animate-page,
+  .animate-page-fade {
+    animation: none;
+  }
+}
+
 /* Reset de aparência para selects estilizados */
 .select-reset {
   appearance: none;
