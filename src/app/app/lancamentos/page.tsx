@@ -6,12 +6,21 @@ import { hojeIso } from "@/lib/format";
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Meus lançamentos · Almeida Closet" };
 
+const PAGINA = 30;
+
 export default async function MeusLancamentosPage() {
   const profile = await getSessionProfile();
   if (!profile) redirect("/login");
 
-  const todos = await getLancamentos({});
-  const meus = todos.filter((l) => l.criado_por === profile.id);
+  // Primeira página; o restante carrega sob demanda ("Carregar mais").
+  const meus = await getLancamentos({ criadoPor: profile.id, limite: PAGINA });
 
-  return <MeusLancamentos lancamentos={meus} hoje={hojeIso()} />;
+  return (
+    <MeusLancamentos
+      iniciais={meus}
+      pagina={PAGINA}
+      temMaisInicial={meus.length === PAGINA}
+      hoje={hojeIso()}
+    />
+  );
 }

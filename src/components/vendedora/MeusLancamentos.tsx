@@ -4,6 +4,7 @@ import Link from "next/link";
 import * as React from "react";
 import { Icon } from "@/components/Icon";
 import { LancamentoCard, tituloLancamento } from "@/components/LancamentoCard";
+import { Spinner } from "@/components/ui/Spinner";
 import { isoParaBR } from "@/lib/format";
 import type { LancamentoView } from "@/lib/types";
 import { BottomNav } from "./BottomNav";
@@ -15,13 +16,49 @@ const FILTROS = [
   { key: "despesa", label: "Despesas" },
 ];
 
-export function MeusLancamentos({ lancamentos, hoje }: { lancamentos: LancamentoView[]; hoje: string }) {
+export function MeusLancamentos({
+  iniciais,
+  pagina,
+  temMaisInicial,
+  hoje,
+}: {
+  iniciais: LancamentoView[];
+  pagina: number;
+  temMaisInicial: boolean;
+  hoje: string;
+}) {
+  const [itens, setItens] = React.useState(iniciais);
+  const [temMais, setTemMais] = React.useState(temMaisInicial);
+  const [carregando, setCarregando] = React.useState(false);
   const [query, setQuery] = React.useState("");
   const [filtro, setFiltro] = React.useState("todos");
 
+  // Ao recarregar do servidor (nova lista), volta para a primeira página.
+  React.useEffect(() => {
+    setItens(iniciais);
+    setTemMais(temMaisInicial);
+  }, [iniciais, temMaisInicial]);
+
+  async function carregarMais() {
+    if (carregando || !temMais) return;
+    setCarregando(true);
+    try {
+      const res = await fetch(`/api/lancamentos?offset=${itens.length}&limite=${pagina}`);
+      if (!res.ok) throw new Error();
+      const d = await res.json();
+      const novos: LancamentoView[] = d.lancamentos ?? [];
+      setItens((atuais) => [...atuais, ...novos]);
+      if (novos.length < pagina) setTemMais(false);
+    } catch {
+      // mantém o botão para o usuário tentar de novo
+    } finally {
+      setCarregando(false);
+    }
+  }
+
   const filtrados = React.useMemo(() => {
     const q = query.trim().toLowerCase();
-    return lancamentos.filter((l) => {
+    return itens.filter((l) => {
       if (filtro !== "todos" && l.tipo !== filtro) return false;
       if (!q) return true;
       const { titulo, sub } = tituloLancamento(l);
@@ -32,7 +69,7 @@ export function MeusLancamentos({ lancamentos, hoje }: { lancamentos: Lancamento
         (l.categoria_nome || "").toLowerCase().includes(q)
       );
     });
-  }, [lancamentos, query, filtro]);
+  }, [itens, query, filtro]);
 
   const grupos = React.useMemo(() => {
     const mapa = new Map<string, LancamentoView[]>();
@@ -61,7 +98,8 @@ export function MeusLancamentos({ lancamentos, hoje }: { lancamentos: Lancamento
           <div className="min-w-0">
             <div className="truncate text-xl font-extrabold tracking-[-.01em]">Meus lançamentos</div>
             <div className="text-[12.5px] font-semibold text-muted">
-              {lancamentos.length} {lancamentos.length === 1 ? "lançamento" : "lançamentos"}
+              {itens.length}
+              {temMais ? "+" : ""} {itens.length === 1 ? "lançamento" : "lançamentos"}
             </div>
           </div>
         </div>
@@ -118,12 +156,14 @@ export function MeusLancamentos({ lancamentos, hoje }: { lancamentos: Lancamento
             </div>
             <div className="mt-1.5 max-w-[240px] text-sm leading-[1.5] text-muted">
               {buscando
-                ? "Tente outro filtro ou termo de busca."
+                ? temMais
+                  ? "Nada nos itens carregados. Carregue mais para buscar nos mais antigos."
+                  : "Tente outro filtro ou termo de busca."
                 : "Seus lançamentos vão aparecer aqui conforme você registra."}
             </div>
           </div>
         ) : (
-          grupos.map(([dia, itens]) => {
+          grupos.map(([dia, itensDia]) => {
             const ehHoje = dia === hoje.slice(0, 10);
             return (
               <div key={dia} className="mb-1">
@@ -133,17 +173,29 @@ export function MeusLancamentos({ lancamentos, hoje }: { lancamentos: Lancamento
                     {isoParaBR(dia)}
                   </span>
                   <span className="text-[12px] font-semibold text-faint-2">
-                    {itens.length} {itens.length === 1 ? "item" : "itens"}
+                    {itensDia.length} {itensDia.length === 1 ? "item" : "itens"}
                   </span>
                 </div>
                 <div className="flex flex-col gap-2.5 pb-4 pt-1">
-                  {itens.map((l) => (
+                  {itensDia.map((l) => (
                     <LancamentoCard key={l.id} l={l} href={`/app/lancamentos/${l.id}/editar`} />
                   ))}
                 </div>
               </div>
             );
           })
+        )}
+
+        {temMais && (
+          <button
+            type="button"
+            onClick={carregarMais}
+            disabled={carregando}
+            className="mt-2 flex h-12 w-full items-center justify-center gap-2 rounded-[13px] border border-line bg-white text-[14px] font-bold text-ink-2 transition-colors active:bg-app disabled:opacity-60"
+          >
+            {carregando && <Spinner size={16} />}
+            {carregando ? "Carregando…" : "Carregar mais"}
+          </button>
         )}
       </div>
 

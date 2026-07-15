@@ -1,10 +1,24 @@
 import { NextRequest } from "next/server";
 import { handle, jsonError, jsonOk, requireUser } from "@/lib/api";
+import { getLancamentos } from "@/lib/data";
 import { montarRowLancamento } from "@/lib/lancamento-row";
 import { createClient } from "@/lib/supabase/server";
 import { lancamentoSchema } from "@/lib/validators";
 
 export const dynamic = "force-dynamic";
+
+// Lista paginada dos lançamentos do próprio usuário (para o "carregar mais"
+// da lista da vendedora). limite/offset via querystring.
+export async function GET(req: NextRequest) {
+  return handle(async () => {
+    const user = await requireUser();
+    const { searchParams } = new URL(req.url);
+    const limite = Math.min(100, Math.max(1, Number(searchParams.get("limite")) || 30));
+    const offset = Math.max(0, Number(searchParams.get("offset")) || 0);
+    const lancamentos = await getLancamentos({ criadoPor: user.id, limite, offset });
+    return jsonOk({ lancamentos });
+  });
+}
 
 // Cria um lançamento. RLS garante criado_por = auth.uid().
 export async function POST(req: NextRequest) {

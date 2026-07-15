@@ -60,7 +60,9 @@ interface FetchLancamentosOptions {
   desde?: string; // ISO inclusive
   ate?: string; // ISO inclusive
   tipos?: string[];
-  apenasDoUsuario?: boolean; // vendedora: só os próprios (RLS já garante, mas útil)
+  criadoPor?: string; // filtra por quem criou (a RLS já garante, mas útil p/ paginar)
+  limite?: number; // paginação: quantos itens
+  offset?: number; // paginação: a partir de qual índice
 }
 
 /**
@@ -75,6 +77,11 @@ export async function getLancamentos(
   if (opts.desde) q = q.gte("data", opts.desde);
   if (opts.ate) q = q.lte("data", opts.ate);
   if (opts.tipos && opts.tipos.length) q = q.in("tipo", opts.tipos);
+  if (opts.criadoPor) q = q.eq("criado_por", opts.criadoPor);
+  if (opts.limite != null) {
+    const from = opts.offset ?? 0;
+    q = q.range(from, from + opts.limite - 1);
+  }
 
   // Roda as 3 leituras em paralelo (a query e os lookups não dependem entre si).
   const [{ data: rows }, categorias, profiles] = await Promise.all([
