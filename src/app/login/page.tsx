@@ -51,7 +51,7 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="relative flex min-h-dvh flex-col overflow-hidden bg-[#151119] text-[#f2ebe1]">
+    <div className="relative flex min-h-dvh flex-col overflow-hidden bg-[#2d2831] text-[#f2ebe1]">
       {/* Atmosfera: brilhos suaves e discretos */}
       <div className="pointer-events-none absolute inset-0">
         <div className="absolute -left-28 -top-32 h-[26rem] w-[26rem] rounded-full bg-[#4a343a]/30 blur-[120px]" />
@@ -108,10 +108,10 @@ export default function LoginPage() {
           </p>
         </header>
 
-        {/* Formulário (fica embaixo, perto do polegar) */}
+        {/* Formulário logo abaixo da marca (sem vão) */}
         <form
           onSubmit={entrar}
-          className="animate-rise mt-auto pt-12"
+          className="animate-rise mt-10"
           style={{ animationDelay: ".1s" }}
           noValidate
         >
@@ -133,7 +133,7 @@ export default function LoginPage() {
                 autoCorrect="off"
                 autoComplete="username"
                 enterKeyHint="next"
-                className="h-14 w-full rounded-[14px] border border-white/10 bg-white/[.05] px-4 text-[15px] text-[#f2ebe1] outline-none transition-colors placeholder:text-[#786f61] focus:border-[#e0bd93]/70 focus:bg-white/[.07]"
+                className="h-14 w-full rounded-[14px] border border-white/[.14] bg-white/[.07] px-4 text-[15px] text-[#f2ebe1] outline-none transition-colors placeholder:text-[#786f61] focus:border-[#dcb98e]/70 focus:bg-white/[.1]"
               />
             </div>
 
@@ -153,7 +153,7 @@ export default function LoginPage() {
                   placeholder="••••••••"
                   autoComplete="current-password"
                   enterKeyHint="go"
-                  className="h-14 w-full rounded-[14px] border border-white/10 bg-white/[.05] pl-4 pr-12 text-[15px] text-[#f2ebe1] outline-none transition-colors placeholder:text-[#786f61] focus:border-[#e0bd93]/70 focus:bg-white/[.07]"
+                  className="h-14 w-full rounded-[14px] border border-white/[.14] bg-white/[.07] pl-4 pr-12 text-[15px] text-[#f2ebe1] outline-none transition-colors placeholder:text-[#786f61] focus:border-[#dcb98e]/70 focus:bg-white/[.1]"
                 />
                 <button
                   type="button"
