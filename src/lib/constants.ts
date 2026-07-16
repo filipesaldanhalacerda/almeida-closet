@@ -14,10 +14,10 @@ export const TIPO_CORES: Record<
   "venda" | "recebimento" | "despesa" | "capital",
   { fg: string; bg: string }
 > = {
-  venda: { fg: "#1f875c", bg: "#e5f1ea" },
-  recebimento: { fg: "#127c84", bg: "#ddeff0" },
-  despesa: { fg: "#cb4a44", bg: "#fae7e3" },
-  capital: { fg: "#96683a", bg: "#f1e8dc" },
+  venda: { fg: "#2f7d5b", bg: "#e7f1ec" },
+  recebimento: { fg: "#2b6f74", bg: "#e2eff0" },
+  despesa: { fg: "#b04a34", bg: "#f7e8e2" },
+  capital: { fg: "#8c6f52", bg: "#f2ece2" },
 };
 
 export function corDoTipo(tipo: LancamentoTipo) {

@@ -37,7 +37,7 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
         >
           <span
             className="flex h-[22px] w-[22px] items-center justify-center rounded-full"
-            style={{ background: toast.tipo === "erro" ? "#cb4a44" : "#1f875c" }}
+            style={{ background: toast.tipo === "erro" ? "#b04a34" : "#2f7d5b" }}
           >
             <Icon name={toast.tipo === "erro" ? "x" : "check"} size={13} color="#fff" strokeWidth={3} />
           </span>

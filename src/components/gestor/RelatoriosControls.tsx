@@ -178,7 +178,7 @@ export function RelatoriosControls({
               aria-pressed={on}
               className="rounded-[12px] border p-3.5 text-left transition-all"
               style={{
-                borderColor: on ? "#1a2130" : "#ece7df",
+                borderColor: on ? "#1c1a17" : "#ece7df",
                 background: on ? "#fff" : "#faf9f6",
                 opacity: on ? 1 : 0.62,
                 boxShadow: on ? "0 1px 2px rgba(40,36,30,.05), 0 10px 22px -18px rgba(40,36,30,.28)" : "none",
@@ -192,8 +192,8 @@ export function RelatoriosControls({
                 <span
                   className="flex h-[18px] w-[18px] flex-none items-center justify-center rounded-[5px] border"
                   style={{
-                    background: on ? "#1a2130" : "#fff",
-                    borderColor: on ? "#1a2130" : "#d8d3ca",
+                    background: on ? "#1c1a17" : "#fff",
+                    borderColor: on ? "#1c1a17" : "#d8d3ca",
                   }}
                 >
                   {on && <Icon name="check" size={11} color="#fff" strokeWidth={3} />}
@@ -260,16 +260,16 @@ function FormatoBtn({
       aria-pressed={ativo}
       className="flex-1 rounded-[12px] border px-4 py-3 text-left transition-all"
       style={{
-        borderColor: ativo ? "#1a2130" : "#e0ddd5",
-        background: ativo ? "#1a2130" : "#fff",
+        borderColor: ativo ? "#1c1a17" : "#e0ddd5",
+        background: ativo ? "#1c1a17" : "#fff",
       }}
     >
-      <div className="text-[14px] font-bold" style={{ color: ativo ? "#fff" : "#1a2130" }}>
+      <div className="text-[14px] font-bold" style={{ color: ativo ? "#fff" : "#1c1a17" }}>
         {titulo}
       </div>
       <div
         className="mt-0.5 text-[11.5px] leading-[1.4]"
-        style={{ color: ativo ? "rgba(255,255,255,.65)" : "#727a88" }}
+        style={{ color: ativo ? "rgba(255,255,255,.65)" : "#78726a" }}
       >
         {sub}
       </div>

@@ -29,7 +29,7 @@ export function ResultadoVendas({ model, ano, anos }: { model: ResultadoVendasMo
                   disabled={pending}
                   onClick={() => startTransition(() => router.push(`/admin/resultado-de-vendas?ano=${y}`))}
                   className="h-[34px] rounded-[7px] px-4 text-[13px] font-bold"
-                  style={{ background: ativo ? "#1a2130" : "transparent", color: ativo ? "#fff" : "#5a6273" }}
+                  style={{ background: ativo ? "#1c1a17" : "transparent", color: ativo ? "#fff" : "#6f6a63" }}
                 >
                   {y}
                 </button>
@@ -97,7 +97,7 @@ export function ResultadoVendas({ model, ano, anos }: { model: ResultadoVendasMo
                     <b className="text-sm">{pct(m.pct, 0)}</b> · {brl(m.valor)}
                   </span>
                 </div>
-                <HBar largura={m.pct} cor="#127c84" />
+                <HBar largura={m.pct} cor="#2b6f74" />
               </div>
             ))}
           </div>

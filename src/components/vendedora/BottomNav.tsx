@@ -2,37 +2,9 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { Icon, type IconName } from "@/components/Icon";
+import { Icon } from "@/components/Icon";
 import { haptics } from "@/lib/haptics";
 
-function NavItem({
-  href,
-  icon,
-  label,
-  ativo,
-}: {
-  href: string;
-  icon: IconName;
-  label: string;
-  ativo: boolean;
-}) {
-  const cor = ativo ? "#e8674c" : "rgba(255,255,255,.55)";
-  return (
-    <Link
-      href={href}
-      onClick={() => haptics.leve()}
-      aria-current={ativo ? "page" : undefined}
-      className="flex h-full flex-1 flex-col items-center justify-center gap-[3px] transition-transform active:scale-95"
-    >
-      <Icon name={icon} size={21} color={cor} strokeWidth={ativo ? 2.3 : 1.9} />
-      <span className="text-[10.5px] font-bold" style={{ color: cor }}>
-        {label}
-      </span>
-    </Link>
-  );
-}
-
-// Dock flutuante navy com FAB coral central elevado.
 export function BottomNav() {
   const pathname = usePathname();
   const router = useRouter();
@@ -40,23 +12,40 @@ export function BottomNav() {
   const lista = pathname.startsWith("/app/lancamentos") && !pathname.includes("/novo");
 
   return (
-    <div className="pointer-events-none fixed inset-x-0 bottom-0 z-40 mx-auto flex w-full max-w-[440px] justify-center px-5 pb-[calc(env(safe-area-inset-bottom)+0.65rem)]">
-      <div className="pointer-events-auto relative flex h-[62px] w-full items-center rounded-[26px] bg-night px-2 shadow-night ring-1 ring-white/[.06]">
-        <NavItem href="/app" icon="home" label="Início" ativo={inicio} />
-        <div className="w-[64px] flex-none" />
-        <NavItem href="/app/lancamentos" icon="list" label="Lançamentos" ativo={lista} />
-
+    <div className="pointer-events-none fixed inset-x-0 bottom-0 z-40 mx-auto flex h-[calc(88px+env(safe-area-inset-bottom))] w-full max-w-[440px] items-start bg-gradient-to-t from-app from-[62%] to-transparent px-2 pb-[env(safe-area-inset-bottom)] pt-3.5">
+      {/* 3 seções de largura igual (1/3 cada), mantém o "+" no centro exato */}
+      <Link
+        href="/app"
+        onClick={() => haptics.leve()}
+        aria-current={inicio ? "page" : undefined}
+        className="pointer-events-auto flex flex-1 flex-col items-center gap-[3px] transition-transform active:scale-95"
+        style={{ color: inicio ? "#1c1a17" : "#8c867b" }}
+      >
+        <Icon name="home" size={22} />
+        <span className="text-[11px] font-semibold">Início</span>
+      </Link>
+      <div className="flex flex-1 justify-center">
         <button
           onClick={() => {
             haptics.toque();
             router.push("/app/lancamentos/novo");
           }}
           aria-label="Novo lançamento"
-          className="absolute left-1/2 top-0 flex h-[58px] w-[58px] -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-accent text-white shadow-primary ring-4 ring-app transition-transform active:scale-90"
+          className="pointer-events-auto -mt-1.5 flex h-14 w-14 items-center justify-center rounded-full bg-ink text-white shadow-[0_10px_20px_-6px_rgba(28,26,23,.5)] transition-transform active:scale-90"
         >
-          <Icon name="plus" size={26} color="#fff" strokeWidth={2.3} />
+          <Icon name="plus" size={24} color="#fff" strokeWidth={2.2} />
         </button>
       </div>
+      <Link
+        href="/app/lancamentos"
+        onClick={() => haptics.leve()}
+        aria-current={lista ? "page" : undefined}
+        className="pointer-events-auto flex flex-1 flex-col items-center gap-[3px] transition-transform active:scale-95"
+        style={{ color: lista ? "#1c1a17" : "#8c867b" }}
+      >
+        <Icon name="list" size={22} />
+        <span className="text-[11px] font-semibold">Lançamentos</span>
+      </Link>
     </div>
   );
 }

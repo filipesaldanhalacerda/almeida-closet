@@ -110,7 +110,7 @@ export default function PrimeiroAcessoPage() {
       <div className="min-h-dvh md:flex md:items-center md:justify-center md:bg-[radial-gradient(115%_90%_at_50%_-12%,#efece5_0%,#e6e2da_52%,#ded9d0_100%)] md:px-6 md:py-12">
       <main className="mx-auto flex min-h-dvh w-full max-w-[420px] flex-col items-center justify-center px-9 text-center md:min-h-[560px] md:rounded-[32px] md:border md:border-black/5 md:bg-app md:shadow-[0_40px_70px_-28px_rgba(0,0,0,.35)]">
         <div className="flex h-[88px] w-[88px] animate-pop items-center justify-center rounded-full bg-venda-bg">
-          <Icon name="check" size={42} color="#1f875c" strokeWidth={2.2} />
+          <Icon name="check" size={42} color="#2f7d5b" strokeWidth={2.2} />
         </div>
         <div className="mt-7 text-[26px] font-extrabold tracking-[-.01em]">
           Bem-vinda, {nome.split(" ")[0]}!

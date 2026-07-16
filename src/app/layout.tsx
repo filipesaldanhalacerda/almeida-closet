@@ -1,22 +1,14 @@
 import type { Metadata, Viewport } from "next";
-import { Fraunces, Public_Sans } from "next/font/google";
+import { Public_Sans } from "next/font/google";
 import { Suspense } from "react";
 import { PWARegister } from "@/components/PWARegister";
 import { TopProgressBar } from "@/components/TopProgressBar";
 import "./globals.css";
 
-// UI / corpo: grotesca neutra e legível.
 const publicSans = Public_Sans({
   subsets: ["latin"],
   weight: ["400", "500", "600", "700", "800"],
   variable: "--font-public-sans",
-  display: "swap",
-});
-
-// Display / números: serifa editorial de moda (dá a cara de boutique).
-const fraunces = Fraunces({
-  subsets: ["latin"],
-  variable: "--font-fraunces",
   display: "swap",
 });
 
@@ -37,7 +29,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#1a2130",
+  themeColor: "#1c1a17",
   width: "device-width",
   initialScale: 1,
   maximumScale: 1,
@@ -52,7 +44,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="pt-BR" className={`${publicSans.variable} ${fraunces.variable}`}>
+    <html lang="pt-BR" className={publicSans.variable}>
       <body className="min-h-dvh bg-app text-ink antialiased">
         <Suspense fallback={null}>
           <TopProgressBar />

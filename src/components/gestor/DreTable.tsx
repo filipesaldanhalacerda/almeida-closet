@@ -93,7 +93,7 @@ export function DreTable({
                   disabled={pending}
                   onClick={() => startTransition(() => router.push(`/admin/dre?ano=${y}`))}
                   className="h-[34px] rounded-[7px] px-4 text-[13px] font-bold"
-                  style={{ background: ativo ? "#1a2130" : "transparent", color: ativo ? "#fff" : "#5a6273" }}
+                  style={{ background: ativo ? "#1c1a17" : "transparent", color: ativo ? "#fff" : "#6f6a63" }}
                 >
                   {y}
                 </button>
@@ -112,7 +112,7 @@ export function DreTable({
         <StatCard
           titulo="Receita Bruta"
           valor={brl(model.resumo.receitaBruta)}
-          cor="#1f875c"
+          cor="#2f7d5b"
           sub={
             resumoAnterior && (
               <StatDelta atual={model.resumo.receitaBruta} anterior={resumoAnterior.receitaBruta} rotulo={`vs ${ano - 1}`} />
@@ -122,7 +122,7 @@ export function DreTable({
         <StatCard
           titulo="Despesa Total"
           valor={brl(model.resumo.despesaTotal)}
-          cor="#cb4a44"
+          cor="#b04a34"
           sub={
             resumoAnterior && (
               <StatDelta atual={model.resumo.despesaTotal} anterior={resumoAnterior.despesaTotal} rotulo={`vs ${ano - 1}`} bomSeMaior={false} />
@@ -177,10 +177,10 @@ export function DreTable({
                   <button
                     onClick={() => l.grupoKey && toggle(l.grupoKey)}
                     className="sticky left-0 z-[1] flex items-center gap-1.5 py-2.5 pr-2 text-left text-[13px]"
-                    style={{ paddingLeft: indent, fontWeight: fw, background: bg, cursor: podeExpandir ? "pointer" : "default", color: l.destaque ? "#1a2130" : "#3a4354" }}
+                    style={{ paddingLeft: indent, fontWeight: fw, background: bg, cursor: podeExpandir ? "pointer" : "default", color: l.destaque ? "#1c1a17" : "#42403b" }}
                   >
                     {podeExpandir ? (
-                      <Icon name={exp[l.grupoKey!] ? "chevronDown" : "chevronRight"} size={12} color="#8b929e" />
+                      <Icon name={exp[l.grupoKey!] ? "chevronDown" : "chevronRight"} size={12} color="#8c867b" />
                     ) : (
                       <span className="w-3" />
                     )}

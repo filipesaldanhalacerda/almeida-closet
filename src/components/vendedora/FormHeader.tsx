@@ -14,7 +14,7 @@ export function FormHeader({ titulo }: { titulo: string }) {
       >
         <Icon name="back" size={18} />
       </button>
-      <span className="truncate font-display text-[19px] font-semibold tracking-[-.01em]">{titulo}</span>
+      <span className="truncate text-[18px] font-extrabold tracking-[-.01em]">{titulo}</span>
     </div>
   );
 }

@@ -1,6 +1,6 @@
 // Service worker do Almeida Closet — app shell offline (network-first para
 // navegação, com fallback; cache-first para estáticos). Não intercepta APIs.
-const CACHE = "ac-cache-v2";
+const CACHE = "ac-cache-v1";
 const SHELL = ["/offline", "/manifest.webmanifest", "/icons/icon-192.png", "/icons/icon-512.png"];
 
 self.addEventListener("install", (event) => {

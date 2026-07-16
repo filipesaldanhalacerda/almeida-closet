@@ -49,8 +49,8 @@ export default async function FluxoDeCaixaPage({
     <div className="flex flex-col gap-4">
       <div className="grid grid-cols-1 gap-3.5 xs:grid-cols-2 lg:grid-cols-4">
         <StatCard titulo="Saldo inicial" valor={brl(f.saldoInicialMes)} />
-        <StatCard titulo="Entradas no mês" valor={brl(f.entradas)} cor="#1f875c" />
-        <StatCard titulo="Saídas no mês" valor={brl(f.saidas)} cor="#cb4a44" />
+        <StatCard titulo="Entradas no mês" valor={brl(f.entradas)} cor="#2f7d5b" />
+        <StatCard titulo="Saídas no mês" valor={brl(f.saidas)} cor="#b04a34" />
         <StatCard
           titulo="Saldo final"
           valor={brl(f.saldoFinal)}
@@ -79,8 +79,8 @@ export default async function FluxoDeCaixaPage({
           <svg viewBox={`0 0 ${W} ${H}`} width="100%" height={H} preserveAspectRatio="none" className="block">
             <defs>
               <linearGradient id="fluxoArea" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#127c84" stopOpacity=".16" />
-                <stop offset="100%" stopColor="#127c84" stopOpacity="0" />
+                <stop offset="0%" stopColor="#2b6f74" stopOpacity=".16" />
+                <stop offset="100%" stopColor="#2b6f74" stopOpacity="0" />
               </linearGradient>
             </defs>
             <polygon points={areaPts} fill="url(#fluxoArea)" />
@@ -95,7 +95,7 @@ export default async function FluxoDeCaixaPage({
                 strokeDasharray="4 4"
               />
             )}
-            <polyline points={pts} fill="none" stroke="#127c84" strokeWidth="2.5" strokeLinejoin="round" strokeLinecap="round" vectorEffect="non-scaling-stroke" />
+            <polyline points={pts} fill="none" stroke="#2b6f74" strokeWidth="2.5" strokeLinejoin="round" strokeLinecap="round" vectorEffect="non-scaling-stroke" />
           </svg>
         )}
       </div>
@@ -120,10 +120,10 @@ export default async function FluxoDeCaixaPage({
             <span className="text-[13px] font-bold">{d.dia}</span>
             <span className="text-right text-[13px] font-semibold text-venda-fg tnum">{d.entradas ? brl(d.entradas) : "—"}</span>
             <span className="text-right text-[13px] font-semibold text-desp-fg tnum">{d.saidas ? brl(d.saidas) : "—"}</span>
-            <span className="text-right text-[13px] font-bold tnum" style={{ color: d.saldoDia < 0 ? "#cb4a44" : "#1a2130" }}>
+            <span className="text-right text-[13px] font-bold tnum" style={{ color: d.saldoDia < 0 ? "#b04a34" : "#1c1a17" }}>
               {brl(d.saldoDia)}
             </span>
-            <span className="text-right text-[13.5px] font-extrabold tnum" style={{ color: d.saldoFinal < 0 ? "#cb4a44" : "#1a2130" }}>
+            <span className="text-right text-[13.5px] font-extrabold tnum" style={{ color: d.saldoFinal < 0 ? "#b04a34" : "#1c1a17" }}>
               {brl(d.saldoFinal)}
             </span>
           </div>

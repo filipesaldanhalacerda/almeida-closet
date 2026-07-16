@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 import * as React from "react";
 import { AjudaLancamento } from "@/components/AjudaLancamento";
-import { Icon, type IconName } from "@/components/Icon";
+import { Icon } from "@/components/Icon";
 import { BottomSheet, Modal } from "@/components/ui/Modal";
 import { useToast } from "@/components/ui/Toast";
 import {
@@ -72,7 +72,6 @@ interface Props {
   vendedoras?: { id: string; nome: string }[];
   clientes?: Cliente[];
   inicial?: LancamentoView | null;
-  tipoPreset?: string;
 }
 
 /** Exibe centavos como valor pt-BR sem o prefixo (ex.: "1.234,56"). */
@@ -94,22 +93,16 @@ export function LancamentoForm({
   vendedoras = [],
   clientes = [],
   inicial = null,
-  tipoPreset,
 }: Props) {
   const router = useRouter();
   const toast = useToast();
   const editando = Boolean(inicial);
 
-  const presetValido =
-    !!tipoPreset && ["venda", "recebimento", "despesa", "capital"].includes(tipoPreset);
-
   const tipoInicial: TipoForm = inicial
     ? inicial.tipo === "investimento" || inicial.tipo === "devolucao_capital"
       ? "capital"
       : (inicial.tipo as TipoForm)
-    : presetValido
-      ? (tipoPreset as TipoForm)
-      : "venda";
+    : "venda";
 
   const [tipo, setTipo] = React.useState<TipoForm>(tipoInicial);
   const [valorCents, setValorCents] = React.useState(
@@ -161,10 +154,6 @@ export function LancamentoForm({
     if (erro) haptics.erro();
   }, [erro]);
 
-  // Fluxo em etapas (só no NOVO da vendedora): 0=tipo, 1=valor, 2=detalhes.
-  // Deep-link com ?tipo já entra direto no valor.
-  const [passo, setPasso] = React.useState(presetValido ? 1 : 0);
-
   const valor = centavosParaNumero(valorCents);
   const recebValor = centavosParaNumero(recebCents);
   // Recebimento parcial exige entrada > 0 e não maior que o valor da venda.
@@ -176,33 +165,12 @@ export function LancamentoForm({
   const mostrarMeioReceb = !forma || forma === "crediario";
   const cor =
     tipo === "venda"
-      ? "#1f875c"
+      ? "#2f7d5b"
       : tipo === "recebimento"
-        ? "#127c84"
+        ? "#2b6f74"
         : tipo === "capital"
-          ? "#96683a"
-          : "#cb4a44";
-
-  // Fluxo em etapas apenas no novo lançamento da vendedora.
-  const usaEtapas = modo === "vendedora" && !editando;
-  const ICONE_TIPO: Record<TipoForm, IconName> = {
-    venda: "tag",
-    recebimento: "banknote",
-    despesa: "arrowOut",
-    capital: "wallet",
-  };
-  const CORES_TIPO: Record<TipoForm, { fg: string; bg: string }> = {
-    venda: { fg: "#1f875c", bg: "#e5f1ea" },
-    recebimento: { fg: "#127c84", bg: "#ddeff0" },
-    despesa: { fg: "#cb4a44", bg: "#fae7e3" },
-    capital: { fg: "#96683a", bg: "#f1e8dc" },
-  };
-  const TIPO_LABEL_MIN: Record<TipoForm, string> = {
-    venda: "venda",
-    recebimento: "entrada",
-    despesa: "despesa",
-    capital: "movimentação",
-  };
+          ? "#8c6f52"
+          : "#b04a34";
 
   // Ao escolher a forma da venda, sugere o modo e o meio do recebimento.
   // Só aplica quando a forma REALMENTE muda (evita resetar ao re-tocar, o que
@@ -415,7 +383,7 @@ export function LancamentoForm({
   const blocoRecebimentoJunto = tipo === "venda" && !editando && (
     <div className="rounded-[14px] border border-[#d9e6de] bg-[#f4f9f6] p-4">
       <div className="mb-1 flex items-center gap-2">
-        <Icon name="banknote" size={17} color="#127c84" />
+        <Icon name="banknote" size={17} color="#2b6f74" />
         <span className="text-[13px] font-bold text-ink-2">Já entrou dinheiro?</span>
       </div>
       <div className="mb-3 text-[12px] leading-[1.45] text-muted">
@@ -440,9 +408,9 @@ export function LancamentoForm({
               }}
               className="h-10 flex-1 whitespace-nowrap rounded-[10px] px-1 text-[12.5px] font-bold transition-colors"
               style={{
-                border: `1px solid ${ativo ? "#127c84" : "#d5e0da"}`,
-                background: ativo ? "#127c84" : "#fff",
-                color: ativo ? "#fff" : "#3a4354",
+                border: `1px solid ${ativo ? "#2b6f74" : "#d5e0da"}`,
+                background: ativo ? "#2b6f74" : "#fff",
+                color: ativo ? "#fff" : "#42403b",
               }}
             >
               {o.label}
@@ -466,7 +434,7 @@ export function LancamentoForm({
                   inputMode="numeric"
                   placeholder="0,00"
                   className="w-full bg-transparent text-[17px] font-extrabold tnum outline-none"
-                  style={{ color: "#127c84" }}
+                  style={{ color: "#2b6f74" }}
                 />
               </div>
               {recebValor <= 0 && (
@@ -494,9 +462,9 @@ export function LancamentoForm({
                     onClick={() => setRecebMeio(o.value)}
                     className="h-11 whitespace-nowrap rounded-[11px] px-2 text-[13px] font-semibold transition-colors"
                     style={{
-                      border: `1px solid ${ativo ? "#127c84" : "#d5e0da"}`,
-                      background: ativo ? "#127c84" : "#fff",
-                      color: ativo ? "#fff" : "#3a4354",
+                      border: `1px solid ${ativo ? "#2b6f74" : "#d5e0da"}`,
+                      background: ativo ? "#2b6f74" : "#fff",
+                      color: ativo ? "#fff" : "#42403b",
                     }}
                   >
                     {o.label}
@@ -573,7 +541,7 @@ export function LancamentoForm({
                     title={b.valor}
                     className="relative aspect-[79/50] w-full overflow-hidden rounded-[9px] bg-white transition-transform active:scale-95"
                     style={{
-                      boxShadow: ativo ? "0 0 0 2px #1a2130" : "0 0 0 1px #e3dfd8",
+                      boxShadow: ativo ? "0 0 0 2px #1c1a17" : "0 0 0 1px #e3dfd8",
                       opacity: !bandeira || ativo ? 1 : 0.5,
                     }}
                   >
@@ -667,7 +635,7 @@ export function LancamentoForm({
 
       {/* Data, a linha inteira abre o calendário */}
       <label className="relative mt-[18px] flex cursor-pointer items-center gap-3 rounded-[12px] border border-line bg-white px-4 py-3 shadow-card transition-colors hover:border-input-border">
-        <Icon name="calendar" size={20} color="#727a88" />
+        <Icon name="calendar" size={20} color="#78726a" />
         <span className="flex-1">
           <span className="block text-[11.5px] font-bold uppercase tracking-[.1em] text-faint">
             Data
@@ -804,174 +772,7 @@ export function LancamentoForm({
     );
   }
 
-  // ---- modo vendedora ------------------------------------------------------
-  // Novo lançamento: fluxo guiado em etapas (Tipo -> Valor -> Detalhes).
-  if (usaEtapas) {
-    const titulos = ["Tipo de lançamento", "Qual o valor?", "Confirme os detalhes"];
-    return (
-      <div className="flex min-h-dvh flex-col">
-        {/* Cabeçalho do fluxo: voltar + passo + progresso */}
-        <div className="flex flex-none items-center gap-3 px-5 pb-2 pt-[calc(env(safe-area-inset-top)+0.5rem)]">
-          <button
-            type="button"
-            onClick={() => (passo > 0 ? setPasso(passo - 1) : router.back())}
-            aria-label="Voltar"
-            className="flex h-11 w-11 flex-none items-center justify-center rounded-full border border-line bg-white active:scale-95"
-          >
-            <Icon name="back" size={18} />
-          </button>
-          <div className="min-w-0 flex-1">
-            <div className="text-[10.5px] font-bold uppercase tracking-[.16em] text-faint">
-              Passo {passo + 1} de 3
-            </div>
-            <div className="truncate font-display text-[19px] font-semibold tracking-[-.01em]">
-              {titulos[passo]}
-            </div>
-          </div>
-          <div className="flex flex-none items-center gap-1.5">
-            {[0, 1, 2].map((i) => (
-              <span
-                key={i}
-                className="h-1.5 rounded-full transition-all duration-300"
-                style={{ width: i === passo ? 20 : 6, background: i <= passo ? "#e8674c" : "#ded6c8" }}
-              />
-            ))}
-          </div>
-        </div>
-
-        {/* Conteúdo do passo */}
-        <div className="flex flex-1 flex-col overflow-y-auto px-5 pb-6 pt-2">
-          {passo === 0 && (
-            <div className="flex flex-col gap-3">
-              {tiposDisponiveis.map((t) => {
-                const c = CORES_TIPO[t.key];
-                return (
-                  <button
-                    key={t.key}
-                    type="button"
-                    onClick={() => {
-                      haptics.leve();
-                      setTipo(t.key);
-                      setPasso(1);
-                    }}
-                    className="flex items-center gap-4 rounded-[20px] border border-line bg-white p-4 text-left shadow-card transition-transform active:scale-[.98]"
-                  >
-                    <span
-                      className="flex h-14 w-14 flex-none items-center justify-center rounded-[17px]"
-                      style={{ background: c.bg }}
-                    >
-                      <Icon name={ICONE_TIPO[t.key]} size={26} color={c.fg} />
-                    </span>
-                    <span className="flex min-w-0 flex-1 flex-col gap-1">
-                      <span className="font-display text-[18px] font-semibold">{t.label}</span>
-                      <span className="text-[12.5px] leading-[1.35] text-muted">
-                        {TIPO_HINTS[t.key]}
-                      </span>
-                    </span>
-                    <Icon name="chevronRight" size={20} color="#c2c7d0" className="flex-none" />
-                  </button>
-                );
-              })}
-              <div className="mt-1 flex justify-center">
-                <AjudaLancamento />
-              </div>
-            </div>
-          )}
-
-          {passo === 1 && (
-            <div>
-              <div className="mb-6 mt-4 text-center">
-                <div className="text-[11px] font-bold uppercase tracking-[.16em] text-faint">
-                  Valor da {TIPO_LABEL_MIN[tipo]}
-                </div>
-                <div
-                  className="mt-2 font-display text-[clamp(48px,16vw,66px)] font-black leading-none tracking-[-.02em] tnum transition-colors"
-                  style={{ color: valor > 0 ? cor : "#c2c7d0" }}
-                >
-                  {brl(valor)}
-                </div>
-              </div>
-              <div className="grid grid-cols-3 gap-2.5">
-                {keypad.map((k) => {
-                  const util = k === "C" || k === "⌫";
-                  return (
-                    <button
-                      key={k}
-                      type="button"
-                      onClick={() =>
-                        k === "C" ? limpaValor() : k === "⌫" ? apagaDigito() : apertaDigito(k)
-                      }
-                      className={
-                        "flex h-[62px] items-center justify-center rounded-[16px] text-[24px] font-bold transition-all active:scale-[.94] " +
-                        (util
-                          ? "bg-[#e9e2d6] text-ink-2 active:bg-[#e0d8c9]"
-                          : "border border-line bg-white text-ink shadow-[0_1px_2px_rgba(26,33,48,.05)] active:bg-[#f6f2ec]")
-                      }
-                      style={k === "C" ? { color: "#cb4a44" } : undefined}
-                      aria-label={k === "⌫" ? "Apagar" : k === "C" ? "Limpar" : k}
-                    >
-                      {k === "⌫" ? <Icon name="backspace" size={24} /> : k}
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-          )}
-
-          {passo === 2 && (
-            <div className="pt-1">
-              {camposAdaptativos}
-              {erro && (
-                <div className="mt-4 rounded-[13px] border border-[#eeccc7] bg-desp-bg px-4 py-3 text-sm font-semibold text-desp-fg">
-                  {erro}
-                </div>
-              )}
-            </div>
-          )}
-        </div>
-
-        {/* Ação fixa por passo */}
-        {passo > 0 && (
-          <div className="sticky bottom-0 flex-none bg-gradient-to-t from-app from-70% to-transparent px-5 pb-[calc(1.25rem+env(safe-area-inset-bottom))] pt-3">
-            {passo === 1 ? (
-              <button
-                type="button"
-                onClick={() => valor > 0 && setPasso(2)}
-                disabled={valor <= 0}
-                className="flex h-[58px] w-full items-center justify-center gap-2 rounded-[16px] text-[16.5px] font-bold text-white shadow-primary transition-transform active:scale-[.99] disabled:opacity-50"
-                style={{ background: cor }}
-              >
-                Continuar
-                <Icon name="arrowRight" size={18} color="#fff" strokeWidth={2.2} />
-              </button>
-            ) : (
-              <button
-                type="button"
-                onClick={salvar}
-                disabled={salvando || valor <= 0 || parcialSemValor || parcialExcede}
-                className="flex h-[58px] w-full items-center justify-center gap-2.5 rounded-[16px] text-[16.5px] font-bold text-white shadow-primary transition-transform active:scale-[.99] disabled:opacity-50"
-                style={{ background: cor }}
-              >
-                {salvando ? (
-                  <>
-                    <span className="h-5 w-5 animate-spin rounded-full border-2 border-white/30 border-t-white" />
-                    Salvando…
-                  </>
-                ) : (
-                  <>
-                    <Icon name="check" size={19} color="#fff" strokeWidth={2.4} />
-                    Salvar lançamento
-                  </>
-                )}
-              </button>
-            )}
-          </div>
-        )}
-      </div>
-    );
-  }
-
-  // Edição (vendedora): tela única com todos os campos de uma vez.
+  // ---- modo vendedora (mobile, com teclado) --------------------------------
   return (
     <div className="flex min-h-full flex-col">
       <div className="flex-1 px-1 pb-6">
@@ -983,8 +784,8 @@ export function LancamentoForm({
             Valor do lançamento
           </div>
           <div
-            className="mt-1.5 font-display text-[clamp(42px,14vw,58px)] font-black leading-none tracking-[-.02em] tnum transition-colors"
-            style={{ color: valor > 0 ? cor : "#c2c7d0" }}
+            className="mt-1.5 text-[clamp(40px,13vw,54px)] font-extrabold leading-none tracking-[-.02em] tnum transition-colors"
+            style={{ color: valor > 0 ? cor : "#cbc6bd" }}
           >
             {brl(valor)}
           </div>
@@ -1004,7 +805,7 @@ export function LancamentoForm({
                     ? "bg-[#eae6df] text-ink-2 active:bg-[#e0dbd2]"
                     : "border border-line bg-white text-ink shadow-[0_1px_2px_rgba(40,36,30,.05)] active:bg-[#f4f1ec]")
                 }
-                style={k === "C" ? { color: "#cb4a44" } : undefined}
+                style={k === "C" ? { color: "#b04a34" } : undefined}
                 aria-label={k === "⌫" ? "Apagar" : k === "C" ? "Limpar" : k}
               >
                 {k === "⌫" ? <Icon name="backspace" size={23} /> : k}
@@ -1182,21 +983,21 @@ function ClienteField({
         />
         {jaCadastrada && (
           <span className="pointer-events-none absolute right-3.5 top-1/2 -translate-y-1/2">
-            <Icon name="check" size={19} color="#1f875c" strokeWidth={2.4} />
+            <Icon name="check" size={19} color="#2f7d5b" strokeWidth={2.4} />
           </span>
         )}
       </div>
 
       {jaCadastrada && !aberto && (
         <div className="mt-1.5 flex items-center gap-1 px-0.5 text-[12px] font-semibold text-venda-fg">
-          <Icon name="check" size={13} color="#1f875c" strokeWidth={2.6} />
+          <Icon name="check" size={13} color="#2f7d5b" strokeWidth={2.6} />
           Cliente cadastrada
         </div>
       )}
 
       {!jaCadastrada && norm.length > 0 && !aberto && (
         <div className="mt-1.5 flex items-center gap-1 px-0.5 text-[12px] font-semibold text-desp-fg">
-          <Icon name="alert" size={13} color="#cb4a44" strokeWidth={2.4} />
+          <Icon name="alert" size={13} color="#b04a34" strokeWidth={2.4} />
           Cliente não cadastrada. Cadastre ou selecione uma da lista
         </div>
       )}
@@ -1231,7 +1032,7 @@ function ClienteField({
                     {c.telefone && (
                       <span className="text-[12px] font-medium text-faint">{c.telefone}</span>
                     )}
-                    {exata && <Icon name="check" size={16} color="#1f875c" strokeWidth={2.4} />}
+                    {exata && <Icon name="check" size={16} color="#2f7d5b" strokeWidth={2.4} />}
                   </span>
                 </button>
               );
@@ -1247,7 +1048,7 @@ function ClienteField({
               }}
               className="flex w-full items-center gap-2 border-t border-[#f2efe9] bg-panel px-4 py-3 text-left text-[14px] font-bold text-venda-fg hover:bg-venda-bg"
             >
-              <Icon name="plus" size={15} color="#1f875c" strokeWidth={2.4} />
+              <Icon name="plus" size={15} color="#2f7d5b" strokeWidth={2.4} />
               {temParecidas ? "Nenhuma dessas? Cadastrar" : "Cadastrar"} “{valor.trim()}”
             </button>
           )}
@@ -1359,7 +1160,7 @@ function CategoriaField({
             </span>
           )}
         </span>
-        <Icon name="chevronDown" size={18} color="#727a88" />
+        <Icon name="chevronDown" size={18} color="#78726a" />
       </button>
 
       {aberto && (
@@ -1415,7 +1216,7 @@ function CategoriaField({
                           {c.nome}
                         </span>
                         {ativa && (
-                          <Icon name="check" size={17} color="#1f875c" strokeWidth={2.4} />
+                          <Icon name="check" size={17} color="#2f7d5b" strokeWidth={2.4} />
                         )}
                       </button>
                     );
@@ -1444,7 +1245,7 @@ function TipoSelector({
   // (vendedora) ficam sempre em uma linha. Evita rótulos longos se sobreporem.
   const cols = tipos.length > 3 ? "grid-cols-2 sm:grid-cols-4" : "grid-cols-3";
   return (
-    <div className={`grid gap-1.5 rounded-[14px] bg-[#e9e2d6] p-1.5 ${cols}`}>
+    <div className={`grid gap-1.5 rounded-[13px] bg-[#efece5] p-1.5 ${cols}`}>
       {tipos.map((t) => {
         const ativo = t.key === tipo;
         return (
@@ -1455,11 +1256,11 @@ function TipoSelector({
               if (t.key !== tipo) haptics.leve();
               setTipo(t.key);
             }}
-            className="h-[42px] whitespace-nowrap rounded-[10px] text-[13px] font-bold active:scale-[.97] sm:text-[13.5px]"
+            className="h-[42px] whitespace-nowrap rounded-[9px] text-[13px] font-bold active:scale-[.97] sm:text-[13.5px]"
             style={{
               background: ativo ? "#fff" : "transparent",
-              color: ativo ? "#1a2130" : "#5a6273",
-              boxShadow: ativo ? "0 1px 3px rgba(26,33,48,.14)" : "none",
+              color: ativo ? "#1c1a17" : "#6f6a63",
+              boxShadow: ativo ? "0 1px 3px rgba(40,36,30,.12)" : "none",
             }}
           >
             {t.label}
@@ -1501,9 +1302,9 @@ function ChipGroup({
                 " whitespace-nowrap font-semibold transition-colors"
               }
               style={{
-                border: `1px solid ${ativo ? "#1a2130" : "#e3dfd8"}`,
-                background: ativo ? "#1a2130" : "#fff",
-                color: ativo ? "#fff" : "#3a4354",
+                border: `1px solid ${ativo ? "#1c1a17" : "#e3dfd8"}`,
+                background: ativo ? "#1c1a17" : "#fff",
+                color: ativo ? "#fff" : "#42403b",
               }}
             >
               {o.label}

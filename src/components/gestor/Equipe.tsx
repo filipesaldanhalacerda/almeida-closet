@@ -113,7 +113,7 @@ export function Equipe({ time, periodo }: { time: TeamRow[]; periodo: string }) 
                   className="flex-none rounded-full px-2.5 py-[3px] text-[11.5px] font-bold"
                   style={{
                     background: t.ativo ? "#edf3ee" : "#f2efe9",
-                    color: t.ativo ? "#1f875c" : "#8b929e",
+                    color: t.ativo ? "#2f7d5b" : "#8c867b",
                   }}
                 >
                   {t.ativo ? "Ativa" : "Inativa"}
@@ -135,7 +135,7 @@ export function Equipe({ time, periodo }: { time: TeamRow[]; periodo: string }) 
                 className="rounded-[9px] border bg-white px-3 py-1.5 text-[12px] font-bold transition-opacity hover:opacity-80"
                 style={{
                   borderColor: t.ativo ? "#eccec5" : "#dfe9df",
-                  color: t.ativo ? "#cb4a44" : "#1f875c",
+                  color: t.ativo ? "#b04a34" : "#2f7d5b",
                 }}
               >
                 {t.ativo ? "Desativar" : "Reativar"}

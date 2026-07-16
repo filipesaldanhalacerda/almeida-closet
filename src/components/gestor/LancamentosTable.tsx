@@ -104,7 +104,7 @@ export function LancamentosTable({
           <option value="capital">Capital</option>
         </select>
         <div className="flex h-10 min-w-[200px] flex-1 items-center gap-2.5 rounded-[10px] border border-input-border bg-white px-3">
-          <Icon name="search" size={18} color="#8b929e" />
+          <Icon name="search" size={18} color="#8c867b" />
           <input
             value={query}
             onChange={(e) => setQuery(e.target.value)}
@@ -174,7 +174,7 @@ export function LancamentosTable({
                   title="Excluir"
                   className="flex h-8 w-8 items-center justify-center rounded-lg border border-[#eccec5] bg-white transition-colors hover:bg-[#fbf1ee] active:bg-[#fbf1ee]"
                 >
-                  <Icon name="trash" size={15} color="#cb4a44" />
+                  <Icon name="trash" size={15} color="#b04a34" />
                 </button>
               </span>
             </div>
@@ -225,7 +225,7 @@ export function LancamentosTable({
                 aria-label="Excluir"
                 className="flex h-8 w-8 flex-none items-center justify-center rounded-lg border border-[#eccec5]"
               >
-                <Icon name="trash" size={15} color="#cb4a44" />
+                <Icon name="trash" size={15} color="#b04a34" />
               </button>
             </div>
           );

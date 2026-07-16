@@ -39,11 +39,11 @@ export default async function DashboardGestor({
   const maxBar = Math.max(1, ...d.serie6.flatMap((s) => [s.recebido, s.despesa]));
 
   const kpis = [
-    { label: "Recebido no mês", hint: "o que entrou", value: brl(d.recebido), color: "#1f875c", bg: "#e7f1ec", icon: "banknote" as const, delta: d.delta.recebido, bom: d.delta.recebido >= 0 },
-    { label: "Despesas", hint: "o que saiu", value: brl(d.despesas), color: "#cb4a44", bg: "#f7e8e2", icon: "arrowOut" as const, delta: d.delta.despesas, bom: d.delta.despesas <= 0 },
-    { label: "Vendas (volume)", hint: `${d.vendasCount} ${d.vendasCount === 1 ? "venda" : "vendas"}`, value: brl(d.vendasVolume), color: "#127c84", bg: "#e2eff0", icon: "tag" as const, delta: d.delta.vendas, bom: d.delta.vendas >= 0 },
-    { label: "Ticket médio", hint: "por venda", value: brl(d.ticketMedio), color: "#3a4354", bg: "#efece5", icon: "chart" as const, delta: d.delta.ticket, bom: d.delta.ticket >= 0 },
-    { label: "Saldo de caixa", hint: "acumulado", value: brl(d.saldoCaixa), color: d.saldoCaixa < 0 ? "#cb4a44" : "#1a2130", bg: "#f2ece2", icon: "wallet" as const, delta: null, bom: true },
+    { label: "Recebido no mês", hint: "o que entrou", value: brl(d.recebido), color: "#2f7d5b", bg: "#e7f1ec", icon: "banknote" as const, delta: d.delta.recebido, bom: d.delta.recebido >= 0 },
+    { label: "Despesas", hint: "o que saiu", value: brl(d.despesas), color: "#b04a34", bg: "#f7e8e2", icon: "arrowOut" as const, delta: d.delta.despesas, bom: d.delta.despesas <= 0 },
+    { label: "Vendas (volume)", hint: `${d.vendasCount} ${d.vendasCount === 1 ? "venda" : "vendas"}`, value: brl(d.vendasVolume), color: "#2b6f74", bg: "#e2eff0", icon: "tag" as const, delta: d.delta.vendas, bom: d.delta.vendas >= 0 },
+    { label: "Ticket médio", hint: "por venda", value: brl(d.ticketMedio), color: "#42403b", bg: "#efece5", icon: "chart" as const, delta: d.delta.ticket, bom: d.delta.ticket >= 0 },
+    { label: "Saldo de caixa", hint: "acumulado", value: brl(d.saldoCaixa), color: d.saldoCaixa < 0 ? "#b04a34" : "#1c1a17", bg: "#f2ece2", icon: "wallet" as const, delta: null, bom: true },
   ];
 
   return (
@@ -58,13 +58,13 @@ export default async function DashboardGestor({
       >
         {d.semLancamentosHoje ? (
           <span className="flex items-center gap-2 text-desp-fg">
-            <Icon name="alert" size={18} color="#cb4a44" />
+            <Icon name="alert" size={18} color="#b04a34" />
             Nenhum lançamento registrado ainda hoje.
           </span>
         ) : (
           <>
             <span className="flex items-center gap-2 text-ink-2">
-              <Icon name="calendar" size={17} color="#1f875c" /> Hoje:
+              <Icon name="calendar" size={17} color="#2f7d5b" /> Hoje:
             </span>
             <span className="text-ink-2">
               <b>{d.resumoDia.vendas}</b> {d.resumoDia.vendas === 1 ? "venda" : "vendas"}
@@ -84,7 +84,7 @@ export default async function DashboardGestor({
         className="flex flex-wrap items-center justify-between gap-4 rounded-card px-6 py-6 text-white"
         style={{
           background:
-            "radial-gradient(130% 180% at 88% -30%, #34302a 0%, #262320 45%, #1a2130 100%)",
+            "radial-gradient(130% 180% at 88% -30%, #34302a 0%, #262320 45%, #1c1a17 100%)",
         }}
       >
         <div className="min-w-0">
@@ -162,7 +162,7 @@ export default async function DashboardGestor({
                     <span className="text-[13.5px] font-extrabold tnum">{brl(r.valor)}</span>
                   </div>
                   <div className="mt-1.5">
-                    <HBar largura={r.pctBarra} cor="#127c84" />
+                    <HBar largura={r.pctBarra} cor="#2b6f74" />
                   </div>
                   <div className="mt-1 text-[11.5px] text-faint">{r.qtd} {r.qtd === 1 ? "venda" : "vendas"}</div>
                 </div>
@@ -174,8 +174,8 @@ export default async function DashboardGestor({
 
       {/* Receita por forma + Despesas por categoria */}
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-        <BreakCard titulo="Receita por forma de pagamento" itens={d.receitaPorForma} cor="#1f875c" />
-        <BreakCard titulo="Despesas por categoria" itens={d.despesasPorCategoria} cor="#cb4a44" />
+        <BreakCard titulo="Receita por forma de pagamento" itens={d.receitaPorForma} cor="#2f7d5b" />
+        <BreakCard titulo="Despesas por categoria" itens={d.despesasPorCategoria} cor="#b04a34" />
       </div>
 
       {/* Comparativo anual + Metas */}
@@ -204,8 +204,8 @@ export default async function DashboardGestor({
                     {brl(m.vendas)} {m.meta > 0 && <span className="text-faint">/ {brl(m.meta)}</span>}
                   </span>
                 </div>
-                <HBar largura={m.pct} cor={m.pctReal >= 100 ? "#1f875c" : "#96683a"} />
-                <div className="mt-1 text-[11.5px] font-semibold" style={{ color: m.pctReal >= 100 ? "#1f875c" : "#8b929e" }}>
+                <HBar largura={m.pct} cor={m.pctReal >= 100 ? "#2f7d5b" : "#8c6f52"} />
+                <div className="mt-1 text-[11.5px] font-semibold" style={{ color: m.pctReal >= 100 ? "#2f7d5b" : "#8c867b" }}>
                   {m.meta > 0 ? `${pct(m.pctReal, 0)} da meta` : "sem meta definida"}
                 </div>
               </div>
@@ -218,7 +218,7 @@ export default async function DashboardGestor({
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
         <div className="rounded-[14px] border border-line bg-white p-5 shadow-card">
           <div className="flex items-center gap-2">
-            <Icon name="trophy" size={18} color="#96683a" />
+            <Icon name="trophy" size={18} color="#8c6f52" />
             <span className="text-[15px] font-bold">Top clientes do ano</span>
           </div>
           <div className="mt-3 flex flex-col">
@@ -299,7 +299,7 @@ function CompCell({ label, atual, ant, bomSeMaior }: { label: string; atual: num
     <div className="min-w-0 rounded-[12px] bg-app p-2.5 sm:p-3">
       <div className="truncate text-[11px] font-bold uppercase tracking-[.05em] text-faint">{label}</div>
       <div className="mt-1 text-[13px] font-extrabold tnum sm:text-[15px]">{brl(atual)}</div>
-      <div className="mt-0.5 text-[11.5px] font-semibold" style={{ color: bom ? "#1f875c" : "#cb4a44" }}>
+      <div className="mt-0.5 text-[11.5px] font-semibold" style={{ color: bom ? "#2f7d5b" : "#b04a34" }}>
         {delta >= 0 ? "+" : "−"}
         {pct(Math.abs(delta), 0)}
       </div>
