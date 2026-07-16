@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 import * as React from "react";
 import { AjudaLancamento } from "@/components/AjudaLancamento";
-import { Icon } from "@/components/Icon";
+import { Icon, type IconName } from "@/components/Icon";
 import { BottomSheet, Modal } from "@/components/ui/Modal";
 import { useToast } from "@/components/ui/Toast";
 import {
@@ -72,6 +72,7 @@ interface Props {
   vendedoras?: { id: string; nome: string }[];
   clientes?: Cliente[];
   inicial?: LancamentoView | null;
+  tipoPreset?: string;
 }
 
 /** Exibe centavos como valor pt-BR sem o prefixo (ex.: "1.234,56"). */
@@ -93,16 +94,22 @@ export function LancamentoForm({
   vendedoras = [],
   clientes = [],
   inicial = null,
+  tipoPreset,
 }: Props) {
   const router = useRouter();
   const toast = useToast();
   const editando = Boolean(inicial);
 
+  const presetValido =
+    !!tipoPreset && ["venda", "recebimento", "despesa", "capital"].includes(tipoPreset);
+
   const tipoInicial: TipoForm = inicial
     ? inicial.tipo === "investimento" || inicial.tipo === "devolucao_capital"
       ? "capital"
       : (inicial.tipo as TipoForm)
-    : "venda";
+    : presetValido
+      ? (tipoPreset as TipoForm)
+      : "venda";
 
   const [tipo, setTipo] = React.useState<TipoForm>(tipoInicial);
   const [valorCents, setValorCents] = React.useState(
@@ -154,6 +161,10 @@ export function LancamentoForm({
     if (erro) haptics.erro();
   }, [erro]);
 
+  // Fluxo em etapas (só no NOVO da vendedora): 0=tipo, 1=valor, 2=detalhes.
+  // Deep-link com ?tipo já entra direto no valor.
+  const [passo, setPasso] = React.useState(presetValido ? 1 : 0);
+
   const valor = centavosParaNumero(valorCents);
   const recebValor = centavosParaNumero(recebCents);
   // Recebimento parcial exige entrada > 0 e não maior que o valor da venda.
@@ -171,6 +182,27 @@ export function LancamentoForm({
         : tipo === "capital"
           ? "#96683a"
           : "#cb4a44";
+
+  // Fluxo em etapas apenas no novo lançamento da vendedora.
+  const usaEtapas = modo === "vendedora" && !editando;
+  const ICONE_TIPO: Record<TipoForm, IconName> = {
+    venda: "tag",
+    recebimento: "banknote",
+    despesa: "arrowOut",
+    capital: "wallet",
+  };
+  const CORES_TIPO: Record<TipoForm, { fg: string; bg: string }> = {
+    venda: { fg: "#1f875c", bg: "#e5f1ea" },
+    recebimento: { fg: "#127c84", bg: "#ddeff0" },
+    despesa: { fg: "#cb4a44", bg: "#fae7e3" },
+    capital: { fg: "#96683a", bg: "#f1e8dc" },
+  };
+  const TIPO_LABEL_MIN: Record<TipoForm, string> = {
+    venda: "venda",
+    recebimento: "entrada",
+    despesa: "despesa",
+    capital: "movimentação",
+  };
 
   // Ao escolher a forma da venda, sugere o modo e o meio do recebimento.
   // Só aplica quando a forma REALMENTE muda (evita resetar ao re-tocar, o que
@@ -772,7 +804,174 @@ export function LancamentoForm({
     );
   }
 
-  // ---- modo vendedora (mobile, com teclado) --------------------------------
+  // ---- modo vendedora ------------------------------------------------------
+  // Novo lançamento: fluxo guiado em etapas (Tipo -> Valor -> Detalhes).
+  if (usaEtapas) {
+    const titulos = ["Tipo de lançamento", "Qual o valor?", "Confirme os detalhes"];
+    return (
+      <div className="flex min-h-dvh flex-col">
+        {/* Cabeçalho do fluxo: voltar + passo + progresso */}
+        <div className="flex flex-none items-center gap-3 px-5 pb-2 pt-[calc(env(safe-area-inset-top)+0.5rem)]">
+          <button
+            type="button"
+            onClick={() => (passo > 0 ? setPasso(passo - 1) : router.back())}
+            aria-label="Voltar"
+            className="flex h-11 w-11 flex-none items-center justify-center rounded-full border border-line bg-white active:scale-95"
+          >
+            <Icon name="back" size={18} />
+          </button>
+          <div className="min-w-0 flex-1">
+            <div className="text-[10.5px] font-bold uppercase tracking-[.16em] text-faint">
+              Passo {passo + 1} de 3
+            </div>
+            <div className="truncate font-display text-[19px] font-semibold tracking-[-.01em]">
+              {titulos[passo]}
+            </div>
+          </div>
+          <div className="flex flex-none items-center gap-1.5">
+            {[0, 1, 2].map((i) => (
+              <span
+                key={i}
+                className="h-1.5 rounded-full transition-all duration-300"
+                style={{ width: i === passo ? 20 : 6, background: i <= passo ? "#e8674c" : "#ded6c8" }}
+              />
+            ))}
+          </div>
+        </div>
+
+        {/* Conteúdo do passo */}
+        <div className="flex flex-1 flex-col overflow-y-auto px-5 pb-6 pt-2">
+          {passo === 0 && (
+            <div className="flex flex-col gap-3">
+              {tiposDisponiveis.map((t) => {
+                const c = CORES_TIPO[t.key];
+                return (
+                  <button
+                    key={t.key}
+                    type="button"
+                    onClick={() => {
+                      haptics.leve();
+                      setTipo(t.key);
+                      setPasso(1);
+                    }}
+                    className="flex items-center gap-4 rounded-[20px] border border-line bg-white p-4 text-left shadow-card transition-transform active:scale-[.98]"
+                  >
+                    <span
+                      className="flex h-14 w-14 flex-none items-center justify-center rounded-[17px]"
+                      style={{ background: c.bg }}
+                    >
+                      <Icon name={ICONE_TIPO[t.key]} size={26} color={c.fg} />
+                    </span>
+                    <span className="flex min-w-0 flex-1 flex-col gap-1">
+                      <span className="font-display text-[18px] font-semibold">{t.label}</span>
+                      <span className="text-[12.5px] leading-[1.35] text-muted">
+                        {TIPO_HINTS[t.key]}
+                      </span>
+                    </span>
+                    <Icon name="chevronRight" size={20} color="#c2c7d0" className="flex-none" />
+                  </button>
+                );
+              })}
+              <div className="mt-1 flex justify-center">
+                <AjudaLancamento />
+              </div>
+            </div>
+          )}
+
+          {passo === 1 && (
+            <div>
+              <div className="mb-6 mt-4 text-center">
+                <div className="text-[11px] font-bold uppercase tracking-[.16em] text-faint">
+                  Valor da {TIPO_LABEL_MIN[tipo]}
+                </div>
+                <div
+                  className="mt-2 font-display text-[clamp(48px,16vw,66px)] font-black leading-none tracking-[-.02em] tnum transition-colors"
+                  style={{ color: valor > 0 ? cor : "#c2c7d0" }}
+                >
+                  {brl(valor)}
+                </div>
+              </div>
+              <div className="grid grid-cols-3 gap-2.5">
+                {keypad.map((k) => {
+                  const util = k === "C" || k === "⌫";
+                  return (
+                    <button
+                      key={k}
+                      type="button"
+                      onClick={() =>
+                        k === "C" ? limpaValor() : k === "⌫" ? apagaDigito() : apertaDigito(k)
+                      }
+                      className={
+                        "flex h-[62px] items-center justify-center rounded-[16px] text-[24px] font-bold transition-all active:scale-[.94] " +
+                        (util
+                          ? "bg-[#e9e2d6] text-ink-2 active:bg-[#e0d8c9]"
+                          : "border border-line bg-white text-ink shadow-[0_1px_2px_rgba(26,33,48,.05)] active:bg-[#f6f2ec]")
+                      }
+                      style={k === "C" ? { color: "#cb4a44" } : undefined}
+                      aria-label={k === "⌫" ? "Apagar" : k === "C" ? "Limpar" : k}
+                    >
+                      {k === "⌫" ? <Icon name="backspace" size={24} /> : k}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
+          {passo === 2 && (
+            <div className="pt-1">
+              {camposAdaptativos}
+              {erro && (
+                <div className="mt-4 rounded-[13px] border border-[#eeccc7] bg-desp-bg px-4 py-3 text-sm font-semibold text-desp-fg">
+                  {erro}
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+
+        {/* Ação fixa por passo */}
+        {passo > 0 && (
+          <div className="sticky bottom-0 flex-none bg-gradient-to-t from-app from-70% to-transparent px-5 pb-[calc(1.25rem+env(safe-area-inset-bottom))] pt-3">
+            {passo === 1 ? (
+              <button
+                type="button"
+                onClick={() => valor > 0 && setPasso(2)}
+                disabled={valor <= 0}
+                className="flex h-[58px] w-full items-center justify-center gap-2 rounded-[16px] text-[16.5px] font-bold text-white shadow-primary transition-transform active:scale-[.99] disabled:opacity-50"
+                style={{ background: cor }}
+              >
+                Continuar
+                <Icon name="arrowRight" size={18} color="#fff" strokeWidth={2.2} />
+              </button>
+            ) : (
+              <button
+                type="button"
+                onClick={salvar}
+                disabled={salvando || valor <= 0 || parcialSemValor || parcialExcede}
+                className="flex h-[58px] w-full items-center justify-center gap-2.5 rounded-[16px] text-[16.5px] font-bold text-white shadow-primary transition-transform active:scale-[.99] disabled:opacity-50"
+                style={{ background: cor }}
+              >
+                {salvando ? (
+                  <>
+                    <span className="h-5 w-5 animate-spin rounded-full border-2 border-white/30 border-t-white" />
+                    Salvando…
+                  </>
+                ) : (
+                  <>
+                    <Icon name="check" size={19} color="#fff" strokeWidth={2.4} />
+                    Salvar lançamento
+                  </>
+                )}
+              </button>
+            )}
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  // Edição (vendedora): tela única com todos os campos de uma vez.
   return (
     <div className="flex min-h-full flex-col">
       <div className="flex-1 px-1 pb-6">
