@@ -52,20 +52,19 @@ export default function LoginPage() {
 
   return (
     <div className="relative flex min-h-dvh flex-col overflow-hidden bg-[#151119] text-[#f2ebe1]">
-      {/* Atmosfera: brilhos quentes difusos */}
+      {/* Atmosfera: brilhos suaves e discretos */}
       <div className="pointer-events-none absolute inset-0">
-        <div className="absolute -left-28 -top-28 h-[28rem] w-[28rem] rounded-full bg-[#5c3038]/45 blur-[100px]" />
-        <div className="absolute -right-32 top-[28%] h-[26rem] w-[26rem] rounded-full bg-[#3b2a42]/55 blur-[110px]" />
-        <div className="absolute -bottom-24 left-[18%] h-[22rem] w-[22rem] rounded-full bg-[#6d4a2c]/35 blur-[100px]" />
+        <div className="absolute -left-28 -top-32 h-[26rem] w-[26rem] rounded-full bg-[#4a343a]/30 blur-[120px]" />
+        <div className="absolute -right-28 bottom-[6%] h-[24rem] w-[24rem] rounded-full bg-[#574430]/22 blur-[120px]" />
       </div>
 
-      {/* Vestido da marca, grande e discreto */}
+      {/* Vestido da marca, grande e bem discreto */}
       <svg
-        className="pointer-events-none absolute -right-16 top-6 h-[440px] w-[440px] opacity-[.06]"
+        className="pointer-events-none absolute -right-16 top-8 h-[420px] w-[420px] opacity-[.045]"
         viewBox="0 0 64 64"
         fill="none"
-        stroke="#e0bd93"
-        strokeWidth="1.3"
+        stroke="#b6a48c"
+        strokeWidth="1.2"
         aria-hidden="true"
       >
         <path d={VESTIDO} strokeLinejoin="round" strokeLinecap="round" />
@@ -76,13 +75,13 @@ export default function LoginPage() {
         {/* Marca */}
         <header className="animate-rise">
           <div className="flex items-center gap-3">
-            <span className="flex h-12 w-12 flex-none items-center justify-center rounded-full bg-white/[.04] ring-1 ring-[#e0bd93]/35">
+            <span className="flex h-12 w-12 flex-none items-center justify-center rounded-full bg-white/[.04] ring-1 ring-white/10">
               <svg
                 width="22"
                 height="22"
                 viewBox="0 0 64 64"
                 fill="none"
-                stroke="#e0bd93"
+                stroke="#c9b393"
                 strokeWidth="3"
                 strokeLinejoin="round"
                 strokeLinecap="round"
@@ -92,19 +91,19 @@ export default function LoginPage() {
                 <path d="M27 31.5H37" />
               </svg>
             </span>
-            <span className="h-px flex-1 bg-gradient-to-r from-[#e0bd93]/45 to-transparent" />
+            <span className="h-px flex-1 bg-gradient-to-r from-white/12 to-transparent" />
           </div>
 
-          <div className="mt-8 text-[11px] font-semibold uppercase tracking-[.42em] text-[#e0bd93]">
+          <div className="mt-8 text-[10.5px] font-semibold uppercase tracking-[.3em] text-[#9c8f7d]">
             Boutique
           </div>
           <h1
-            className={`${serif.className} mt-3 text-[clamp(46px,16vw,64px)] font-medium leading-[.92] text-[#f5eee3]`}
+            className={`${serif.className} mt-3 text-[clamp(40px,13vw,54px)] font-medium leading-[.95] tracking-[-.01em] text-[#f1ebe0]`}
           >
-            <span className="italic">Almeida</span>
-            <span className="block font-normal tracking-[.01em]">Closet</span>
+            Almeida
+            <span className="block font-normal">Closet</span>
           </h1>
-          <p className="mt-5 max-w-[17rem] text-[13.5px] leading-relaxed text-[#b3a695]">
+          <p className="mt-5 max-w-[17rem] text-[13.5px] leading-relaxed text-[#ab9e8d]">
             Gestão de vendas, recebimentos e despesas, direto do balcão.
           </p>
         </header>
@@ -184,7 +183,7 @@ export default function LoginPage() {
           <button
             type="submit"
             disabled={carregando}
-            className="mt-6 flex h-14 w-full items-center justify-center gap-2.5 rounded-[14px] bg-[#e0bd93] text-[15px] font-bold text-[#221708] shadow-[0_16px_44px_-14px_rgba(224,189,147,.55)] transition-transform active:scale-[.99] disabled:opacity-60"
+            className="mt-6 flex h-14 w-full items-center justify-center gap-2.5 rounded-[14px] bg-[#dcb98e] text-[15px] font-bold text-[#221708] shadow-[0_14px_36px_-16px_rgba(220,185,142,.45)] transition-transform active:scale-[.99] disabled:opacity-60"
           >
             {carregando ? (
               <>
@@ -211,7 +210,7 @@ export default function LoginPage() {
             href="/primeiro-acesso"
             className="flex h-[52px] w-full items-center justify-center gap-2 rounded-[14px] border border-white/12 bg-white/[.04] text-[14.5px] font-semibold text-[#e7dfd2] transition-colors active:bg-white/[.08]"
           >
-            <Icon name="tag" size={17} color="#e0bd93" />
+            <Icon name="tag" size={17} color="#9c8f7d" />
             Primeiro acesso com código
           </Link>
         </form>
