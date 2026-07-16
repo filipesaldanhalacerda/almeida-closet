@@ -12,17 +12,17 @@ import type { Configuracao, LancamentoView } from "@/lib/types";
 import type { AbaKey, ExportParams } from "./tipos";
 
 // ---- tokens ----------------------------------------------------------------
-const INK = "#1c1a17";
-const INK2 = "#42403b";
-const MUTED = "#78726a";
-const FAINT = "#8c867b";
+const INK = "#1a2130";
+const INK2 = "#3a4354";
+const MUTED = "#727a88";
+const FAINT = "#8b929e";
 const LINE = "#ece7df";
 const PANEL = "#faf9f6";
 const PANEL2 = "#f3f1ec";
-const VENDA = "#2f7d5b";
-const RECEB = "#2b6f74";
-const DESP = "#b04a34";
-const CAPITAL = "#8c6f52";
+const VENDA = "#1f875c";
+const RECEB = "#127c84";
+const DESP = "#cb4a44";
+const CAPITAL = "#96683a";
 
 const M = 40; // margem
 const FOOTER_H = 34;

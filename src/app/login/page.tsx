@@ -38,28 +38,30 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="flex min-h-dvh flex-col bg-app md:items-center md:justify-center md:bg-[radial-gradient(125%_125%_at_50%_-15%,#f2efe9_0%,#e8e3da_55%,#dcd6cc_100%)] md:p-6">
+    <div className="flex min-h-dvh flex-col bg-app md:items-center md:justify-center md:bg-night md:p-6">
       <main
-        className="animate-rise mx-auto flex w-full max-w-[400px] flex-1 flex-col px-7 pb-[max(1.75rem,env(safe-area-inset-bottom))] pt-[max(3.25rem,env(safe-area-inset-top))] md:min-h-0 md:flex-none md:rounded-[30px] md:border md:border-black/[.055] md:bg-surface md:px-10 md:pb-11 md:pt-11 md:shadow-[0_34px_70px_-30px_rgba(28,26,23,.42)]"
+        className="animate-rise mx-auto flex w-full max-w-[404px] flex-1 flex-col px-7 pb-[max(1.75rem,env(safe-area-inset-bottom))] pt-[max(3rem,env(safe-area-inset-top))] md:min-h-0 md:flex-none md:rounded-[28px] md:border md:border-black/[.05] md:bg-surface md:px-9 md:pb-10 md:pt-10 md:shadow-lift"
       >
         {/* Marca */}
         <header className="flex flex-col items-start">
-          <div className="flex h-[54px] w-[54px] items-center justify-center rounded-[17px] bg-ink shadow-primary">
-            <span className="text-[19px] font-extrabold tracking-[-.03em] text-white">AC</span>
+          <div className="flex h-14 w-14 items-center justify-center rounded-[18px] bg-accent shadow-primary">
+            <span className="font-display text-[22px] font-black leading-none text-white">AC</span>
           </div>
-          <div className="mt-5 text-[11px] font-bold uppercase tracking-[.24em] text-faint-2">
+          <div className="mt-6 text-[11px] font-bold uppercase tracking-[.24em] text-accent">
             Gestão de lançamentos
           </div>
-          <h1 className="mt-2 text-[clamp(30px,9vw,36px)] font-extrabold leading-[1.02] tracking-[-.03em] text-ink">
+          <h1 className="mt-2 font-display text-[clamp(38px,12vw,52px)] font-black leading-[.95] tracking-[-.02em] text-ink">
             Almeida
             <br />
             Closet
           </h1>
         </header>
 
-        {/* Formulário, no mobile fica na metade de baixo (perto do polegar) */}
-        <form onSubmit={entrar} className="mt-auto pt-10 md:mt-9 md:pt-0" noValidate>
-          <div className="text-[19px] font-extrabold tracking-[-.01em]">Entrar na sua conta</div>
+        {/* No mobile o formulário fica na metade de baixo (perto do polegar) */}
+        <form onSubmit={entrar} className="mt-auto pt-10 md:mt-8 md:pt-0" noValidate>
+          <div className="font-display text-[22px] font-semibold tracking-[-.01em]">
+            Entrar na sua conta
+          </div>
           <p className="mt-1 text-[13.5px] text-muted">Acesse com seu usuário e senha.</p>
 
           <div className="mt-6 flex flex-col gap-4">
@@ -77,7 +79,7 @@ export default function LoginPage() {
                 autoCorrect="off"
                 autoComplete="username"
                 enterKeyHint="next"
-                className="focus-ring h-14 w-full rounded-[14px] border border-input-border bg-white px-4 text-base"
+                className="focus-ring h-14 w-full rounded-[15px] border border-input-border bg-white px-4 text-base"
               />
             </div>
 
@@ -94,14 +96,14 @@ export default function LoginPage() {
                   placeholder="••••••••"
                   autoComplete="current-password"
                   enterKeyHint="go"
-                  className="focus-ring h-14 w-full rounded-[14px] border border-input-border bg-white pl-4 pr-12 text-base"
+                  className="focus-ring h-14 w-full rounded-[15px] border border-input-border bg-white pl-4 pr-12 text-base"
                 />
                 <button
                   type="button"
                   onClick={() => setMostrarSenha((v) => !v)}
                   aria-label={mostrarSenha ? "Ocultar senha" : "Mostrar senha"}
                   aria-pressed={mostrarSenha}
-                  className="absolute right-1.5 top-1/2 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-[11px] text-muted active:bg-app"
+                  className="absolute right-1.5 top-1/2 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-[12px] text-muted active:bg-app"
                 >
                   <Icon name={mostrarSenha ? "eyeOff" : "eye"} size={20} />
                 </button>
@@ -112,10 +114,10 @@ export default function LoginPage() {
           {erro && (
             <div
               role="alert"
-              className="mt-4 flex items-start gap-2 rounded-[12px] border border-[#eccec5] bg-desp-bg px-4 py-3 text-sm font-semibold text-desp-fg"
+              className="mt-4 flex items-start gap-2 rounded-[13px] border border-[#eeccc7] bg-desp-bg px-4 py-3 text-sm font-semibold text-desp-fg"
             >
               <span className="mt-px flex-none">
-                <Icon name="alert" size={16} color="#b04a34" strokeWidth={2.2} />
+                <Icon name="alert" size={16} color="#cb4a44" strokeWidth={2.2} />
               </span>
               {erro}
             </div>
@@ -124,7 +126,7 @@ export default function LoginPage() {
           <button
             type="submit"
             disabled={carregando}
-            className="mt-5 flex h-[58px] w-full items-center justify-center gap-2.5 rounded-[15px] bg-ink text-[15.5px] font-bold text-white shadow-primary transition-transform active:scale-[.99] disabled:opacity-60"
+            className="mt-5 flex h-[58px] w-full items-center justify-center gap-2.5 rounded-[16px] bg-accent text-[15.5px] font-bold text-white shadow-primary transition-transform active:scale-[.99] disabled:opacity-60"
           >
             {carregando ? (
               <>
@@ -141,15 +143,15 @@ export default function LoginPage() {
 
           <div className="my-5 flex items-center gap-3">
             <span className="h-px flex-1 bg-input-border-2" />
-            <span className="text-xs font-semibold text-faint-2">ou</span>
+            <span className="text-xs font-semibold text-faint">ou</span>
             <span className="h-px flex-1 bg-input-border-2" />
           </div>
 
           <Link
             href="/primeiro-acesso"
-            className="flex h-[54px] w-full items-center justify-center gap-2 rounded-[14px] border border-[#d8d3ca] bg-white text-[15px] font-bold text-ink-2 active:bg-app"
+            className="flex h-[54px] w-full items-center justify-center gap-2 rounded-[15px] border border-input-border bg-white text-[15px] font-bold text-ink-2 transition-transform active:scale-[.99] active:bg-app"
           >
-            <Icon name="tag" size={17} color="#6f6a63" />
+            <Icon name="tag" size={17} color="#5a6273" />
             Primeiro acesso com código
           </Link>
         </form>

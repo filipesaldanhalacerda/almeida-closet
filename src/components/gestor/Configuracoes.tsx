@@ -129,7 +129,7 @@ export function Configuracoes({ saldoInicial, saldoData, vendedoras, categorias 
       {/* Saldo inicial */}
       <Secao
         icon="wallet"
-        cor="#2b6f74"
+        cor="#127c84"
         bg="#e2eff0"
         titulo="Saldo inicial do caixa"
         desc="Base para o cálculo do Fluxo de Caixa. Defina uma vez, ao começar a usar o sistema."
@@ -171,7 +171,7 @@ export function Configuracoes({ saldoInicial, saldoData, vendedoras, categorias 
       {/* Metas */}
       <Secao
         icon="target"
-        cor="#2f7d5b"
+        cor="#1f875c"
         bg="#e7f1ec"
         titulo="Metas mensais por vendedora"
         desc="Acompanhadas no Dashboard. O valor é salvo ao sair do campo."
@@ -210,7 +210,7 @@ export function Configuracoes({ saldoInicial, saldoData, vendedoras, categorias 
       {/* Categorias */}
       <Secao
         icon="tag"
-        cor="#8c6f52"
+        cor="#96683a"
         bg="#f2ece2"
         titulo="Categorias de despesa e grupo no DRE"
         desc="Cada categoria é somada no grupo escolhido dentro do DRE anual."

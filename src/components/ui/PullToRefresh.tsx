@@ -103,7 +103,7 @@ export function PullToRefresh({
               className="flex"
               style={{ transform: `rotate(${progresso * 180}deg)`, transition: "transform .1s linear" }}
             >
-              <Icon name="chevronDown" size={18} color="#6f6a63" />
+              <Icon name="chevronDown" size={18} color="#5a6273" />
             </span>
           )}
         </div>

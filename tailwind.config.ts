@@ -25,49 +25,58 @@ const config: Config = {
     },
     extend: {
       colors: {
-        ink: "#1c1a17", // tinta principal (texto / botão primário)
-        "ink-2": "#42403b", // texto médio
-        "ink-3": "#6f6a63", // texto médio 2
-        muted: "#78726a", // auxiliar (AA ~4.7:1)
-        faint: "#8c867b", // texto fraco (AA grande ~3.6:1)
-        "faint-2": "#9a9488", // ~3.0:1
-        "faint-3": "#7a746b", // micro texto (datas, ícones vazios) ~4.6:1 AA
+        ink: "#1a2130", // navy-charcoal (texto / superfície escura)
+        "ink-2": "#3a4354", // texto médio
+        "ink-3": "#5a6273", // texto médio 2
+        muted: "#727a88", // auxiliar (AA)
+        faint: "#8b929e", // texto fraco
+        "faint-2": "#9aa1ab",
+        "faint-3": "#757c8b", // micro texto legível
         surface: "#ffffff", // card
-        app: "#f7f6f3", // fundo do app
-        line: "#ece7df", // borda de card
-        "line-2": "#eceae3",
-        "input-border": "#e0ddd5",
-        "input-border-2": "#e3dfd8",
-        panel: "#faf9f6", // superfície secundária (sidebar, header de tabela)
+        app: "#f4efe7", // marfim quente (fundo)
+        line: "#e9e2d6", // borda de card
+        "line-2": "#efe9df",
+        "input-border": "#e2dacd",
+        "input-border-2": "#e6dfd2",
+        panel: "#faf6ef", // superfície secundária
+        // Marca: coral (ação primária) + navy profundo (heros/superfícies escuras)
+        accent: "#e8674c",
+        "accent-press": "#cf5138",
+        "accent-soft": "#fbe6df",
+        night: "#1e2740",
+        "night-2": "#151c2e",
         // Venda / Receita (verde)
-        "venda-fg": "#2f7d5b",
-        "venda-bg": "#e7f1ec",
+        "venda-fg": "#1f875c",
+        "venda-bg": "#e5f1ea",
         // Recebimento (teal)
-        "receb-fg": "#2b6f74",
-        "receb-bg": "#e2eff0",
-        // Despesa (terracota)
-        "desp-fg": "#b04a34",
-        "desp-bg": "#f7e8e2",
-        // Capital (âmbar neutro)
-        capital: "#8c6f52",
+        "receb-fg": "#127c84",
+        "receb-bg": "#ddeff0",
+        // Despesa (vermelho)
+        "desp-fg": "#cb4a44",
+        "desp-bg": "#fae7e3",
+        // Capital (âmbar)
+        capital: "#96683a",
         // Selo de variação positiva
-        "delta-fg": "#2f7d5b",
-        "delta-bg": "#edf3ee",
+        "delta-fg": "#1f875c",
+        "delta-bg": "#e8f1ec",
       },
       fontFamily: {
         sans: ["var(--font-public-sans)", "system-ui", "sans-serif"],
+        display: ["var(--font-fraunces)", "Georgia", "serif"],
       },
       transitionTimingFunction: {
         // Easing natural padrão (material standard) para transições de UI.
         swift: "cubic-bezier(.4,0,.2,1)",
       },
       borderRadius: {
-        input: "12px",
-        card: "16px",
+        input: "14px",
+        card: "20px",
       },
       boxShadow: {
-        card: "0 1px 2px rgba(40,36,30,.03), 0 14px 30px -22px rgba(40,36,30,.16)",
-        primary: "0 12px 26px -12px rgba(28,26,23,.6)",
+        card: "0 1px 2px rgba(26,33,48,.04), 0 12px 28px -18px rgba(26,33,48,.20)",
+        lift: "0 2px 6px rgba(26,33,48,.06), 0 22px 48px -24px rgba(26,33,48,.30)",
+        primary: "0 14px 30px -12px rgba(232,103,76,.5)",
+        night: "0 22px 48px -18px rgba(20,26,46,.55)",
         modal: "0 40px 80px -30px rgba(0,0,0,.42), 0 0 0 1px rgba(0,0,0,.06)",
       },
       keyframes: {

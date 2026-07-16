@@ -97,7 +97,7 @@ export function MeusLancamentos({
             <Icon name="back" size={18} />
           </Link>
           <div className="min-w-0">
-            <div className="truncate text-xl font-extrabold tracking-[-.01em]">Meus lançamentos</div>
+            <div className="truncate font-display text-[22px] font-semibold tracking-[-.01em]">Meus lançamentos</div>
             <div className="text-[12.5px] font-semibold text-muted">
               {itens.length}
               {temMais ? "+" : ""} {itens.length === 1 ? "lançamento" : "lançamentos"}
@@ -106,7 +106,7 @@ export function MeusLancamentos({
         </div>
 
         <div className="flex h-12 items-center gap-2.5 rounded-[13px] border border-line bg-white px-3.5 focus-within:border-ink">
-          <Icon name="search" size={20} color="#8c867b" />
+          <Icon name="search" size={20} color="#8b929e" />
           <input
             value={query}
             onChange={(e) => setQuery(e.target.value)}
@@ -133,9 +133,9 @@ export function MeusLancamentos({
                 onClick={() => setFiltro(f.key)}
                 className="h-9 flex-none rounded-full px-[15px] text-[13px] font-bold transition-colors active:scale-95"
                 style={{
-                  border: `1px solid ${ativo ? "#1c1a17" : "#e3dfd8"}`,
-                  background: ativo ? "#1c1a17" : "#fff",
-                  color: ativo ? "#fff" : "#42403b",
+                  border: `1px solid ${ativo ? "#1a2130" : "#e3dfd8"}`,
+                  background: ativo ? "#1a2130" : "#fff",
+                  color: ativo ? "#fff" : "#3a4354",
                 }}
               >
                 {f.label}

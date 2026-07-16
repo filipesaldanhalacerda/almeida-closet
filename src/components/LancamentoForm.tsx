@@ -165,12 +165,12 @@ export function LancamentoForm({
   const mostrarMeioReceb = !forma || forma === "crediario";
   const cor =
     tipo === "venda"
-      ? "#2f7d5b"
+      ? "#1f875c"
       : tipo === "recebimento"
-        ? "#2b6f74"
+        ? "#127c84"
         : tipo === "capital"
-          ? "#8c6f52"
-          : "#b04a34";
+          ? "#96683a"
+          : "#cb4a44";
 
   // Ao escolher a forma da venda, sugere o modo e o meio do recebimento.
   // Só aplica quando a forma REALMENTE muda (evita resetar ao re-tocar, o que
@@ -383,7 +383,7 @@ export function LancamentoForm({
   const blocoRecebimentoJunto = tipo === "venda" && !editando && (
     <div className="rounded-[14px] border border-[#d9e6de] bg-[#f4f9f6] p-4">
       <div className="mb-1 flex items-center gap-2">
-        <Icon name="banknote" size={17} color="#2b6f74" />
+        <Icon name="banknote" size={17} color="#127c84" />
         <span className="text-[13px] font-bold text-ink-2">Já entrou dinheiro?</span>
       </div>
       <div className="mb-3 text-[12px] leading-[1.45] text-muted">
@@ -408,9 +408,9 @@ export function LancamentoForm({
               }}
               className="h-10 flex-1 whitespace-nowrap rounded-[10px] px-1 text-[12.5px] font-bold transition-colors"
               style={{
-                border: `1px solid ${ativo ? "#2b6f74" : "#d5e0da"}`,
-                background: ativo ? "#2b6f74" : "#fff",
-                color: ativo ? "#fff" : "#42403b",
+                border: `1px solid ${ativo ? "#127c84" : "#d5e0da"}`,
+                background: ativo ? "#127c84" : "#fff",
+                color: ativo ? "#fff" : "#3a4354",
               }}
             >
               {o.label}
@@ -434,7 +434,7 @@ export function LancamentoForm({
                   inputMode="numeric"
                   placeholder="0,00"
                   className="w-full bg-transparent text-[17px] font-extrabold tnum outline-none"
-                  style={{ color: "#2b6f74" }}
+                  style={{ color: "#127c84" }}
                 />
               </div>
               {recebValor <= 0 && (
@@ -462,9 +462,9 @@ export function LancamentoForm({
                     onClick={() => setRecebMeio(o.value)}
                     className="h-11 whitespace-nowrap rounded-[11px] px-2 text-[13px] font-semibold transition-colors"
                     style={{
-                      border: `1px solid ${ativo ? "#2b6f74" : "#d5e0da"}`,
-                      background: ativo ? "#2b6f74" : "#fff",
-                      color: ativo ? "#fff" : "#42403b",
+                      border: `1px solid ${ativo ? "#127c84" : "#d5e0da"}`,
+                      background: ativo ? "#127c84" : "#fff",
+                      color: ativo ? "#fff" : "#3a4354",
                     }}
                   >
                     {o.label}
@@ -541,7 +541,7 @@ export function LancamentoForm({
                     title={b.valor}
                     className="relative aspect-[79/50] w-full overflow-hidden rounded-[9px] bg-white transition-transform active:scale-95"
                     style={{
-                      boxShadow: ativo ? "0 0 0 2px #1c1a17" : "0 0 0 1px #e3dfd8",
+                      boxShadow: ativo ? "0 0 0 2px #1a2130" : "0 0 0 1px #e3dfd8",
                       opacity: !bandeira || ativo ? 1 : 0.5,
                     }}
                   >
@@ -635,7 +635,7 @@ export function LancamentoForm({
 
       {/* Data, a linha inteira abre o calendário */}
       <label className="relative mt-[18px] flex cursor-pointer items-center gap-3 rounded-[12px] border border-line bg-white px-4 py-3 shadow-card transition-colors hover:border-input-border">
-        <Icon name="calendar" size={20} color="#78726a" />
+        <Icon name="calendar" size={20} color="#727a88" />
         <span className="flex-1">
           <span className="block text-[11.5px] font-bold uppercase tracking-[.1em] text-faint">
             Data
@@ -784,8 +784,8 @@ export function LancamentoForm({
             Valor do lançamento
           </div>
           <div
-            className="mt-1.5 text-[clamp(40px,13vw,54px)] font-extrabold leading-none tracking-[-.02em] tnum transition-colors"
-            style={{ color: valor > 0 ? cor : "#cbc6bd" }}
+            className="mt-1.5 font-display text-[clamp(42px,14vw,58px)] font-black leading-none tracking-[-.02em] tnum transition-colors"
+            style={{ color: valor > 0 ? cor : "#c2c7d0" }}
           >
             {brl(valor)}
           </div>
@@ -805,7 +805,7 @@ export function LancamentoForm({
                     ? "bg-[#eae6df] text-ink-2 active:bg-[#e0dbd2]"
                     : "border border-line bg-white text-ink shadow-[0_1px_2px_rgba(40,36,30,.05)] active:bg-[#f4f1ec]")
                 }
-                style={k === "C" ? { color: "#b04a34" } : undefined}
+                style={k === "C" ? { color: "#cb4a44" } : undefined}
                 aria-label={k === "⌫" ? "Apagar" : k === "C" ? "Limpar" : k}
               >
                 {k === "⌫" ? <Icon name="backspace" size={23} /> : k}
@@ -983,21 +983,21 @@ function ClienteField({
         />
         {jaCadastrada && (
           <span className="pointer-events-none absolute right-3.5 top-1/2 -translate-y-1/2">
-            <Icon name="check" size={19} color="#2f7d5b" strokeWidth={2.4} />
+            <Icon name="check" size={19} color="#1f875c" strokeWidth={2.4} />
           </span>
         )}
       </div>
 
       {jaCadastrada && !aberto && (
         <div className="mt-1.5 flex items-center gap-1 px-0.5 text-[12px] font-semibold text-venda-fg">
-          <Icon name="check" size={13} color="#2f7d5b" strokeWidth={2.6} />
+          <Icon name="check" size={13} color="#1f875c" strokeWidth={2.6} />
           Cliente cadastrada
         </div>
       )}
 
       {!jaCadastrada && norm.length > 0 && !aberto && (
         <div className="mt-1.5 flex items-center gap-1 px-0.5 text-[12px] font-semibold text-desp-fg">
-          <Icon name="alert" size={13} color="#b04a34" strokeWidth={2.4} />
+          <Icon name="alert" size={13} color="#cb4a44" strokeWidth={2.4} />
           Cliente não cadastrada. Cadastre ou selecione uma da lista
         </div>
       )}
@@ -1032,7 +1032,7 @@ function ClienteField({
                     {c.telefone && (
                       <span className="text-[12px] font-medium text-faint">{c.telefone}</span>
                     )}
-                    {exata && <Icon name="check" size={16} color="#2f7d5b" strokeWidth={2.4} />}
+                    {exata && <Icon name="check" size={16} color="#1f875c" strokeWidth={2.4} />}
                   </span>
                 </button>
               );
@@ -1048,7 +1048,7 @@ function ClienteField({
               }}
               className="flex w-full items-center gap-2 border-t border-[#f2efe9] bg-panel px-4 py-3 text-left text-[14px] font-bold text-venda-fg hover:bg-venda-bg"
             >
-              <Icon name="plus" size={15} color="#2f7d5b" strokeWidth={2.4} />
+              <Icon name="plus" size={15} color="#1f875c" strokeWidth={2.4} />
               {temParecidas ? "Nenhuma dessas? Cadastrar" : "Cadastrar"} “{valor.trim()}”
             </button>
           )}
@@ -1160,7 +1160,7 @@ function CategoriaField({
             </span>
           )}
         </span>
-        <Icon name="chevronDown" size={18} color="#78726a" />
+        <Icon name="chevronDown" size={18} color="#727a88" />
       </button>
 
       {aberto && (
@@ -1216,7 +1216,7 @@ function CategoriaField({
                           {c.nome}
                         </span>
                         {ativa && (
-                          <Icon name="check" size={17} color="#2f7d5b" strokeWidth={2.4} />
+                          <Icon name="check" size={17} color="#1f875c" strokeWidth={2.4} />
                         )}
                       </button>
                     );
@@ -1245,7 +1245,7 @@ function TipoSelector({
   // (vendedora) ficam sempre em uma linha. Evita rótulos longos se sobreporem.
   const cols = tipos.length > 3 ? "grid-cols-2 sm:grid-cols-4" : "grid-cols-3";
   return (
-    <div className={`grid gap-1.5 rounded-[13px] bg-[#efece5] p-1.5 ${cols}`}>
+    <div className={`grid gap-1.5 rounded-[14px] bg-[#e9e2d6] p-1.5 ${cols}`}>
       {tipos.map((t) => {
         const ativo = t.key === tipo;
         return (
@@ -1256,11 +1256,11 @@ function TipoSelector({
               if (t.key !== tipo) haptics.leve();
               setTipo(t.key);
             }}
-            className="h-[42px] whitespace-nowrap rounded-[9px] text-[13px] font-bold active:scale-[.97] sm:text-[13.5px]"
+            className="h-[42px] whitespace-nowrap rounded-[10px] text-[13px] font-bold active:scale-[.97] sm:text-[13.5px]"
             style={{
               background: ativo ? "#fff" : "transparent",
-              color: ativo ? "#1c1a17" : "#6f6a63",
-              boxShadow: ativo ? "0 1px 3px rgba(40,36,30,.12)" : "none",
+              color: ativo ? "#1a2130" : "#5a6273",
+              boxShadow: ativo ? "0 1px 3px rgba(26,33,48,.14)" : "none",
             }}
           >
             {t.label}
@@ -1302,9 +1302,9 @@ function ChipGroup({
                 " whitespace-nowrap font-semibold transition-colors"
               }
               style={{
-                border: `1px solid ${ativo ? "#1c1a17" : "#e3dfd8"}`,
-                background: ativo ? "#1c1a17" : "#fff",
-                color: ativo ? "#fff" : "#42403b",
+                border: `1px solid ${ativo ? "#1a2130" : "#e3dfd8"}`,
+                background: ativo ? "#1a2130" : "#fff",
+                color: ativo ? "#fff" : "#3a4354",
               }}
             >
               {o.label}

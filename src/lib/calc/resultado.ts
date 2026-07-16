@@ -4,7 +4,7 @@ import type { LancamentoView, ModalidadeVenda } from "../types";
 import { arr12, ymOf } from "./helpers";
 
 // Paleta para segmentos empilhados por vendedora (design tokens §9)
-export const CORES_VENDEDORA = ["#2b6f74", "#8c6f52", "#b04a34", "#2f7d5b", "#4a6b8a", "#a07b3e"];
+export const CORES_VENDEDORA = ["#127c84", "#96683a", "#cb4a44", "#1f875c", "#4a6b8a", "#a07b3e"];
 
 export interface VendedoraSerie {
   id: string;

@@ -31,11 +31,11 @@ function NavList({ pathname, onNavigate }: { pathname: string; onNavigate?: () =
                 onClick={onNavigate}
                 aria-current={ativo ? "page" : undefined}
                 className={
-                  "flex h-11 items-center gap-3 rounded-[10px] px-3 text-sm font-semibold transition-colors " +
-                  (ativo ? "bg-[#efece5] text-ink" : "text-ink-3 hover:bg-[#f2efe9] hover:text-ink")
+                  "flex h-11 items-center gap-3 rounded-[11px] px-3 text-sm font-semibold transition-colors " +
+                  (ativo ? "bg-accent-soft text-accent" : "text-ink-3 hover:bg-[#efe8dd] hover:text-ink")
                 }
               >
-                <Icon name={n.icon} size={19} color={ativo ? "#1c1a17" : "#78726a"} />
+                <Icon name={n.icon} size={19} color={ativo ? "#e8674c" : "#727a88"} />
                 <span>{n.label}</span>
               </Link>
             );
@@ -109,7 +109,7 @@ export function AdminShell({
             onClick={(e) => e.stopPropagation()}
           >
             <div className="px-2.5 pb-5">
-              <div className="text-[17px] font-extrabold tracking-[-.01em]">Almeida Closet</div>
+              <div className="font-display text-[19px] font-semibold tracking-[-.01em]">Almeida Closet</div>
               <div className="mt-0.5 text-[11px] font-semibold uppercase tracking-[.14em] text-faint">
                 Gestão
               </div>
@@ -131,13 +131,13 @@ export function AdminShell({
             >
               <Icon name="list" size={20} />
             </button>
-            <div className="truncate text-[18px] font-extrabold tracking-[-.01em] md:text-[20px]">{titulo}</div>
+            <div className="truncate font-display text-[20px] font-semibold tracking-[-.01em] md:text-[22px]">{titulo}</div>
           </div>
           <div className="flex flex-none items-center gap-2 md:gap-3">
             {mostraPeriodo && <PeriodPicker ano={ano} mes={mes} />}
             <button
               onClick={() => router.push("/admin/lancamentos/novo")}
-              className="flex h-[38px] items-center gap-1.5 rounded-[10px] bg-ink px-3 text-[13.5px] font-bold text-white transition-opacity hover:opacity-90 active:scale-[.98] md:px-4"
+              className="flex h-[38px] items-center gap-1.5 rounded-[11px] bg-accent px-3 text-[13.5px] font-bold text-white shadow-primary transition-opacity hover:opacity-90 active:scale-[.98] md:px-4"
             >
               <Icon name="plus" size={16} color="#fff" strokeWidth={2.2} />
               <span className="hidden sm:inline">Novo lançamento</span>

@@ -14,14 +14,14 @@ export default async function CapitalPage() {
   return (
     <div className="flex flex-col gap-4">
       <div className="grid grid-cols-1 gap-3.5 md:grid-cols-3">
-        <StatCard titulo="Total de aportes" valor={brl(c.totalAportes)} cor="#2f7d5b" />
-        <StatCard titulo="Total de devoluções" valor={brl(c.totalDevolucoes)} cor="#b04a34" />
+        <StatCard titulo="Total de aportes" valor={brl(c.totalAportes)} cor="#1f875c" />
+        <StatCard titulo="Total de devoluções" valor={brl(c.totalDevolucoes)} cor="#cb4a44" />
         <StatCard titulo="Capital líquido investido" valor={brl(c.liquido)} dark />
       </div>
 
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-        <ListaCapital titulo="Investimento (aportes)" cor="#2f7d5b" itens={c.aportes} />
-        <ListaCapital titulo="Devolução de capital (retiradas)" cor="#b04a34" itens={c.devolucoes} />
+        <ListaCapital titulo="Investimento (aportes)" cor="#1f875c" itens={c.aportes} />
+        <ListaCapital titulo="Devolução de capital (retiradas)" cor="#cb4a44" itens={c.devolucoes} />
       </div>
     </div>
   );

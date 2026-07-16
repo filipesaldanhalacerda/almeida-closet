@@ -27,7 +27,7 @@ export function AjudaLancamento() {
         <div className="rounded-[14px] border border-[#d9e6de] bg-venda-bg/40 p-4">
           <div className="flex items-center gap-2.5">
             <span className="flex h-9 w-9 flex-none items-center justify-center rounded-[10px] bg-venda-bg">
-              <Icon name="tag" size={18} color="#2f7d5b" />
+              <Icon name="tag" size={18} color="#1f875c" />
             </span>
             <div>
               <div className="text-[14.5px] font-extrabold text-venda-fg">VENDA</div>
@@ -46,7 +46,7 @@ export function AjudaLancamento() {
         <div className="rounded-[14px] border border-[#d5e0e1] bg-receb-bg/40 p-4">
           <div className="flex items-center gap-2.5">
             <span className="flex h-9 w-9 flex-none items-center justify-center rounded-[10px] bg-receb-bg">
-              <Icon name="banknote" size={18} color="#2b6f74" />
+              <Icon name="banknote" size={18} color="#127c84" />
             </span>
             <div>
               <div className="text-[14.5px] font-extrabold text-receb-fg">RECEBIMENTO</div>

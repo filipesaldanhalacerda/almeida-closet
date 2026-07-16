@@ -36,26 +36,26 @@ export function LancamentoCard({ l, href }: { l: LancamentoView; href: string })
   return (
     <Link
       href={href}
-      className="flex items-center gap-3 rounded-card border border-line bg-white px-[15px] py-3.5 text-left shadow-card active:bg-[#faf9f6]"
+      className="flex items-center gap-3.5 rounded-[18px] border border-line bg-white px-4 py-3.5 text-left shadow-card transition-transform active:scale-[.99] active:bg-[#fbf8f3]"
     >
       <span
-        className="flex h-[42px] w-[42px] flex-none items-center justify-center rounded-[11px]"
+        className="flex h-11 w-11 flex-none items-center justify-center rounded-[13px]"
         style={{ background: cor.bg }}
       >
-        <Icon name={iconeDoTipo(l.tipo)} size={18} color={cor.fg} />
+        <Icon name={iconeDoTipo(l.tipo)} size={19} color={cor.fg} />
       </span>
       <span className="flex min-w-0 flex-1 flex-col gap-0.5">
         <span className="truncate text-[15px] font-bold text-ink">{titulo}</span>
         <span className="truncate text-[12.5px] font-medium text-muted">{sub}</span>
       </span>
       <span className="flex flex-none flex-col items-end gap-0.5">
-        <span className="text-[15px] font-bold tnum" style={{ color: cor.fg }}>
+        <span className="text-[15.5px] font-extrabold tnum" style={{ color: cor.fg }}>
           {brlSinal(l.valor, saida)}
         </span>
         <span className="text-[11.5px] font-semibold text-faint-3">{isoParaBR(l.data)}</span>
       </span>
       {/* Seta indica que o card é tocável (abre a edição). */}
-      <Icon name="chevronRight" size={18} color="#cbc6bd" className="-ml-1 flex-none" />
+      <Icon name="chevronRight" size={18} color="#c2c7d0" className="-ml-1 flex-none" />
     </Link>
   );
 }

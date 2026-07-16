@@ -1,13 +1,13 @@
 {
-  "name": "Almeida Closet — Gestão de Lançamentos",
+  "name": "Almeida Closet · Gestão de Lançamentos",
   "short_name": "Almeida Closet",
   "description": "Registre vendas, recebimentos e despesas direto do celular.",
   "start_url": "/app",
   "scope": "/",
   "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#f7f6f3",
-  "theme_color": "#1c1a17",
+  "background_color": "#f4efe7",
+  "theme_color": "#1a2130",
   "lang": "pt-BR",
   "icons": [
     { "src": "/icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },

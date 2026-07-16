@@ -41,7 +41,7 @@ export function DeltaBadge({ valor, bom }: { valor: number; bom: boolean }) {
       className="rounded-full px-2.5 py-[3px] text-[11.5px] font-bold"
       style={{
         background: bom ? "#edf3ee" : "#f7e8e2",
-        color: bom ? "#2f7d5b" : "#b04a34",
+        color: bom ? "#1f875c" : "#cb4a44",
       }}
     >
       {sinal}
@@ -83,12 +83,12 @@ export function StatCard({
         (dark ? "border-transparent bg-ink" : "border-line bg-white shadow-card")
       }
     >
-      <div className="text-xs font-bold" style={{ color: dark ? "rgba(255,255,255,.6)" : "#78726a" }}>
+      <div className="text-xs font-bold" style={{ color: dark ? "rgba(255,255,255,.6)" : "#727a88" }}>
         {titulo}
       </div>
       <div
         className="mt-1.5 text-[18px] font-extrabold tnum sm:text-[20px]"
-        style={{ color: dark ? "#fff" : cor || "#1c1a17" }}
+        style={{ color: dark ? "#fff" : cor || "#1a2130" }}
       >
         {valor}
       </div>
@@ -112,15 +112,15 @@ export function StatDelta({
   dark?: boolean;
 }) {
   if (anterior === 0) {
-    return <span style={{ color: dark ? "rgba(255,255,255,.45)" : "#7a746b" }}>{rotulo}: —</span>;
+    return <span style={{ color: dark ? "rgba(255,255,255,.45)" : "#757c8b" }}>{rotulo}: —</span>;
   }
   const delta = ((atual - anterior) / Math.abs(anterior)) * 100;
   const bom = bomSeMaior ? delta >= 0 : delta <= 0;
-  const corTexto = dark ? (bom ? "#8fd6b4" : "#e6a993") : bom ? "#2f7d5b" : "#b04a34";
+  const corTexto = dark ? (bom ? "#8fd6b4" : "#e6a993") : bom ? "#1f875c" : "#cb4a44";
   return (
     <span style={{ color: corTexto }}>
       {delta >= 0 ? "▲" : "▼"} {pct(Math.abs(delta), 0)}{" "}
-      <span style={{ color: dark ? "rgba(255,255,255,.45)" : "#7a746b" }}>{rotulo}</span>
+      <span style={{ color: dark ? "rgba(255,255,255,.45)" : "#757c8b" }}>{rotulo}</span>
     </span>
   );
 }
