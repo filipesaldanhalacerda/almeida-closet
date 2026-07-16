@@ -112,7 +112,7 @@ export function StatDelta({
   dark?: boolean;
 }) {
   if (anterior === 0) {
-    return <span style={{ color: dark ? "rgba(255,255,255,.45)" : "#b4afa6" }}>{rotulo}: —</span>;
+    return <span style={{ color: dark ? "rgba(255,255,255,.45)" : "#7a746b" }}>{rotulo}: —</span>;
   }
   const delta = ((atual - anterior) / Math.abs(anterior)) * 100;
   const bom = bomSeMaior ? delta >= 0 : delta <= 0;
@@ -120,7 +120,7 @@ export function StatDelta({
   return (
     <span style={{ color: corTexto }}>
       {delta >= 0 ? "▲" : "▼"} {pct(Math.abs(delta), 0)}{" "}
-      <span style={{ color: dark ? "rgba(255,255,255,.45)" : "#b4afa6" }}>{rotulo}</span>
+      <span style={{ color: dark ? "rgba(255,255,255,.45)" : "#7a746b" }}>{rotulo}</span>
     </span>
   );
 }

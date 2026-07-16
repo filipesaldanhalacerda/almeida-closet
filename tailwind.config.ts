@@ -31,7 +31,7 @@ const config: Config = {
         muted: "#78726a", // auxiliar (AA ~4.7:1)
         faint: "#8c867b", // texto fraco (AA grande ~3.6:1)
         "faint-2": "#9a9488", // ~3.0:1
-        "faint-3": "#b4afa6", // placeholder / micro texto decorativo
+        "faint-3": "#7a746b", // micro texto (datas, ícones vazios) ~4.6:1 AA
         surface: "#ffffff", // card
         app: "#f7f6f3", // fundo do app
         line: "#ece7df", // borda de card
